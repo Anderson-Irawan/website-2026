@@ -1185,11 +1185,12 @@ h1, h2, h3, h4 {
 
 .hero-title {
     font-family: var(--font-marker);
-    font-size: clamp(4rem, 10vw, 5rem);
+    font-size: clamp(4rem, 10vw, 6rem);
     color: var(--color-pink);
     text-transform: uppercase;
     line-height: 0.9;
     margin-bottom: var(--space-sm);
+    white-space: nowrap;
 }
 
 .hero-title .highlight-word {
@@ -1204,21 +1205,9 @@ h1, h2, h3, h4 {
 
 .hero-title .highlight-word:hover {
     background-color: var(--color-red) !important;
-    color: var(--color-cream) !important;
-    box-shadow: 0 0 0 0.2em var(--color-red);
-    transform: skewX(-2deg);
-}
-
-.hero-underline {
-    width: 100%;
-    max-width: 500px;
-    height: 20px;
-    margin-bottom: var(--space-xl);
-}
-
-.hero-underline svg {
-    width: 100%;
-    height: 100%;
+    color: var(--color-black) !important;
+    box-shadow: 0 0 0 0.1em var(--color-red);
+    transform: skewX(-1deg);
 }
 
 .hero-scroll {
