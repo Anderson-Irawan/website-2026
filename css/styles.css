@@ -367,20 +367,19 @@ h1, h2, h3, h4 {
     position: absolute;
     top: 100%;
     left: 0;
-    color: var(--color-pink);
 }
 
 .nav-link-cycle:hover span {
     transform: translateY(-100%);
 }
 
-.page-cream .nav-link-cycle {
+/*.page-cream .nav-link-cycle {
     color: var(--color-black);
 }
 
 .page-cream .nav-link-cycle span::before {
     color: var(--color-red);
-}
+}*/
 
 .nav-links a {
     font-family: var(--font-body);
@@ -486,6 +485,10 @@ h1, h2, h3, h4 {
     align-items: center;
     position: relative;
     overflow: hidden;
+}
+
+.hero-opening {
+    margin-top: 10vw;
 }
 
 .hero-content {
@@ -756,7 +759,6 @@ h1, h2, h3, h4 {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-radius: var(--radius-full);
     transition: all 0.3s var(--transition-bounce);
 }
 
@@ -766,20 +768,19 @@ h1, h2, h3, h4 {
 }
 
 .btn-primary:hover {
-    background-color: var(--color-pink);
-    transform: scale(1.05);
+    background-color: var(--color-black);
+    border: 2px solid var(--color-cream);
 }
 
 .btn-outline {
     background-color: transparent;
     color: var(--color-cream);
-    border: 2px solid var(--color-cream);
+    border: 1px solid var(--color-cream);
 }
 
 .btn-outline:hover {
     background-color: var(--color-cream);
     color: var(--color-black);
-    transform: scale(1.05);
 }
 
 /* ============================================
@@ -1176,7 +1177,7 @@ h1, h2, h3, h4 {
 
 .hero-subtitle {
     font-family: var(--font-display);
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: clamp(2rem, 3vw, 3rem);
     color: var(--color-cream);
     text-transform: uppercase;
     margin-bottom: var(--space-xs);
@@ -1184,7 +1185,7 @@ h1, h2, h3, h4 {
 
 .hero-title {
     font-family: var(--font-marker);
-    font-size: clamp(3rem, 10vw, 6rem);
+    font-size: clamp(4rem, 10vw, 5rem);
     color: var(--color-pink);
     text-transform: uppercase;
     line-height: 0.9;
@@ -1299,9 +1300,10 @@ h1, h2, h3, h4 {
 
 .greeting-hello {
     display: block;
+    text-transform: none;
     font-family: var(--font-marker);
     font-size: clamp(2.5rem, 6vw, 4rem);
-    color: var(--color-pink);
+    color: var(--color-red);
     line-height: 1;
 }
 
