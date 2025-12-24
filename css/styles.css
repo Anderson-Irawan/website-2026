@@ -1192,18 +1192,19 @@ h1, h2, h3, h4 {
     margin-bottom: var(--space-sm);
 }
 
-.highlight-word {
+.hero-title .highlight-word {
     position: relative;
     display: inline-block;
     padding: 0.1em 0.3em;
     background-color: transparent;
     transition: all 0.3s var(--transition-bounce);
     cursor: pointer;
+    color: inherit;
 }
 
-.highlight-word:hover {
-    background-color: var(--color-red);
-    color: var(--color-cream);
+.hero-title .highlight-word:hover {
+    background-color: var(--color-red) !important;
+    color: var(--color-cream) !important;
     box-shadow: 0 0 0 0.2em var(--color-red);
     transform: skewX(-2deg);
 }
