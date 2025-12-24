@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize all modules
     initNavbar();
     initScrollAnimations();
+    initMobileMenu();
     initContactForm();
 });
 
@@ -69,9 +70,36 @@ function initScrollAnimations() {
 }
 
 /* ============================================
-   Mobile Menu Toggle (Bootstrap handles this)
+   Mobile Menu Toggle
    ============================================ */
-// Bootstrap's built-in collapse component handles mobile menu functionality
+function initMobileMenu() {
+    const menuToggle = document.querySelector('.mobile-menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (!menuToggle || !navLinks) return;
+    
+    menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+    });
+    
+    // Close menu when clicking on a link
+    const links = navLinks.querySelectorAll('a');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            menuToggle.classList.remove('active');
+        });
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
+            navLinks.classList.remove('active');
+            menuToggle.classList.remove('active');
+        }
+    });
+}
 
 /* ============================================
    Contact Form Handler
