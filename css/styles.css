@@ -343,6 +343,44 @@ h1, h2, h3, h4 {
     list-style: none;
 }
 
+/* Text Cycling Animation for Nav Links */
+.nav-link-cycle {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-cream);
+    text-decoration: none;
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.nav-link-cycle span {
+    display: inline-block;
+    position: relative;
+    transition: transform 0.4s var(--transition-bounce);
+}
+
+.nav-link-cycle span::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 100%;
+    left: 0;
+}
+
+.nav-link-cycle:hover span {
+    transform: translateY(-100%);
+}
+
+/*.page-cream .nav-link-cycle {
+    color: var(--color-black);
+}
+
+.page-cream .nav-link-cycle span::before {
+    color: var(--color-red);
+}*/
+
 .nav-links a {
     font-family: var(--font-body);
     font-size: 0.875rem;
@@ -353,7 +391,7 @@ h1, h2, h3, h4 {
     position: relative;
 }
 
-.nav-links a::after {
+.nav-links a:not(.nav-link-cycle)::after {
     content: '';
     position: absolute;
     bottom: -4px;
@@ -364,7 +402,7 @@ h1, h2, h3, h4 {
     transition: width 0.3s var(--transition-bounce);
 }
 
-.nav-links a:hover::after {
+.nav-links a:not(.nav-link-cycle):hover::after {
     width: 100%;
 }
 
@@ -419,8 +457,18 @@ h1, h2, h3, h4 {
     color: var(--color-black);
 }
 
+.page-cream .logo-text {
+
+}
+
+.page-cream .nav-links a {
+}
+
 .page-cream .mobile-menu-toggle span {
     background-color: var(--color-black);
+}
+
+.page-cream .nav-links {
 }
 
 .page-cream .heading-lg {
@@ -437,6 +485,10 @@ h1, h2, h3, h4 {
     align-items: center;
     position: relative;
     overflow: hidden;
+}
+
+.hero-opening {
+    margin-top: 10vw;
 }
 
 .hero-content {
@@ -707,7 +759,6 @@ h1, h2, h3, h4 {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-radius: var(--radius-full);
     transition: all 0.3s var(--transition-bounce);
 }
 
@@ -717,20 +768,19 @@ h1, h2, h3, h4 {
 }
 
 .btn-primary:hover {
-    background-color: var(--color-pink);
-    transform: scale(1.05);
+    background-color: var(--color-black);
+    border: 2px solid var(--color-cream);
 }
 
 .btn-outline {
     background-color: transparent;
     color: var(--color-cream);
-    border: 2px solid var(--color-cream);
+    border: 1px solid var(--color-cream);
 }
 
 .btn-outline:hover {
     background-color: var(--color-cream);
     color: var(--color-black);
-    transform: scale(1.05);
 }
 
 /* ============================================
@@ -1127,7 +1177,7 @@ h1, h2, h3, h4 {
 
 .hero-subtitle {
     font-family: var(--font-display);
-    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-size: clamp(2rem, 3vw, 3rem);
     color: var(--color-cream);
     text-transform: uppercase;
     margin-bottom: var(--space-xs);
@@ -1135,7 +1185,7 @@ h1, h2, h3, h4 {
 
 .hero-title {
     font-family: var(--font-marker);
-    font-size: clamp(3rem, 10vw, 6rem);
+    font-size: clamp(4rem, 10vw, 5rem);
     color: var(--color-pink);
     text-transform: uppercase;
     line-height: 0.9;
@@ -1266,9 +1316,10 @@ h1, h2, h3, h4 {
 
 .greeting-hello {
     display: block;
+    text-transform: none;
     font-family: var(--font-marker);
     font-size: clamp(2.5rem, 6vw, 4rem);
-    color: var(--color-pink);
+    color: var(--color-red);
     line-height: 1;
 }
 
@@ -1303,25 +1354,25 @@ h1, h2, h3, h4 {
 
 .sticker-badge {
     position: absolute;
-    top: var(--space-md);
-    right: var(--space-md);
-    width: 150px;
+    top: -20px;
+    right: -30px;
+    width: 220px;
     height: auto;
-    transform: rotate(8deg);
+    transform: rotate(12deg);
     z-index: 2;
-    filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.3));
+    filter: drop-shadow(6px 6px 12px rgba(0, 0, 0, 0.4));
     transition: transform 0.4s var(--transition-bounce);
 }
 
 .sticker-badge:hover {
-    transform: rotate(12deg) scale(1.1);
+    transform: rotate(8deg) scale(1.1);
 }
 
 @media (max-width: 768px) {
     .sticker-badge {
-        width: 120px;
-        top: var(--space-sm);
-        right: var(--space-sm);
+        width: 160px;
+        top: -10px;
+        right: -15px;
     }
 }
 
