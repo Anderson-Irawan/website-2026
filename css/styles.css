@@ -321,6 +321,17 @@ h1, h2, h3, h4 {
     gap: var(--space-sm);
     text-decoration: none;
     color: var(--color-cream);
+    transform: scale(1);
+     transition: transform 0.1s ease-in-out
+}
+
+.logo:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out, color 0.5s ease;
+
+    svg {
+    color: var(--color-pink);
+    }
 }
 
 .logo svg {
