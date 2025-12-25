@@ -3,12 +3,50 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Lottie Logo Animation
+    initLottieLogo();
+
     // Initialize all modules
     initNavbar();
     initScrollAnimations();
     initMobileMenu();
     initContactForm();
 });
+
+/* ============================================
+   Lottie Logo Animation
+   ============================================ */
+function initLottieLogo() {
+    const logoContainer = document.getElementById('lottie-logo');
+
+    if (!logoContainer) return;
+
+    const animation = lottie.loadAnimation({
+        container: logoContainer,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: 'assets/animations/logo-ae.json',
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid meet',
+            progressiveLoad: false,
+            hideOnTransparent: true,
+            className: 'lottie-svg-class'
+        }
+    });
+
+    // Force resize after load
+    animation.addEventListener('DOMLoaded', function() {
+        const svgElement = logoContainer.querySelector('svg');
+        if (svgElement) {
+            svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+            svgElement.style.width = '100%';
+            svgElement.style.height = '100%';
+            svgElement.style.maxWidth = '100%';
+            svgElement.style.maxHeight = '100%';
+        }
+    });
+}
 
 /* ============================================
    Navbar Scroll Effect
