@@ -343,7 +343,7 @@ h1, h2, h3, h4 {
 /* Lottie Logo Styling */
 #lottie-logo {
     width: 55px;
-    height: 55px;
+    height: 73px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -355,14 +355,14 @@ h1, h2, h3, h4 {
 }
 
 /* Apply red color to Lottie animation paths */
-#lottie-logo svg path,
-#lottie-logo svg g {
+#lottie-logo svg path {
     stroke: var(--color-red) !important;
+    fill: var(--color-red) !important;
 }
 
-.logo:hover #lottie-logo svg path,
-.logo:hover #lottie-logo svg g {
+.logo:hover #lottie-logo svg path {
     stroke: var(--color-pink) !important;
+    fill: var(--color-pink) !important;
 }
 
 .logo-text {
