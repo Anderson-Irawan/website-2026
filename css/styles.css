@@ -779,19 +779,18 @@ h1, h2, h3, h4 {
 }
 
 .btn-primary:hover {
-    background-color: var(--color-black);
-    border: 2px solid var(--color-cream);
+    background-color: transparent;
+    border: thin solid var(--color-cream);
 }
 
 .btn-outline {
-    background-color: transparent;
-    color: var(--color-cream);
-    border: 1px solid var(--color-cream);
-}
+    background-color: var(--color-red);
+    color: var(--color-cream);}
 
 .btn-outline:hover {
     background-color: var(--color-cream);
     color: var(--color-black);
+    background-color: transparent;
 }
 
 /* ============================================
@@ -1361,7 +1360,6 @@ h1, h2, h3, h4 {
     height: auto;
     transform: rotate(12deg);
     z-index: 2;
-    filter: drop-shadow(6px 6px 12px rgba(0, 0, 0, 0.4));
     transition: transform 0.4s var(--transition-bounce);
 }
 
