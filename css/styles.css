@@ -493,18 +493,8 @@ h1, h2, h3, h4 {
     color: var(--color-black);
 }
 
-.page-cream .logo-text {
-
-}
-
-.page-cream .nav-links a {
-}
-
 .page-cream .mobile-menu-toggle span {
     background-color: var(--color-black);
-}
-
-.page-cream .nav-links {
 }
 
 .page-cream .heading-lg {
@@ -576,6 +566,10 @@ h1, h2, h3, h4 {
     
     .hero-mascot {
         max-width: 280px;
+    }
+
+    .hero-title {
+        white-space: pre;
     }
 }
 
@@ -1225,7 +1219,7 @@ h1, h2, h3, h4 {
     text-transform: uppercase;
     line-height: 0.9;
     margin-bottom: var(--space-sm);
-    white-space: nowrap;
+    white-space: pre;
 }
 
 .hero-title .highlight-word {
@@ -1242,7 +1236,7 @@ h1, h2, h3, h4 {
     background-color: var(--color-red) !important;
     color: var(--color-black) !important;
     box-shadow: 0 0 0 0.1em var(--color-red);
-    transform: skewX(-1deg);
+    transform: skewX(-2deg);
 }
 
 .hero-scroll {
@@ -1265,6 +1259,29 @@ h1, h2, h3, h4 {
     opacity: 0.6;
     letter-spacing: 0.05em;
 }
+
+@media (max-width: 768px) {
+    .hero-title {
+        white-space: normal;
+    }
+
+    .hero-subtitle {
+        line-height: 1.1;
+    }
+
+    .hero-title .highlight-word {
+    padding: 0;
+    }
+
+    .hero-title .highlight-word:hover {
+    background-color: var(--color-red) !important;
+    color: var(--color-black) !important;
+    box-shadow: 0 0 0 0.1em var(--color-red);
+    transform: none;
+    }
+}
+
+
 
 /* ============================================
    NEW: Full-width Portfolio Items
