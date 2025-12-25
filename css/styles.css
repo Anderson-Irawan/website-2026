@@ -318,7 +318,7 @@ h1, h2, h3, h4 {
 .logo {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: 0.5rem;
     text-decoration: none;
     color: var(--color-cream);
     transform: scale(1);
