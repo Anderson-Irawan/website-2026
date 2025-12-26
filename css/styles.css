@@ -468,7 +468,6 @@ h1, h2, h3, h4 {
 
     .nav-links {
         position: fixed;
-        top: 100px;
         top: 80px;
         left: 0;
         right: 0;
@@ -482,12 +481,15 @@ h1, h2, h3, h4 {
         transform: translateY(100%);
         opacity: 0;
         pointer-events: none;
+<<<<<<< HEAD
         transition: all 0.4s var(--transition-smooth);
         z-index: 999;
+=======
+        transition: all 0.3s var(--transition-smooth);
+>>>>>>> parent of 213cf16 (bits and bobs 1)
     }
 
     .nav-links.active {
-        transform: translateX(0);
         transform: translateY(0);
         opacity: 1;
         pointer-events: all;
@@ -505,6 +507,7 @@ h1, h2, h3, h4 {
 }
 
 .page-cream .mobile-menu-toggle span {
+    background-color: var(--color-black);
 }
 
 .page-cream .heading-lg {
@@ -1290,6 +1293,8 @@ h1, h2, h3, h4 {
     transform: none;
     }
 }
+
+
 
 /* ============================================
    NEW: Full-width Portfolio Items
