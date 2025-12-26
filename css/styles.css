@@ -467,14 +467,14 @@ h1, h2, h3, h4 {
 
     .nav-links {
         position: fixed;
-        top: 80px;
+        top: 100px;
         left: 0;
         right: 0;
         background-color: var(--color-black);
         flex-direction: column;
         padding: var(--space-lg);
         gap: var(--space-lg);
-        transform: translateY(-100%);
+        transform: translateX(100%);
         opacity: 0;
         pointer-events: none;
         transition: all 0.3s var(--transition-smooth);
@@ -1040,7 +1040,6 @@ h1, h2, h3, h4 {
     font-family: var(--font-body);
     font-size: 1rem;
     border: 2px solid var(--color-black);
-    border-radius: var(--radius-full);
     background-color: transparent;
     color: var(--color-black);
     transition: border-color 0.3s var(--transition-smooth);
@@ -1054,7 +1053,6 @@ h1, h2, h3, h4 {
 }
 
 .form-group textarea {
-    border-radius: var(--radius-lg);
     min-height: 150px;
     resize: vertical;
 }
