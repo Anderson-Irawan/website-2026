@@ -1073,15 +1073,36 @@ h1, h2, h3, h4 {
 /* Sticky Shark Animation */
 .contact-shark {
     position: sticky;
-    top: 100px; /* Distance from top of viewport when scrolling */
+    top: 150px; /* More space from navbar */
     height: fit-content;
-    align-self: flex-start; /* Prevents stretching */
+    align-self: flex-start;
+    transition: transform 0.6s var(--transition-smooth);
 }
 
 .contact-shark img {
     width: 100%;
     height: auto;
     display: block;
+    transition: transform 0.4s var(--transition-bounce);
+}
+
+/* Shark scroll animation - grows and twirls when sticky */
+.contact-shark.is-stuck img {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.contact-shark:hover img {
+    transform: scale(1.15) rotate(-3deg);
+}
+
+/* Mobile shark - static with bounce animation */
+@keyframes sharkBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
 }
 
 @media (max-width: 768px) {
@@ -1094,7 +1115,19 @@ h1, h2, h3, h4 {
     }
 
     .contact-shark {
-        display: none; /* Hide shark on mobile for better UX */
+        position: static; /* Not sticky on mobile */
+        display: block;
+        margin: var(--space-xl) auto;
+        max-width: 300px;
+    }
+
+    .contact-shark img {
+        animation: sharkBounce 3s ease-in-out infinite;
+    }
+
+    .contact-shark:hover img {
+        animation-play-state: paused;
+        transform: scale(1.1);
     }
 }
 
