@@ -1199,11 +1199,6 @@ h1, h2, h3, h4 {
     line-height: 1.8;
 }
 
-.case-study-full-image {
-    aspect-ratio: 16/9;
-    background-color: var(--color-gray-placeholder);
-}
-
 .case-study-solution {
     display: grid;
     grid-template-columns: 2fr 3fr;
