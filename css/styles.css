@@ -469,6 +469,7 @@ h1, h2, h3, h4 {
     .nav-links {
         position: fixed;
         top: 100px;
+        top: 80px;
         left: 0;
         right: 0;
         bottom: 0;
@@ -487,6 +488,7 @@ h1, h2, h3, h4 {
 
     .nav-links.active {
         transform: translateX(0);
+        transform: translateY(0);
         opacity: 1;
         pointer-events: all;
     }
@@ -503,7 +505,6 @@ h1, h2, h3, h4 {
 }
 
 .page-cream .mobile-menu-toggle span {
-    background-color: var(--color-cream);
 }
 
 .page-cream .heading-lg {
