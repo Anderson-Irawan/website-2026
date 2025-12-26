@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollAnimations();
     initMobileMenu();
     initContactForm();
-    initStickyShark();
 });
 
 /* ============================================
@@ -221,30 +220,3 @@ window.addEventListener('load', function() {
         }, index * 150);
     });
 });
-
-/* ============================================
-   Sticky Shark Animation
-   ============================================ */
-function initStickyShark() {
-    const shark = document.querySelector('.contact-shark');
-
-    if (!shark) return;
-
-    // Create an Intersection Observer to detect when shark becomes sticky
-    const observer = new IntersectionObserver(
-        ([entry]) => {
-            // When shark reaches its sticky position (less than 100% visible)
-            if (entry.intersectionRatio < 1) {
-                shark.classList.add('is-stuck');
-            } else {
-                shark.classList.remove('is-stuck');
-            }
-        },
-        {
-            threshold: [1],
-            rootMargin: '-150px 0px 0px 0px' // Account for the top offset
-        }
-    );
-
-    observer.observe(shark);
-}

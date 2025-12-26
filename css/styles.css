@@ -1076,26 +1076,17 @@ h1, h2, h3, h4 {
     top: 150px; /* More space from navbar */
     height: fit-content;
     align-self: flex-start;
-    transition: transform 0.6s var(--transition-smooth);
 }
 
 .contact-shark img {
     width: 100%;
     height: auto;
     display: block;
+    animation: sharkBounce 3s ease-in-out infinite;
     transition: transform 0.4s var(--transition-bounce);
 }
 
-/* Shark scroll animation - grows and twirls when sticky */
-.contact-shark.is-stuck img {
-    transform: scale(1.1) rotate(5deg);
-}
-
-.contact-shark:hover img {
-    transform: scale(1.15) rotate(-3deg);
-}
-
-/* Mobile shark - static with bounce animation */
+/* Gentle bounce animation */
 @keyframes sharkBounce {
     0%, 100% {
         transform: translateY(0);
@@ -1105,6 +1096,13 @@ h1, h2, h3, h4 {
     }
 }
 
+/* Pause animation and scale on hover */
+.contact-shark:hover img {
+    animation-play-state: paused;
+    transform: scale(1.1);
+}
+
+/* Mobile shark - same bounce animation */
 @media (max-width: 768px) {
     .contact-layout {
         grid-template-columns: 1fr;
@@ -1121,6 +1119,7 @@ h1, h2, h3, h4 {
         max-width: 300px;
     }
 
+    /* Same animation as desktop */
     .contact-shark img {
         animation: sharkBounce 3s ease-in-out infinite;
     }
