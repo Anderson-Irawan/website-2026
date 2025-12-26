@@ -467,7 +467,7 @@ h1, h2, h3, h4 {
     
     .nav-links {
         position: fixed;
-        top: 80px;
+        top: 100px;
         left: 0;
         right: 0;
         background-color: var(--color-black);
@@ -478,10 +478,11 @@ h1, h2, h3, h4 {
         opacity: 0;
         pointer-events: none;
         transition: all 0.3s var(--transition-smooth);
+        z-index: -1;
     }
     
     .nav-links.active {
-        transform: translateY(0);
+        transform: translateX(0);
         opacity: 1;
         pointer-events: all;
     }
@@ -494,7 +495,7 @@ h1, h2, h3, h4 {
 }
 
 .page-cream .mobile-menu-toggle span {
-    background-color: var(--color-black);
+    background-color: var(--color-cream);
 }
 
 .page-cream .heading-lg {
@@ -1280,8 +1281,6 @@ h1, h2, h3, h4 {
     transform: none;
     }
 }
-
-
 
 /* ============================================
    NEW: Full-width Portfolio Items
