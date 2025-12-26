@@ -1206,9 +1206,8 @@ h1, h2, h3, h4 {
 
 .case-study-solution {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 3fr;
     gap: var(--space-xl);
-    padding: var(--space-3xl) 0;
     align-items: center;
 }
 
@@ -1219,7 +1218,7 @@ h1, h2, h3, h4 {
 }
 
 .case-study-solution .image-box {
-    aspect-ratio: 4/3;
+    aspect-ratio: 4/5;
     background-color: var(--color-gray-placeholder);
 }
 
