@@ -468,7 +468,7 @@ h1, h2, h3, h4 {
 
     .nav-links {
         position: fixed;
-        top: 0;
+        top: 100px;
         left: 0;
         right: 0;
         bottom: 0;
@@ -486,7 +486,7 @@ h1, h2, h3, h4 {
     }
 
     .nav-links.active {
-        transform: translateY(0);
+        transform: translateX(0);
         opacity: 1;
         pointer-events: all;
     }
@@ -502,18 +502,8 @@ h1, h2, h3, h4 {
     color: var(--color-black);
 }
 
-.page-cream .logo-text {
-
-}
-
-.page-cream .nav-links a {
-}
-
 .page-cream .mobile-menu-toggle span {
-    background-color: var(--color-black);
-}
-
-.page-cream .nav-links {
+    background-color: var(--color-cream);
 }
 
 .page-cream .heading-lg {
@@ -585,6 +575,10 @@ h1, h2, h3, h4 {
     
     .hero-mascot {
         max-width: 280px;
+    }
+
+    .hero-title {
+        white-space: pre;
     }
 }
 
@@ -813,19 +807,18 @@ h1, h2, h3, h4 {
 }
 
 .btn-primary:hover {
-    background-color: var(--color-black);
-    border: 2px solid var(--color-cream);
+    background-color: transparent;
+    border: thin solid var(--color-cream);
 }
 
 .btn-outline {
-    background-color: transparent;
-    color: var(--color-cream);
-    border: 1px solid var(--color-cream);
-}
+    background-color: var(--color-red);
+    color: var(--color-cream);}
 
 .btn-outline:hover {
     background-color: var(--color-cream);
     color: var(--color-black);
+    background-color: transparent;
 }
 
 /* ============================================
@@ -1235,7 +1228,7 @@ h1, h2, h3, h4 {
     text-transform: uppercase;
     line-height: 0.9;
     margin-bottom: var(--space-sm);
-    white-space: nowrap;
+    white-space: pre;
 }
 
 .hero-title .highlight-word {
@@ -1252,7 +1245,7 @@ h1, h2, h3, h4 {
     background-color: var(--color-red) !important;
     color: var(--color-black) !important;
     box-shadow: 0 0 0 0.1em var(--color-red);
-    transform: skewX(-1deg);
+    transform: skewX(-2deg);
 }
 
 .hero-scroll {
@@ -1274,6 +1267,27 @@ h1, h2, h3, h4 {
     text-transform: lowercase;
     opacity: 0.6;
     letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        white-space: normal;
+    }
+
+    .hero-subtitle {
+        line-height: 1.1;
+    }
+
+    .hero-title .highlight-word {
+    padding: 0;
+    }
+
+    .hero-title .highlight-word:hover {
+    background-color: var(--color-red) !important;
+    color: var(--color-black) !important;
+    box-shadow: 0 0 0 0.1em var(--color-red);
+    transform: none;
+    }
 }
 
 /* ============================================
@@ -1395,7 +1409,6 @@ h1, h2, h3, h4 {
     height: auto;
     transform: rotate(12deg);
     z-index: 2;
-    filter: drop-shadow(6px 6px 12px rgba(0, 0, 0, 0.4));
     transition: transform 0.4s var(--transition-bounce);
 }
 
