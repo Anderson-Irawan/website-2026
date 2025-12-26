@@ -1070,13 +1070,31 @@ h1, h2, h3, h4 {
     background-color: var(--color-gray-placeholder);
 }
 
+/* Sticky Shark Animation */
+.contact-shark {
+    position: sticky;
+    top: 100px; /* Distance from top of viewport when scrolling */
+    height: fit-content;
+    align-self: flex-start; /* Prevents stretching */
+}
+
+.contact-shark img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 @media (max-width: 768px) {
     .contact-layout {
         grid-template-columns: 1fr;
     }
-    
+
     .contact-image {
         display: none;
+    }
+
+    .contact-shark {
+        display: none; /* Hide shark on mobile for better UX */
     }
 }
 
