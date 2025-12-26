@@ -494,7 +494,7 @@ h1, h2, h3, h4 {
 }
 
 .page-cream .mobile-menu-toggle span {
-    background-color: var(--color-cream);
+    background-color: var(--color-black);
 }
 
 .page-cream .heading-lg {
@@ -1280,6 +1280,8 @@ h1, h2, h3, h4 {
     transform: none;
     }
 }
+
+
 
 /* ============================================
    NEW: Full-width Portfolio Items
