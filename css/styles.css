@@ -1096,10 +1096,9 @@ h1, h2, h3, h4 {
     }
 }
 
-/* Pause animation and scale on hover */
+/* Scale on hover while keeping bounce animation */
 .contact-shark:hover img {
-    animation-play-state: paused;
-    transform: scale(1.1);
+    filter: brightness(1.1);
 }
 
 /* Mobile shark - same bounce animation */
@@ -1125,8 +1124,7 @@ h1, h2, h3, h4 {
     }
 
     .contact-shark:hover img {
-        animation-play-state: paused;
-        transform: scale(1.1);
+        filter: brightness(1.1);
     }
 }
 
