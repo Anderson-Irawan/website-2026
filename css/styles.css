@@ -305,7 +305,6 @@ h1, h2, h3, h4 {
 }
 
 .navbar.scrolled {
-    background-color: rgba(6, 5, 5, 0.95);
     backdrop-filter: blur(10px);
 }
 
@@ -325,12 +324,21 @@ h1, h2, h3, h4 {
      transition: transform 0.1s ease-in-out
 }
 
+.logo-and {
+    color: var(--color-red);
+}
+
 .logo:hover {
     transform: scale(1.1);
     transition: transform 0.3s ease-in-out, color 0.5s ease;
 
-    svg {
-    color: var(--color-pink);
+    svg,
+    .logo-and {
+        color: var(--color-pink);
+    }
+
+    .logo-and {
+        color: var(--color-pink);
     }
 }
 
@@ -1098,7 +1106,7 @@ h1, h2, h3, h4 {
 
 /* Scale on hover while keeping bounce animation */
 .contact-shark:hover img {
-    filter: brightness(1.1);
+    transform: scale(1.1);
 }
 
 /* Mobile shark - same bounce animation */
@@ -1123,9 +1131,9 @@ h1, h2, h3, h4 {
         animation: sharkBounce 3s ease-in-out infinite;
     }
 
-    .contact-shark:hover img {
+    /*.contact-shark:hover img {
         filter: brightness(1.1);
-    }
+    }*/
 }
 
 /* ============================================
@@ -1180,7 +1188,7 @@ h1, h2, h3, h4 {
 }
 
 .case-study-problem {
-    text-align: center;
+    text-align: left;
     padding: var(--space-3xl) 0;
     max-width: 800px;
     margin: 0 auto;
