@@ -463,36 +463,27 @@ h1, h2, h3, h4 {
 @media (max-width: 768px) {
     .mobile-menu-toggle {
         display: flex;
-        z-index: 1001;
     }
 
     .nav-links {
         position: fixed;
-        top: 100px;
+        top: 80px;
         left: 0;
         right: 0;
-        bottom: 0;
         background-color: var(--color-black);
         flex-direction: column;
-        padding-top: 120px;
-        padding-left: var(--space-lg);
-        padding-right: var(--space-lg);
+        padding: var(--space-lg);
         gap: var(--space-lg);
-        transform: translateY(100%);
+        transform: translateY(-100%);
         opacity: 0;
         pointer-events: none;
-        transition: all 0.4s var(--transition-smooth);
-        z-index: 999;
+        transition: all 0.3s var(--transition-smooth);
     }
 
     .nav-links.active {
-        transform: translateX(0);
+        transform: translateY(0);
         opacity: 1;
         pointer-events: all;
-    }
-
-    .navbar {
-        z-index: 1000;
     }
 }
 
