@@ -1136,6 +1136,14 @@ h1, h2, h3, h4 {
     min-height: 400px;
     background-color: var(--color-gray-placeholder);
     margin-top: 80px;
+    overflow: hidden;
+}
+
+.case-study-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .case-study-intro {
@@ -1168,6 +1176,34 @@ h1, h2, h3, h4 {
     line-height: 1.8;
 }
 
+.case-study-intro .description p {
+    margin-bottom: var(--space-md);
+}
+
+.case-study-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+    margin-top: var(--space-xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid rgba(6, 5, 5, 0.2);
+}
+
+.case-study-meta-grid .meta-item h3 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(6, 5, 5, 0.6);
+    margin-bottom: var(--space-xs);
+}
+
+.case-study-meta-grid .meta-item p {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-black);
+}
+
 .case-study-images {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1177,6 +1213,14 @@ h1, h2, h3, h4 {
 .case-study-images .image-box {
     aspect-ratio: 16/10;
     background-color: var(--color-gray-placeholder);
+    overflow: hidden;
+}
+
+.case-study-images .image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .case-study-problem {
@@ -1194,6 +1238,15 @@ h1, h2, h3, h4 {
 .case-study-full-image {
     aspect-ratio: 16/9;
     background-color: var(--color-gray-placeholder);
+    width: 100%;
+    overflow: hidden;
+}
+
+.case-study-full-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .case-study-solution {
@@ -1213,6 +1266,14 @@ h1, h2, h3, h4 {
 .case-study-solution .image-box {
     aspect-ratio: 4/3;
     background-color: var(--color-gray-placeholder);
+    overflow: hidden;
+}
+
+.case-study-solution .image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 @media (max-width: 768px) {
@@ -1220,6 +1281,11 @@ h1, h2, h3, h4 {
     .case-study-images,
     .case-study-solution {
         grid-template-columns: 1fr;
+    }
+
+    .case-study-meta-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-md);
     }
 }
 
