@@ -317,7 +317,7 @@ h1, h2, h3, h4 {
 .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.1rem;
     text-decoration: none;
     color: var(--color-cream);
     transform: scale(1);
@@ -1203,7 +1203,6 @@ h1, h2, h3, h4 {
     display: grid;
     grid-template-columns: 2fr 3fr;
     gap: var(--space-xl);
-    align-items: center;
 }
 
 .case-study-solution h2 {
