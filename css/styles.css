@@ -468,7 +468,7 @@ h1, h2, h3, h4 {
     transition: all 0.3s var(--transition-smooth);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .mobile-menu-toggle {
         display: flex;
     }
@@ -566,7 +566,7 @@ h1, h2, h3, h4 {
     opacity: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .hero-content {
         flex-direction: column;
         text-align: center;
@@ -718,7 +718,7 @@ h1, h2, h3, h4 {
     color: var(--color-pink);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .about-preview {
         grid-template-columns: 1fr;
     }
@@ -760,7 +760,7 @@ h1, h2, h3, h4 {
     font-weight: 500;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .services-grid {
         grid-template-columns: 1fr;
     }
@@ -978,7 +978,7 @@ h1, h2, h3, h4 {
     color: var(--color-pink);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .about-quote-content {
         grid-template-columns: 1fr;
     }
@@ -1007,7 +1007,7 @@ h1, h2, h3, h4 {
     justify-content: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .clients-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1112,7 +1112,7 @@ h1, h2, h3, h4 {
 }
 
 /* Mobile shark - same bounce animation */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .contact-layout {
         grid-template-columns: 1fr;
     }
@@ -1288,18 +1288,7 @@ h1, h2, h3, h4 {
     display: block;
 }
 
-.case-study-full-image {
-    
-    margin: 1.5rem 0 1.5rem 0;
-
-    img {
-        aspect-ratio: 16/9;
-        width: 100%;
-        object-fit: cover;
-    }
-}
-
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .case-study-intro,
     .case-study-images,
     .case-study-solution {
@@ -1423,7 +1412,7 @@ h1, h2, h3, h4 {
     letter-spacing: 0.05em;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .hero-title {
         white-space: normal;
     }
@@ -1572,7 +1561,7 @@ h1, h2, h3, h4 {
     transform: rotate(8deg) scale(1.1);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .sticker-badge {
         width: 160px;
         top: -10px;
@@ -1580,7 +1569,7 @@ h1, h2, h3, h4 {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .about-content {
         grid-template-columns: 1fr;
         gap: var(--space-xl);
@@ -1699,7 +1688,7 @@ h1, h2, h3, h4 {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .services-stickers {
         flex-direction: column;
         gap: var(--space-md);
@@ -1780,7 +1769,7 @@ h1, h2, h3, h4 {
     margin-left: var(--space-xl);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
     .cta-line2 {
         margin-left: var(--space-md);
     }
