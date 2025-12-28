@@ -1140,9 +1140,7 @@ h1, h2, h3, h4 {
    Page: Case Study
    ============================================ */
 .case-study-hero {
-    height: 100vh;
     min-height: 400px;
-    background-color: var(--color-gray-placeholder);
     margin-top: 80px;
     overflow: hidden;
 }
@@ -1289,6 +1287,14 @@ h1, h2, h3, h4 {
     .case-study-images,
     .case-study-solution {
         grid-template-columns: 1fr;
+    }
+
+    .case-study-intro-grid {
+        display: block
+    }
+
+    .case-study-intro-grid h1 {
+        font-size: clamp(4rem, 7rem, 9rem);
     }
 
     .case-study-meta-grid {
