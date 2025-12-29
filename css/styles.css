@@ -1955,11 +1955,12 @@ h4 {
 
 .cta-section .btn {
     background-color: var(--color-black);
+    color: var(--color-red);
     font-size: 1rem;
 }
 
 .cta-section .btn:hover {
-    background-color: var(--color-red);
+    background-color: transparent;
     color: var(--color-black);
     border-color: var(--color-black);
 }
