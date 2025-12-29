@@ -1756,8 +1756,10 @@ h4 {
     position: relative;
     cursor: pointer;
     transition: transform 0.4s var(--transition-bounce),
+        opacity 0.6s var(--transition-bounce),
         z-index 0s;
     z-index: 1;
+    opacity: 0;
 }
 
 .sticker:hover {
@@ -1777,40 +1779,56 @@ h4 {
 }
 
 /* Sticker positions - jumbled layout */
-.sticker-branding.visible,
 .sticker-branding {
-    transform: rotate(-8deg) translateY(20px);
+    transform: rotate(-8deg) translateY(20px) scale(0.8);
     margin-right: -50px;
+}
+
+.sticker-branding.visible {
+    transform: rotate(-8deg) translateY(20px) scale(1);
+    opacity: 1;
 }
 
 .sticker-branding:hover {
     transform: rotate(-2deg) translateY(0) scale(1.15);
 }
 
-.sticker-logo.visible,
 .sticker-logo {
-    transform: rotate(10deg) translateY(-50px);
+    transform: rotate(10deg) translateY(-50px) scale(0.8);
     margin-right: -40px;
     z-index: 2;
+}
+
+.sticker-logo.visible {
+    transform: rotate(10deg) translateY(-50px) scale(1);
+    opacity: 1;
 }
 
 .sticker-logo:hover {
     transform: rotate(5deg) translateY(-40px) scale(1.15);
 }
 
-.sticker-print.visible,
 .sticker-print {
-    transform: rotate(-5deg) translateY(10px);
+    transform: rotate(-5deg) translateY(10px) scale(0.8);
     margin-right: -60px;
+}
+
+.sticker-print.visible {
+    transform: rotate(-5deg) translateY(10px) scale(1);
+    opacity: 1;
 }
 
 .sticker-print:hover {
     transform: rotate(0deg) translateY(-10px) scale(1.15);
 }
 
-.sticker-illustrations.visible,
 .sticker-illustrations {
-    transform: rotate(12deg) translateY(-20px);
+    transform: rotate(12deg) translateY(-20px) scale(0.8);
+}
+
+.sticker-illustrations.visible {
+    transform: rotate(12deg) translateY(-20px) scale(1);
+    opacity: 1;
 }
 
 .sticker-illustrations:hover {
@@ -1844,36 +1862,52 @@ h4 {
         max-width: 280px;
     }
 
-    .sticker-branding.visible,
     .sticker-branding {
-        transform: rotate(-5deg);
+        transform: rotate(-5deg) scale(0.8);
+    }
+
+    .sticker-branding.visible {
+        transform: rotate(-5deg) scale(1);
+        opacity: 1;
     }
 
     .sticker-branding:hover {
         transform: rotate(0deg) scale(1.1);
     }
 
-    .sticker-logo.visible,
     .sticker-logo {
-        transform: rotate(8deg);
+        transform: rotate(8deg) scale(0.8);
+    }
+
+    .sticker-logo.visible {
+        transform: rotate(8deg) scale(1);
+        opacity: 1;
     }
 
     .sticker-logo:hover {
         transform: rotate(3deg) scale(1.1);
     }
 
-    .sticker-print.visible,
     .sticker-print {
-        transform: rotate(-3deg);
+        transform: rotate(-3deg) scale(0.8);
+    }
+
+    .sticker-print.visible {
+        transform: rotate(-3deg) scale(1);
+        opacity: 1;
     }
 
     .sticker-print:hover {
         transform: rotate(0deg) scale(1.1);
     }
 
-    .sticker-illustrations.visible,
     .sticker-illustrations {
-        transform: rotate(10deg);
+        transform: rotate(10deg) scale(0.8);
+    }
+
+    .sticker-illustrations.visible {
+        transform: rotate(10deg) scale(1);
+        opacity: 1;
     }
 
     .sticker-illustrations:hover {
