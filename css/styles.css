@@ -686,11 +686,14 @@ h4 {
     aspect-ratio: 1;
     overflow: hidden;
     background-color: var(--color-gray-placeholder);
-    transition: transform 0.4s var(--transition-bounce);
 }
 
-.portfolio-item:hover {
-    transform: scale(1.02);
+.portfolio-item .image-placeholder {
+    transition: transform 0.4s var(--transition-smooth);
+}
+
+.portfolio-item:hover .image-placeholder {
+    transform: scale(1.1);
 }
 
 .portfolio-item img {
