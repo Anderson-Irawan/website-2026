@@ -705,18 +705,31 @@ h4 {
 }
 
 .portfolio-item-overlay {
-    position: absolute;
+    position: relative;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: var(--space-md);
-    background: linear-gradient(transparent, rgba(6, 5, 5, 0.9));
+    background: gray;
+
+    img {
+        aspect-ratio: 1/1;
+        opacity: 1;
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: .5s ease;
+        backface-visibility: hidden;
+    }
 }
 
 .portfolio-item-title {
     font-family: var(--font-body);
     font-size: 1rem;
     font-weight: 500;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
 }
 
 /* Image Placeholder */
@@ -1321,7 +1334,8 @@ h4 {
 }
 
 .case-study-solution {
-    .content, 
+
+    .content,
     .content-img {
         margin: var(--space-lg);
     }
