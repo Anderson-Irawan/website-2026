@@ -1778,12 +1778,12 @@ h4 {
 
 /* Sticker positions - jumbled layout */
 .sticker-branding {
-    transform: rotate(-2deg) translateY(0);
+    transform: rotate(-8deg) translateY(20px);
     margin-right: -50px;
 }
 
 .sticker-branding:hover {
-    transform: rotate(-8deg) translateY(20px) scale(1.15);
+    transform: rotate(-2deg) translateY(0) scale(1.15);
 }
 
 .sticker-logo {
@@ -1797,12 +1797,12 @@ h4 {
 }
 
 .sticker-print {
-    transform: rotate(0deg) translateY(-10px);
+    transform: rotate(-5deg) translateY(10px);
     margin-right: -60px;
 }
 
 .sticker-print:hover {
-    transform: rotate(-5deg) translateY(10px) scale(1.15);
+    transform: rotate(0deg) translateY(-10px) scale(1.15);
 }
 
 .sticker-illustrations {
@@ -1810,7 +1810,7 @@ h4 {
 }
 
 .sticker-illustrations:hover {
-    transform: rotate(8deg) translateY(-10px) scale(1.15);
+    transform: rotate(5deg) translateY(-10px) scale(1.15);
 }
 
 @media (max-width: 1024px) {
@@ -1841,11 +1841,11 @@ h4 {
     }
 
     .sticker-branding {
-        transform: rotate(0deg);
+        transform: rotate(-5deg);
     }
 
     .sticker-branding:hover {
-        transform: rotate(-5deg) scale(1.1);
+        transform: rotate(0deg) scale(1.1);
     }
 
     .sticker-logo {
@@ -1857,11 +1857,11 @@ h4 {
     }
 
     .sticker-print {
-        transform: rotate(2deg);
+        transform: rotate(-3deg);
     }
 
     .sticker-print:hover {
-        transform: rotate(-3deg) scale(1.1);
+        transform: rotate(0deg) scale(1.1);
     }
 
     .sticker-illustrations {
