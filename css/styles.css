@@ -1777,6 +1777,7 @@ h4 {
 }
 
 /* Sticker positions - jumbled layout */
+.sticker-branding.visible,
 .sticker-branding {
     transform: rotate(-8deg) translateY(20px);
     margin-right: -50px;
@@ -1786,6 +1787,7 @@ h4 {
     transform: rotate(-2deg) translateY(0) scale(1.15);
 }
 
+.sticker-logo.visible,
 .sticker-logo {
     transform: rotate(10deg) translateY(-50px);
     margin-right: -40px;
@@ -1796,6 +1798,7 @@ h4 {
     transform: rotate(5deg) translateY(-40px) scale(1.15);
 }
 
+.sticker-print.visible,
 .sticker-print {
     transform: rotate(-5deg) translateY(10px);
     margin-right: -60px;
@@ -1805,6 +1808,7 @@ h4 {
     transform: rotate(0deg) translateY(-10px) scale(1.15);
 }
 
+.sticker-illustrations.visible,
 .sticker-illustrations {
     transform: rotate(12deg) translateY(-20px);
 }
@@ -1840,6 +1844,7 @@ h4 {
         max-width: 280px;
     }
 
+    .sticker-branding.visible,
     .sticker-branding {
         transform: rotate(-5deg);
     }
@@ -1848,6 +1853,7 @@ h4 {
         transform: rotate(0deg) scale(1.1);
     }
 
+    .sticker-logo.visible,
     .sticker-logo {
         transform: rotate(8deg);
     }
@@ -1856,6 +1862,7 @@ h4 {
         transform: rotate(3deg) scale(1.1);
     }
 
+    .sticker-print.visible,
     .sticker-print {
         transform: rotate(-3deg);
     }
@@ -1864,6 +1871,7 @@ h4 {
         transform: rotate(0deg) scale(1.1);
     }
 
+    .sticker-illustrations.visible,
     .sticker-illustrations {
         transform: rotate(10deg);
     }
