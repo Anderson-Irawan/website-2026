@@ -636,11 +636,14 @@ h1, h2, h3, h4 {
     aspect-ratio: 1;
     overflow: hidden;
     background-color: var(--color-gray-placeholder);
-    transition: transform 0.4s var(--transition-bounce);
 }
 
-.portfolio-item:hover {
-    transform: scale(1.02);
+.portfolio-item .image-placeholder {
+    transition: transform 0.4s var(--transition-smooth);
+}
+
+.portfolio-item:hover .image-placeholder {
+    transform: scale(1.1);
 }
 
 .portfolio-item img {
@@ -656,17 +659,37 @@ h1, h2, h3, h4 {
 
 .portfolio-item-overlay {
     position: absolute;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     padding: var(--space-md);
-    background: linear-gradient(transparent, rgba(6, 5, 5, 0.9));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0);
+    opacity: 0;
+    transition: all 0.4s var(--transition-smooth);
+}
+
+.portfolio-item:hover .portfolio-item-overlay {
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
 }
 
 .portfolio-item-title {
     font-family: var(--font-body);
     font-size: 1rem;
     font-weight: 500;
+    color: var(--color-cream);
+    transform: translateY(10px);
+    opacity: 0;
+    transition: all 0.3s var(--transition-smooth);
+}
+
+.portfolio-item:hover .portfolio-item-title {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 /* Image Placeholder */
