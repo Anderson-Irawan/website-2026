@@ -723,15 +723,15 @@ h4 {
 }
 
 .portfolio-item:hover .portfolio-item-overlay {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(140, 53, 60, 0.3);
     opacity: 1;
 }
 
 .portfolio-item-title {
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 500;
-    color: var(--color-cream);
+    color: var(--color-mint);
     transform: translateY(10px);
     opacity: 0;
     transition: all 0.3s var(--transition-smooth);
