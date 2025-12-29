@@ -1781,39 +1781,39 @@ h4 {
 
 /* Sticker positions - jumbled layout */
 .sticker-branding {
-    transform: rotate(-8deg) translateY(20px);
+    transform: rotate(-2deg) translateY(0);
     margin-right: -50px;
 }
 
 .sticker-branding:hover {
-    transform: rotate(-2deg) translateY(0) scale(1.15);
+    transform: rotate(-8deg) translateY(20px) scale(1.15);
 }
 
 .sticker-logo {
-    transform: rotate(5deg) translateY(-40px);
+    transform: rotate(10deg) translateY(-50px);
     margin-right: -40px;
     z-index: 2;
 }
 
 .sticker-logo:hover {
-    transform: rotate(10deg) translateY(-50px) scale(1.15);
+    transform: rotate(5deg) translateY(-40px) scale(1.15);
 }
 
 .sticker-print {
-    transform: rotate(-5deg) translateY(10px);
+    transform: rotate(0deg) translateY(-10px);
     margin-right: -60px;
 }
 
 .sticker-print:hover {
-    transform: rotate(0deg) translateY(-10px) scale(1.15);
+    transform: rotate(-5deg) translateY(10px) scale(1.15);
 }
 
 .sticker-illustrations {
-    transform: rotate(8deg) translateY(-10px);
+    transform: rotate(12deg) translateY(-20px);
 }
 
 .sticker-illustrations:hover {
-    transform: rotate(12deg) translateY(-20px) scale(1.15);
+    transform: rotate(8deg) translateY(-10px) scale(1.15);
 }
 
 @media (max-width: 1024px) {
@@ -1844,35 +1844,35 @@ h4 {
     }
 
     .sticker-branding {
-        transform: rotate(-5deg);
+        transform: rotate(0deg);
     }
 
     .sticker-branding:hover {
-        transform: rotate(0deg) scale(1.1);
+        transform: rotate(-5deg) scale(1.1);
     }
 
     .sticker-logo {
-        transform: rotate(3deg);
+        transform: rotate(8deg);
     }
 
     .sticker-logo:hover {
-        transform: rotate(8deg) scale(1.1);
+        transform: rotate(3deg) scale(1.1);
     }
 
     .sticker-print {
-        transform: rotate(-3deg);
+        transform: rotate(2deg);
     }
 
     .sticker-print:hover {
-        transform: rotate(2deg) scale(1.1);
+        transform: rotate(-3deg) scale(1.1);
     }
 
     .sticker-illustrations {
-        transform: rotate(5deg);
+        transform: rotate(10deg);
     }
 
     .sticker-illustrations:hover {
-        transform: rotate(10deg) scale(1.1);
+        transform: rotate(5deg) scale(1.1);
     }
 }
 
