@@ -900,7 +900,7 @@ h4 {
 .footer {
     background-color: var(--color-black);
     padding: var(--space-xl) 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
 }
 
 .footer .container {
