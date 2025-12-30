@@ -15,9 +15,9 @@
     align-items: center;
     justify-content: center;
     background: var(--color-black);
-    background-image:
+    /*background-image:
         radial-gradient(ellipse at 20% 80%, rgba(26, 10, 46, 0.3) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(22, 33, 62, 0.3) 0%, transparent 50%);
+        radial-gradient(ellipse at 80% 20%, rgba(22, 33, 62, 0.3) 0%, transparent 50%);*/
     overflow: hidden;
     perspective: 1200px;
 }
