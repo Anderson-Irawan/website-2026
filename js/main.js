@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavbar();
     initScrollAnimations();
     initMobileMenu();
+    initSlidingPortfolio();
     // initContactForm(); // Disabled - using EmailJS in contact.html instead
 });
 
@@ -172,6 +173,53 @@ function initContactForm() {
         
         // Open mailto link
         window.location.href = `mailto:irawanandersonputra@gmail.com?subject=${subject}&body=${body}`;
+    });
+}
+
+/* ============================================
+   Sliding Portfolio Animation
+   ============================================ */
+function initSlidingPortfolio() {
+    const slides = document.querySelectorAll('.portfolio-slide');
+
+    if (slides.length === 0) return;
+
+    // Set first slide as active initially
+    slides[0].classList.add('slide-active');
+
+    const observerOptions = {
+        root: null,
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+        rootMargin: '0px'
+    };
+
+    let lastScrollY = window.scrollY;
+    let isScrollingDown = true;
+
+    // Track scroll direction
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        isScrollingDown = currentScrollY > lastScrollY;
+        lastScrollY = currentScrollY;
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const slide = entry.target;
+
+            // When scrolling down - slide in when visible
+            if (isScrollingDown && entry.intersectionRatio > 0.5) {
+                slide.classList.add('slide-active');
+            }
+            // When scrolling up - slide out when leaving
+            else if (!isScrollingDown && entry.intersectionRatio < 0.5) {
+                slide.classList.remove('slide-active');
+            }
+        });
+    }, observerOptions);
+
+    slides.forEach(slide => {
+        observer.observe(slide);
     });
 }
 
