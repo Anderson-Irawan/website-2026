@@ -517,6 +517,30 @@ h4 {
     transition: all 0.3s var(--transition-smooth);
 }
 
+.mobile-menu-toggle span:nth-child(1) {
+    transform-origin: center;
+}
+
+.mobile-menu-toggle span:nth-child(2) {
+    transform-origin: center;
+}
+
+.mobile-menu-toggle span:nth-child(3) {
+    transform-origin: center;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
 @media (max-width: 640px) {
     .mobile-menu-toggle {
         display: flex;
