@@ -190,25 +190,13 @@ function initSlidingPortfolio() {
         rootMargin: '0px'
     };
 
-    let lastScrollY = window.scrollY;
-
-    // Track scroll direction
-    window.addEventListener('scroll', () => {
-        lastScrollY = window.scrollY;
-    });
-
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const item = entry.target;
-            const scrollDirection = window.scrollY > lastScrollY ? 'down' : 'up';
 
-            // Slide in when scrolling down and item is visible
+            // Only slide in when scrolling into view - never slide out
             if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
                 item.classList.add('slide-in');
-            }
-            // Slide out when scrolling up and item is leaving
-            else if (scrollDirection === 'up' && entry.intersectionRatio < 0.5) {
-                item.classList.remove('slide-in');
             }
         });
     }, observerOptions);
