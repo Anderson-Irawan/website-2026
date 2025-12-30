@@ -22,6 +22,19 @@
     perspective: 1200px;
 }
 
+/* Grid Container for Title and Sphere */
+.sphere-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8rem;
+    align-items: center;
+    justify-items: center;
+    max-width: 1400px;
+    width: 100%;
+    padding: 2rem;
+    z-index: 5;
+}
+
 
 /* Floating particles */
 .sphere-particles {
@@ -60,12 +73,9 @@
 
 /* Sphere Container */
 .sphere-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotateX(-15deg) rotateZ(10deg);
+    position: relative;
+    transform: rotateX(-15deg) rotateZ(10deg);
     transform-style: preserve-3d;
-    z-index: 5;
 }
 
 .logo-sphere {
@@ -183,17 +193,14 @@
 
 /* Sphere title */
 .sphere-title {
-    position: absolute;
-    bottom: 14rem;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    z-index: 10;
+    text-align: left;
+    justify-self: end;
+    padding-right: 2rem;
 }
 
 .sphere-title h2 {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 8vw, 4rem);
+    font-size: clamp(3rem, 10vw, 6rem);
     color: var(--color-cream);
     letter-spacing: 0.1em;
     line-height: 1;
@@ -201,11 +208,12 @@
     text-shadow:
         0 0 40px rgba(255, 136, 153, 0.5),
         0 0 80px rgba(255, 23, 57, 0.3);
+    margin-bottom: 1rem;
 }
 
 .sphere-title p {
     font-family: var(--font-marker);
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--color-pink);
     letter-spacing: 0.3em;
     margin-top: 0.5rem;
@@ -235,20 +243,44 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .sphere-grid-container {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+        padding: 3rem 2rem;
+    }
+
+    .sphere-title {
+        text-align: center;
+        justify-self: center;
+        padding-right: 0;
+        order: 2;
+    }
+
+    .sphere-wrapper {
+        order: 1;
+    }
+
+    .sphere-title h2 {
+        font-size: clamp(2rem, 8vw, 4rem);
+    }
+}
+
 @media (max-width: 768px) {
     :root {
         --sphere-size: min(70vmin, 300px);
     }
 
-    .sphere-title {
-        bottom: 10rem;
+    .sphere-grid-container {
+        gap: 3rem;
+        padding: 2rem 1rem;
     }
 
     .sphere-title h2 {
-        font-size: clamp(1.5rem, 6vw, 3rem);
+        font-size: clamp(1.8rem, 7vw, 3rem);
     }
 
-    .logo-sphere-section .hero-text {
-        bottom: 4rem;
+    .sphere-title p {
+        font-size: 0.85rem;
     }
 }
