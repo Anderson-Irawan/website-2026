@@ -184,6 +184,16 @@ function initSlidingPortfolio() {
 
     if (items.length === 0) return;
 
+    let lastScrollY = window.scrollY;
+    let scrollDirection = 'down';
+
+    // Track scroll direction
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        scrollDirection = currentScrollY > lastScrollY ? 'down' : 'up';
+        lastScrollY = currentScrollY;
+    });
+
     const observerOptions = {
         root: null,
         threshold: [0, 0.2, 0.4, 0.6, 0.8, 1],
@@ -194,9 +204,13 @@ function initSlidingPortfolio() {
         entries.forEach(entry => {
             const item = entry.target;
 
-            // Only slide in when scrolling into view - never slide out
-            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+            // Slide in when scrolling DOWN and entering view
+            if (scrollDirection === 'down' && entry.isIntersecting && entry.intersectionRatio > 0.5) {
                 item.classList.add('slide-in');
+            }
+            // Slide out when scrolling UP and leaving view
+            else if (scrollDirection === 'up' && !entry.isIntersecting) {
+                item.classList.remove('slide-in');
             }
         });
     }, observerOptions);
