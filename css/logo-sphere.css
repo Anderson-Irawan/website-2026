@@ -1,0 +1,256 @@
+/* ============================================
+   LOGO SPHERE - 3D Rotating Portfolio Display
+   ============================================ */
+
+:root {
+    --sphere-size: min(60vmin, 400px);
+    --logo-size-sphere: calc(var(--sphere-size) / 10);
+}
+
+/* Sphere Section */
+.logo-sphere-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-black);
+    background-image:
+        radial-gradient(ellipse at 20% 80%, rgba(26, 10, 46, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(22, 33, 62, 0.3) 0%, transparent 50%);
+    overflow: hidden;
+    perspective: 1200px;
+}
+
+/* Animated background grid */
+.logo-sphere-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 136, 153, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 136, 153, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridPulse 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes gridPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* Floating particles */
+.sphere-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.sphere-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--color-pink);
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: floatParticle 15s infinite ease-in-out;
+}
+
+.sphere-particle:nth-child(2) { left: 10%; animation-delay: -2s; background: var(--color-red); }
+.sphere-particle:nth-child(3) { left: 20%; animation-delay: -4s; background: var(--color-pink); }
+.sphere-particle:nth-child(4) { left: 30%; animation-delay: -6s; }
+.sphere-particle:nth-child(5) { left: 40%; animation-delay: -8s; background: var(--color-red); }
+.sphere-particle:nth-child(6) { left: 50%; animation-delay: -10s; background: var(--color-pink); }
+.sphere-particle:nth-child(7) { left: 60%; animation-delay: -12s; }
+.sphere-particle:nth-child(8) { left: 70%; animation-delay: -14s; background: var(--color-red); }
+.sphere-particle:nth-child(9) { left: 80%; animation-delay: -3s; background: var(--color-pink); }
+.sphere-particle:nth-child(10) { left: 90%; animation-delay: -7s; }
+
+@keyframes floatParticle {
+    0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+}
+
+/* Sphere Container */
+.sphere-wrapper {
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(-15deg) rotateZ(10deg);
+}
+
+.logo-sphere {
+    width: var(--sphere-size);
+    height: var(--sphere-size);
+    position: relative;
+    transform-style: preserve-3d;
+    animation: spinSphere 25s linear infinite;
+}
+
+@keyframes spinSphere {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
+
+/* Individual logo items */
+.sphere-logo-item {
+    position: absolute;
+    width: var(--logo-size-sphere);
+    height: var(--logo-size-sphere);
+    top: 50%;
+    left: 50%;
+    margin-left: calc(var(--logo-size-sphere) / -2);
+    margin-top: calc(var(--logo-size-sphere) / -2);
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+}
+
+.sphere-logo-item:hover {
+    z-index: 100;
+}
+
+.sphere-logo-item:hover .sphere-logo-content {
+    transform: rotateY(0deg) scale(2.5);
+    filter: drop-shadow(0 0 30px var(--color-pink));
+}
+
+.sphere-logo-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: counterSpin 25s linear infinite;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    cursor: pointer;
+    backface-visibility: hidden;
+}
+
+@keyframes counterSpin {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(-360deg); }
+}
+
+.sphere-logo-content img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(255, 136, 153, 0.3));
+}
+
+/* Placeholder styling */
+.sphere-logo-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: calc(var(--logo-size-sphere) * 0.4);
+    color: var(--color-black);
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+}
+
+.sphere-logo-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(25deg); }
+    100% { transform: translateX(200%) rotate(25deg); }
+}
+
+/* Color variations */
+.sphere-logo-placeholder.hot { background: linear-gradient(135deg, var(--color-red), var(--color-pink)); }
+.sphere-logo-placeholder.electric { background: linear-gradient(135deg, var(--color-pink), #ff6b9d); }
+.sphere-logo-placeholder.pink { background: linear-gradient(135deg, var(--color-pink), #ffaabb); }
+.sphere-logo-placeholder.red { background: linear-gradient(135deg, var(--color-red), #ff4466); }
+
+/* Center glow */
+.sphere-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--sphere-size) * 0.4);
+    height: calc(var(--sphere-size) * 0.4);
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255, 136, 153, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: glowPulse 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes glowPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+}
+
+/* Sphere title */
+.sphere-title {
+    position: absolute;
+    bottom: 4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+}
+
+.sphere-title h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 8vw, 4rem);
+    color: var(--color-cream);
+    letter-spacing: 0.1em;
+    line-height: 1;
+    text-transform: uppercase;
+    text-shadow:
+        0 0 40px rgba(255, 136, 153, 0.5),
+        0 0 80px rgba(255, 23, 57, 0.3);
+}
+
+.sphere-title p {
+    font-family: var(--font-marker);
+    font-size: 0.9rem;
+    color: var(--color-pink);
+    letter-spacing: 0.3em;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+}
+
+/* Interaction hint */
+.sphere-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: hintFade 3s ease-in-out infinite;
+}
+
+@keyframes hintFade {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    :root {
+        --sphere-size: min(70vmin, 300px);
+    }
+
+    .sphere-title h2 {
+        font-size: clamp(1.5rem, 6vw, 3rem);
+    }
+}
