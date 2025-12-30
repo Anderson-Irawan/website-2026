@@ -1718,8 +1718,9 @@ h4 {
 }
 
 .about-description p {
-    font-size: 0.9rem;
-    line-height: 1.8;
+    font-size: 1.2rem;
+    font-weight: 100;
+    line-height: 1.2;
     margin-bottom: var(--space-md);
     opacity: 0.9;
 }
@@ -1736,6 +1737,23 @@ h4 {
     width: 100%;
     height: auto;
     display: block;
+}
+
+.about-btn {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+
+    .btn-primary {
+        background-color: var(--color-red);
+        color: var(--color-black);
+    }
+
+    .btn-primary:hover {
+        background-color: transparent;
+        color: var(--color-cream);
+        border: thin solid var(--color-cream);
+    }
 }
 
 .sticker-badge {
