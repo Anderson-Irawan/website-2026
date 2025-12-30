@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavbar();
     initScrollAnimations();
     initMobileMenu();
-    initContactForm();
+    // initContactForm(); // Disabled - using EmailJS in contact.html instead
 });
 
 /* ============================================
