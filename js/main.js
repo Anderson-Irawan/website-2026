@@ -172,7 +172,7 @@ function initContactForm() {
         );
         
         // Open mailto link
-        window.location.href = `mailto:hello@andersondesigns.com?subject=${subject}&body=${body}`;
+        window.location.href = `mailto:irawanandersonputra@gmail.com?subject=${subject}&body=${body}`;
     });
 }
 

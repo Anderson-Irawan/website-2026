@@ -1817,8 +1817,9 @@ h4 {
 }
 
 .about-description p {
-    font-size: 0.9rem;
-    line-height: 1.8;
+    font-size: 1.2rem;
+    font-weight: 100;
+    line-height: 1.2;
     margin-bottom: var(--space-md);
     opacity: 0.9;
 }
@@ -1835,6 +1836,23 @@ h4 {
     width: 100%;
     height: auto;
     display: block;
+}
+
+.about-btn {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+
+    .btn-primary {
+        background-color: var(--color-red);
+        color: var(--color-black);
+    }
+
+    .btn-primary:hover {
+        background-color: transparent;
+        color: var(--color-cream);
+        border: thin solid var(--color-cream);
+    }
 }
 
 .sticker-badge {
@@ -1868,6 +1886,16 @@ h4 {
 
     .about-image {
         order: -1;
+    }
+
+    .about-btn {
+        gap: var(--space-xs);
+        text-align: center;
+
+        .btn-primary {
+            font-size: 0.8rem;
+            padding: 1rem 1.5rem;
+        }
     }
 }
 
@@ -2020,6 +2048,7 @@ h4 {
 
     .sticker-branding {
         transform: rotate(-5deg) scale(0.8);
+        top: 25vw;
     }
 
     .sticker-branding.visible {
