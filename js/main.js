@@ -200,7 +200,7 @@ function initSlidingPortfolio() {
             // Start: when bottom of image enters viewport
             // End: when top of image reaches center of viewport
             const startPoint = windowHeight / 2;
-            const endPoint = windowHeight / 4;
+            const endPoint = windowHeight / 6;
 
             let progress = 0;
 
