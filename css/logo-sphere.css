@@ -221,22 +221,14 @@
     max-width: 800px;
 }
 
-/* Interaction hint */
-.sphere-hint {
+.sphere-text {
     position: absolute;
     bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
     font-size: 0.65rem;
-    color: rgba(255, 255, 255, 0.3);
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    animation: hintFade 3s ease-in-out infinite;
-}
-
-@keyframes hintFade {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.7; }
 }
 
 /* Responsive */
