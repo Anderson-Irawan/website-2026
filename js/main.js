@@ -187,28 +187,33 @@ function initSlidingPortfolio() {
     function updateSlideProgress() {
         items.forEach(item => {
             const overlay = item.querySelector('.portfolio-image-overlay');
+            const imageContainer = item.querySelector('.portfolio-images');
             const direction = item.getAttribute('data-slide-direction');
 
-            if (!overlay) return;
+            if (!overlay || !imageContainer) return;
 
-            // Get element position relative to viewport
-            const rect = item.getBoundingClientRect();
+            // Get image container position relative to viewport
+            const rect = imageContainer.getBoundingClientRect();
             const windowHeight = window.innerHeight;
 
             // Calculate scroll progress (0 to 1)
-            // Start sliding when element enters viewport, complete when it's centered
+            // Start: when bottom of image enters viewport
+            // End: when top of image reaches center of viewport
             const startPoint = windowHeight;
             const endPoint = windowHeight / 2;
 
             let progress = 0;
 
-            if (rect.top <= startPoint && rect.top >= endPoint) {
-                // Element is between bottom of screen and center
-                progress = (startPoint - rect.top) / (startPoint - endPoint);
-                progress = Math.max(0, Math.min(1, progress)); // Clamp between 0 and 1
-            } else if (rect.top < endPoint) {
-                // Element has passed center point
-                progress = 1;
+            // Only start calculating when the image container's bottom enters viewport
+            if (rect.bottom > 0 && rect.top <= startPoint) {
+                if (rect.top >= endPoint) {
+                    // Image is between bottom of screen and center
+                    progress = (startPoint - rect.top) / (startPoint - endPoint);
+                    progress = Math.max(0, Math.min(1, progress)); // Clamp between 0 and 1
+                } else {
+                    // Image has passed center point
+                    progress = 1;
+                }
             }
 
             // Apply transform based on direction and progress
