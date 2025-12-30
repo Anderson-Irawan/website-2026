@@ -180,46 +180,49 @@ function initContactForm() {
    Sliding Portfolio Animation
    ============================================ */
 function initSlidingPortfolio() {
-    const slides = document.querySelectorAll('.portfolio-slide');
+    const items = document.querySelectorAll('.portfolio-item-sliding');
 
-    if (slides.length === 0) return;
+    if (items.length === 0) return;
 
-    // Set first slide as active initially
-    slides[0].classList.add('slide-active');
+    // First item starts visible
+    items[0].classList.add('slide-in');
 
     const observerOptions = {
         root: null,
-        threshold: [0, 0.25, 0.5, 0.75, 1],
+        threshold: [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1],
         rootMargin: '0px'
     };
 
     let lastScrollY = window.scrollY;
-    let isScrollingDown = true;
 
     // Track scroll direction
     window.addEventListener('scroll', () => {
-        const currentScrollY = window.scrollY;
-        isScrollingDown = currentScrollY > lastScrollY;
-        lastScrollY = currentScrollY;
+        lastScrollY = window.scrollY;
     });
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            const slide = entry.target;
+            const item = entry.target;
+            const imageContainer = item.querySelector('.portfolio-image-container');
 
-            // When scrolling down - slide in when visible
-            if (isScrollingDown && entry.intersectionRatio > 0.5) {
-                slide.classList.add('slide-active');
+            if (!imageContainer) return;
+
+            const rect = imageContainer.getBoundingClientRect();
+            const scrollDirection = window.scrollY > lastScrollY ? 'down' : 'up';
+
+            // Slide in when the image container becomes visible
+            if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+                item.classList.add('slide-in');
             }
-            // When scrolling up - slide out when leaving
-            else if (!isScrollingDown && entry.intersectionRatio < 0.5) {
-                slide.classList.remove('slide-active');
+            // Slide out when scrolling up and leaving viewport
+            else if (scrollDirection === 'up' && entry.intersectionRatio < 0.3) {
+                item.classList.remove('slide-in');
             }
         });
     }, observerOptions);
 
-    slides.forEach(slide => {
-        observer.observe(slide);
+    items.forEach(item => {
+        observer.observe(item);
     });
 }
 
