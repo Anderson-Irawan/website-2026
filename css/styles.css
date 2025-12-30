@@ -589,10 +589,6 @@ h4 {
     overflow: hidden;
 }
 
-.hero-opening {
-    margin-top: 10vw;
-}
-
 .hero-content {
     display: flex;
     justify-content: space-between;
