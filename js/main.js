@@ -184,12 +184,9 @@ function initSlidingPortfolio() {
 
     if (items.length === 0) return;
 
-    // First item starts visible
-    items[0].classList.add('slide-in');
-
     const observerOptions = {
         root: null,
-        threshold: [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1],
+        threshold: [0, 0.2, 0.4, 0.6, 0.8, 1],
         rootMargin: '0px'
     };
 
@@ -203,19 +200,14 @@ function initSlidingPortfolio() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             const item = entry.target;
-            const imageContainer = item.querySelector('.portfolio-image-container');
-
-            if (!imageContainer) return;
-
-            const rect = imageContainer.getBoundingClientRect();
             const scrollDirection = window.scrollY > lastScrollY ? 'down' : 'up';
 
-            // Slide in when the image container becomes visible
-            if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            // Slide in when scrolling down and item is visible
+            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
                 item.classList.add('slide-in');
             }
-            // Slide out when scrolling up and leaving viewport
-            else if (scrollDirection === 'up' && entry.intersectionRatio < 0.3) {
+            // Slide out when scrolling up and item is leaving
+            else if (scrollDirection === 'up' && entry.intersectionRatio < 0.5) {
                 item.classList.remove('slide-in');
             }
         });
