@@ -184,40 +184,50 @@ function initSlidingPortfolio() {
 
     if (items.length === 0) return;
 
-    let lastScrollY = window.scrollY;
-    let scrollDirection = 'down';
+    function updateSlideProgress() {
+        items.forEach(item => {
+            const overlay = item.querySelector('.portfolio-image-overlay');
+            const direction = item.getAttribute('data-slide-direction');
 
-    // Track scroll direction
-    window.addEventListener('scroll', () => {
-        const currentScrollY = window.scrollY;
-        scrollDirection = currentScrollY > lastScrollY ? 'down' : 'up';
-        lastScrollY = currentScrollY;
-    });
+            if (!overlay) return;
 
-    const observerOptions = {
-        root: null,
-        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-        rootMargin: '0px'
-    };
+            // Get element position relative to viewport
+            const rect = item.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            const item = entry.target;
+            // Calculate scroll progress (0 to 1)
+            // Start sliding when element enters viewport, complete when it's centered
+            const startPoint = windowHeight;
+            const endPoint = windowHeight / 2;
 
-            // Slide in when scrolling DOWN and entering view
-            if (scrollDirection === 'down' && entry.isIntersecting && entry.intersectionRatio > 0.5) {
-                item.classList.add('slide-in');
+            let progress = 0;
+
+            if (rect.top <= startPoint && rect.top >= endPoint) {
+                // Element is between bottom of screen and center
+                progress = (startPoint - rect.top) / (startPoint - endPoint);
+                progress = Math.max(0, Math.min(1, progress)); // Clamp between 0 and 1
+            } else if (rect.top < endPoint) {
+                // Element has passed center point
+                progress = 1;
             }
-            // Slide out when scrolling UP and element is less than 30% visible
-            else if (scrollDirection === 'up' && entry.isIntersecting && entry.intersectionRatio < 0.3) {
-                item.classList.remove('slide-in');
+
+            // Apply transform based on direction and progress
+            let translateValue;
+            if (direction === 'left') {
+                translateValue = -100 + (progress * 100); // Start at -100%, end at 0%
+            } else {
+                translateValue = 100 - (progress * 100); // Start at 100%, end at 0%
             }
+
+            overlay.style.transform = `translateX(${translateValue}%)`;
         });
-    }, observerOptions);
+    }
 
-    items.forEach(item => {
-        observer.observe(item);
-    });
+    // Update on scroll
+    window.addEventListener('scroll', updateSlideProgress);
+
+    // Initial update
+    updateSlideProgress();
 }
 
 /* ============================================
