@@ -123,5 +123,52 @@
 
     <script src="js/lottie.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- EmailJS Form Handler -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('contact-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const submitButton = this.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.textContent;
+
+                // Disable button and show loading state
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending...';
+
+                // Send the form data via EmailJS
+                emailjs.sendForm('service_a&d127', 'template_a&d127', this)
+                    .then(function() {
+                        // Success message
+                        submitButton.textContent = 'Sent!';
+                        submitButton.style.backgroundColor = '#4CAF50';
+
+                        // Reset form
+                        document.getElementById('contact-form').reset();
+
+                        // Reset button after 3 seconds
+                        setTimeout(function() {
+                            submitButton.disabled = false;
+                            submitButton.textContent = originalButtonText;
+                            submitButton.style.backgroundColor = '';
+                        }, 3000);
+                    }, function(error) {
+                        // Error message
+                        submitButton.textContent = 'Failed. Try again.';
+                        submitButton.style.backgroundColor = '#f44336';
+
+                        // Reset button after 3 seconds
+                        setTimeout(function() {
+                            submitButton.disabled = false;
+                            submitButton.textContent = originalButtonText;
+                            submitButton.style.backgroundColor = '';
+                        }, 3000);
+
+                        console.log('EmailJS Error:', error);
+                    });
+            });
+        });
+    </script>
 </body>
 </html>
