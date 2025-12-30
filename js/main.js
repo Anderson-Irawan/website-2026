@@ -199,8 +199,8 @@ function initSlidingPortfolio() {
             // Calculate scroll progress (0 to 1)
             // Start: when bottom of image enters viewport
             // End: when top of image reaches center of viewport
-            const startPoint = windowHeight;
-            const endPoint = windowHeight / 2;
+            const startPoint = windowHeight / 2;
+            const endPoint = windowHeight / 4;
 
             let progress = 0;
 
