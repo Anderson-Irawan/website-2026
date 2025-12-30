@@ -1685,56 +1685,58 @@ h4 {
    Sliding Portfolio Section (Homepage)
    ============================================ */
 .portfolio-item-sliding {
+    display: block;
     position: relative;
+    text-decoration: none;
+    color: var(--color-cream);
+    width: 100%;
+    overflow: hidden;
 }
 
-.portfolio-item-sliding .portfolio-image-container {
-    position: sticky;
-    top: 0;
+.portfolio-item-sliding .portfolio-images {
+    position: relative;
     width: 100%;
     height: 70vh;
     min-height: 400px;
     overflow: hidden;
-    z-index: 1;
 }
 
-.portfolio-item-sliding .portfolio-image {
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-gray-placeholder);
-    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-/* Initial state - images are off-screen */
-.portfolio-item-sliding[data-slide-direction="left"] .portfolio-image {
-    transform: translateX(-100%);
-}
-
-.portfolio-item-sliding[data-slide-direction="right"] .portfolio-image {
-    transform: translateX(100%);
-}
-
-/* Active state - images slide into view */
-.portfolio-item-sliding.slide-in[data-slide-direction="left"] .portfolio-image {
-    transform: translateX(0);
-}
-
-.portfolio-item-sliding.slide-in[data-slide-direction="right"] .portfolio-image {
-    transform: translateX(0);
-}
-
-.portfolio-item-sliding .portfolio-image img,
-.portfolio-item-sliding .portfolio-image .image-placeholder {
+.portfolio-item-sliding .portfolio-image-base {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    background-color: var(--color-gray-placeholder);
 }
 
-.portfolio-item-sliding .portfolio-info-link {
+.portfolio-item-sliding .portfolio-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
-    text-decoration: none;
-    color: var(--color-cream);
+    background-color: var(--color-gray-placeholder);
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Initial state - overlay images are off-screen */
+.portfolio-item-sliding[data-slide-direction="left"] .portfolio-image-overlay {
+    transform: translateX(-100%);
+}
+
+.portfolio-item-sliding[data-slide-direction="right"] .portfolio-image-overlay {
+    transform: translateX(100%);
+}
+
+/* Active state - overlay images slide into view */
+.portfolio-item-sliding.slide-in[data-slide-direction="left"] .portfolio-image-overlay {
+    transform: translateX(0);
+}
+
+.portfolio-item-sliding.slide-in[data-slide-direction="right"] .portfolio-image-overlay {
+    transform: translateX(0);
 }
 
 .portfolio-item-sliding .portfolio-info {
