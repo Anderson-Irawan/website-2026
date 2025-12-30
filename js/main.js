@@ -196,7 +196,7 @@ function initSlidingPortfolio() {
 
     const observerOptions = {
         root: null,
-        threshold: [0, 0.2, 0.4, 0.6, 0.8, 1],
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
         rootMargin: '0px'
     };
 
@@ -208,8 +208,8 @@ function initSlidingPortfolio() {
             if (scrollDirection === 'down' && entry.isIntersecting && entry.intersectionRatio > 0.5) {
                 item.classList.add('slide-in');
             }
-            // Slide out when scrolling UP and leaving view
-            else if (scrollDirection === 'up' && !entry.isIntersecting) {
+            // Slide out when scrolling UP and element is less than 30% visible
+            else if (scrollDirection === 'up' && entry.isIntersecting && entry.intersectionRatio < 0.3) {
                 item.classList.remove('slide-in');
             }
         });
