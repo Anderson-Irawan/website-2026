@@ -218,6 +218,10 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
+    :root {
+        --logo-size-sphere: calc(var(--sphere-size) / 8);
+    }
+
     .sphere-grid-container {
         gap: 4rem;
         padding: 3rem 2rem;
@@ -245,6 +249,7 @@
 @media (max-width: 768px) {
     :root {
         --sphere-size: min(70vmin, 300px);
+        --logo-size-sphere: calc(var(--sphere-size) / 6.5);
     }
 
     .sphere-grid-container {
