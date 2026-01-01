@@ -16,6 +16,9 @@
         // 'assets/logos/logo1.svg',
         // 'assets/logos/logo2.png',
         // etc.
+
+        'assets/logos/bci.svg',
+        'assets/logos/andy-logo.svg',
     ];
 
     // Generate logo items positioned on a sphere
