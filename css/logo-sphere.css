@@ -76,6 +76,9 @@
     position: relative;
     transform: rotateX(-15deg) rotateZ(10deg);
     transform-style: preserve-3d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .logo-sphere {
@@ -218,6 +221,7 @@
     .sphere-grid-container {
         gap: 4rem;
         padding: 3rem 2rem;
+        justify-items: center;
     }
 
     .sphere-title {
@@ -229,7 +233,8 @@
 
     .sphere-wrapper {
         order: 1;
-        margin-bottom: 50px;
+        width: 100%;
+        justify-content: center;
     }
 
     .sphere-title h2 {
@@ -244,6 +249,12 @@
 
     .sphere-grid-container {
         gap: 3rem;
-        padding: 2rem 1rem;
+        padding: 2rem;
+        justify-items: center;
+    }
+
+    .sphere-wrapper {
+        width: 100%;
+        justify-content: center;
     }
 }
