@@ -83,6 +83,12 @@
     padding: 0;
 }
 
+::selection {
+  background: var(--color-red);
+  color: var(--color-black);
+}
+
+
 html {
     scroll-behavior: smooth;
 }

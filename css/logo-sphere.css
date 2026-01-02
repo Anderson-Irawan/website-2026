@@ -74,7 +74,7 @@
 /* Sphere Container */
 .sphere-wrapper {
     position: relative;
-    transform: rotateX(-15deg) rotateZ(10deg);
+    transform: rotateX(-15deg) rotateZ(0deg);
     transform-style: preserve-3d;
     display: flex;
     align-items: center;

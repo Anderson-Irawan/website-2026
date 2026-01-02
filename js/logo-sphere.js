@@ -17,8 +17,24 @@
         // 'assets/logos/logo2.png',
         // etc.
 
+        'assets/logos/anglia.svg',
+        'assets/logos/as.svg',
         'assets/logos/bci.svg',
-        'assets/logos/andy-logo.svg',
+        'assets/logos/dna.svg',
+        'assets/logos/furari.svg',
+        'assets/logos/glide.svg',
+        'assets/logos/hopo.svg',
+        'assets/logos/hot.svg',
+        'assets/logos/kiev.svg',
+        'assets/logos/mumu.svg',
+        'assets/logos/oakao.svg',
+        'assets/logos/pack.svg',
+        'assets/logos/ross.svg',
+        'assets/logos/scooop.svg',
+        'assets/logos/sizzle.svg',
+        'assets/logos/snap.svg',
+        'assets/logos/tvw.svg',
+        'assets/logos/w.svg',
     ];
 
     // Generate logo items positioned on a sphere
