@@ -5,7 +5,6 @@
     // Configuration
     const NUM_LOGOS = 30;      // Number of logos to display
     const RADIUS = 180;         // Sphere radius in pixels
-    const MULTIPLIER = 8;       // Spiral tightness
 
     // Color classes for placeholder logos
     const colors = ['hot', 'electric', 'pink', 'red'];
@@ -18,11 +17,12 @@
         // etc.
     ];
 
-    // Generate logo items positioned on a sphere
-    for (let i = 1; i <= NUM_LOGOS; i++) {
-        // Spherical coordinate calculations
-        const phi = (i / NUM_LOGOS) * Math.PI;
-        const theta = (i / NUM_LOGOS) * Math.PI * 2 * MULTIPLIER;
+    // Generate logo items positioned on a sphere using Fibonacci sphere algorithm
+    // This creates an even distribution without visible patterns or overlapping
+    for (let i = 0; i < NUM_LOGOS; i++) {
+        // Fibonacci sphere (golden spiral) algorithm for even distribution
+        const phi = Math.acos(1 - 2 * (i + 0.5) / NUM_LOGOS);
+        const theta = Math.PI * (1 + Math.sqrt(5)) * i;
 
         // Convert spherical to Cartesian coordinates
         const x = RADIUS * Math.sin(phi) * Math.cos(theta);
@@ -42,14 +42,14 @@
         if (logoImages.length > 0) {
             const img = document.createElement('img');
             img.src = logoImages[i % logoImages.length];
-            img.alt = `Logo ${i}`;
+            img.alt = `Logo ${i + 1}`;
             img.loading = 'lazy';
             logoContent.appendChild(img);
         } else {
             // Use placeholder
             const placeholder = document.createElement('div');
             placeholder.className = `sphere-logo-placeholder ${colors[i % colors.length]}`;
-            placeholder.textContent = i;
+            placeholder.textContent = i + 1;
             logoContent.appendChild(placeholder);
         }
 
