@@ -180,7 +180,7 @@
 .process-item {
     position: relative;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .process-item .process-line {
@@ -205,6 +205,7 @@
     font-weight: bold;
     min-width: 120px;
     flex-shrink: 0;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .process-title {
@@ -213,14 +214,18 @@
     color: var(--color-cream);
     text-transform: uppercase;
     margin: 0;
-    transition: color 0.3s ease;
+    transition: color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .process-content {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+    transform: translateY(-10px);
+    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                margin 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     margin-left: 140px;
 }
 
@@ -229,6 +234,7 @@
     line-height: 1.8;
     color: var(--color-cream);
     padding-right: 2rem;
+    padding-top: 0.5rem;
 }
 
 /* Hover effect */
@@ -236,9 +242,14 @@
     color: var(--color-pink);
 }
 
+.process-item:hover .process-number {
+    transform: scale(1.05);
+}
+
 .process-item.active .process-content {
-    max-height: 500px;
+    max-height: 800px;
     opacity: 1;
+    transform: translateY(0);
     margin-bottom: 2rem;
 }
 
