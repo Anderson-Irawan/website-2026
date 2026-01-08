@@ -83,6 +83,12 @@
     padding: 0;
 }
 
+::selection {
+  background: rgb(255, 23, 57, 0.7);
+  color: var(--color-black);
+}
+
+
 html {
     scroll-behavior: smooth;
 }
@@ -1557,7 +1563,6 @@ h4 {
     text-transform: uppercase;
     line-height: 0.9;
     margin-bottom: var(--space-sm);
-    white-space: pre;
 }
 
 .hero-title .highlight-word {
