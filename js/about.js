@@ -5,13 +5,8 @@
     let isTransitioning = false;
 
     processItems.forEach(item => {
-        // Add hover event listeners with sequential book-page-like transitions
+        // Add hover event listeners with quick, simultaneous transitions
         item.addEventListener('mouseenter', () => {
-            // Clear any pending transitions
-            if (transitionTimeout) {
-                clearTimeout(transitionTimeout);
-            }
-
             // Check if any item is currently active
             const activeItem = document.querySelector('.process-item.active');
 
@@ -20,20 +15,13 @@
                 return;
             }
 
-            // If there's an active item, close it first, then open the new one
+            // Close any active item and open new one simultaneously
             if (activeItem) {
-                isTransitioning = true;
                 activeItem.classList.remove('active');
-
-                // Wait for close transition to complete before opening new item
-                transitionTimeout = setTimeout(() => {
-                    item.classList.add('active');
-                    isTransitioning = false;
-                }, 400); // Slightly longer than close duration (0.35s)
-            } else {
-                // No active item, open immediately
-                item.classList.add('active');
             }
+
+            // Open the new item immediately (simultaneous transition)
+            item.classList.add('active');
         });
 
         // Optional: Keep expanded on click for mobile/touch devices
@@ -45,16 +33,12 @@
                 // Close if already active
                 item.classList.remove('active');
             } else {
-                // Close all others first
+                // Close all others and open this one simultaneously
                 const activeItem = document.querySelector('.process-item.active');
                 if (activeItem) {
                     activeItem.classList.remove('active');
-                    setTimeout(() => {
-                        item.classList.add('active');
-                    }, 400);
-                } else {
-                    item.classList.add('active');
                 }
+                item.classList.add('active');
             }
         });
     });
@@ -63,13 +47,8 @@
     const processList = document.querySelector('.process-list');
     if (processList) {
         processList.addEventListener('mouseleave', () => {
-            if (transitionTimeout) {
-                clearTimeout(transitionTimeout);
-            }
-
             // Close any active items
             processItems.forEach(item => item.classList.remove('active'));
-            isTransitioning = false;
         });
     }
 })();
