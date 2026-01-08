@@ -31,6 +31,11 @@
     margin-bottom: 2rem;
 }
 
+.about-btn {
+    display: block;
+    gap: none;
+}
+
 .hello-text {
     font-family: var(--font-marker);
     font-size: clamp(3rem, 8vw, 5rem);
@@ -127,12 +132,10 @@
 .reasoning-list li {
     margin-bottom: 1rem;
     padding-left: 0.5rem;
-    font-size: 1.1rem;
 }
 
 .reasoning-cta {
     margin: 2rem 0;
-    font-size: 1.1rem;
 }
 
 .reasoning-description .btn {
@@ -176,7 +179,7 @@
 
 .process-item .process-line {
     width: 100%;
-    height: 1px;
+    height: 2px;
     background: var(--color-cream);
     opacity: 0.3;
     margin-bottom: 2rem;
@@ -185,7 +188,7 @@
 .process-title-wrapper {
     display: flex;
     align-items: baseline;
-    gap: 2rem;
+    gap: 1rem;
     padding: 0 0 1.5rem 0;
     transition: all 0.3s ease;
 }
