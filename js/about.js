@@ -4,27 +4,32 @@
     let transitionTimeout = null;
     let isTransitioning = false;
 
+    // Detect if device supports touch
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
     processItems.forEach(item => {
-        // Add hover event listeners with quick, simultaneous transitions
-        item.addEventListener('mouseenter', () => {
-            // Check if any item is currently active
-            const activeItem = document.querySelector('.process-item.active');
+        // Add hover event listeners with quick, simultaneous transitions (desktop only)
+        if (!isTouchDevice) {
+            item.addEventListener('mouseenter', () => {
+                // Check if any item is currently active
+                const activeItem = document.querySelector('.process-item.active');
 
-            // If hovering over the already active item, do nothing
-            if (activeItem === item) {
-                return;
-            }
+                // If hovering over the already active item, do nothing
+                if (activeItem === item) {
+                    return;
+                }
 
-            // Close any active item and open new one simultaneously
-            if (activeItem) {
-                activeItem.classList.remove('active');
-            }
+                // Close any active item and open new one simultaneously
+                if (activeItem) {
+                    activeItem.classList.remove('active');
+                }
 
-            // Open the new item immediately (simultaneous transition)
-            item.classList.add('active');
-        });
+                // Open the new item immediately (simultaneous transition)
+                item.classList.add('active');
+            });
+        }
 
-        // Optional: Keep expanded on click for mobile/touch devices
+        // Click/tap handler for all devices
         item.addEventListener('click', (e) => {
             e.preventDefault();
             const isActive = item.classList.contains('active');
@@ -43,12 +48,14 @@
         });
     });
 
-    // Close all when mouse leaves the process list
-    const processList = document.querySelector('.process-list');
-    if (processList) {
-        processList.addEventListener('mouseleave', () => {
-            // Close any active items
-            processItems.forEach(item => item.classList.remove('active'));
-        });
+    // Close all when mouse leaves the process list (desktop only)
+    if (!isTouchDevice) {
+        const processList = document.querySelector('.process-list');
+        if (processList) {
+            processList.addEventListener('mouseleave', () => {
+                // Close any active items
+                processItems.forEach(item => item.classList.remove('active'));
+            });
+        }
     }
 })();
