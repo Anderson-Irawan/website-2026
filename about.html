@@ -6,6 +6,7 @@
     <title>About | Anderson & Designs</title>
     <meta name="description" content="Hello! I'm Anderson - a logo and graphic designer based in the UK. Bold and splendiferous.">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/about.css">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
 <body>
@@ -16,13 +17,13 @@
                 <div id="lottie-logo"></div>
                 <span class="logo-text">Anderson<br><span class="logo-and">&</span>Designs</span>
             </a>
-            
+
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
-            
+
             <ul class="nav-links">
                 <li><a href="work.html" class="nav-link-cycle"><span data-text="Portfolio">Portfolio</span></a></li>
                 <li><a href="about.html" class="nav-link-cycle"><span data-text="About">About</span></a></li>
@@ -31,60 +32,123 @@
         </div>
     </nav>
 
-    <!-- About Intro Section -->
-    <section class="section about-section" style="padding-top: 150px;">
+    <!-- Opening Section: Hello! I'm Anderson -->
+    <section class="about-opening section">
         <div class="container">
-            <div class="about-content">
+            <div class="about-grid">
                 <div class="about-text">
-                    <h2 class="about-greeting fade-in">
-                        <span class="greeting-hello">Hello!</span>
-                        <span class="greeting-name">I'm Anderson</span>
-                    </h2>
-                    <div class="about-description fade-in fade-in-delay-1">
-                        <p>Since making the decision to pursue graphic design half a decade ago, I have tirelessly worked on my craft, creating fun and thrilling brands, and collaborated with teams to put unique and daring styles to their projects.</p>
-                        <p>I like to join forces with aspiring start-ups, determined businesses, and brilliant minds who want to leave a memorable mark with their brand. I aim to not only deliver on results, but to build something powerful and moving - brands that resonate with audience.</p>
-                        <p>So let me pull up my chair and have us take on this wicked world creatively - together!</p>
+                    <h1 class="about-heading">
+                        <span class="hello-text">Hello!</span><br>
+                        <span class="name-text">I'm Anderson</span>
+                    </h1>
+                    <div class="about-description">
+                        <p>Since making the decision to pursue graphic design half a decade ago, I have tirelessly worked on my craft, creating fun and thrilling brands with my friends, and collaborated with teams to put unique and inspiring styles to their projects. Some of them I feel lucky to call long-term partners. You can find my work in the streets of Indonesia to being part of feature films/animations.</p>
+                        <p>I aim to not only deliver on results, but to build something powerful and moving - brands that resonate with audience. It's about creating meaningful relationships that last with my clients.</p>
                     </div>
                 </div>
-                <div class="about-image fade-in fade-in-delay-2">
-                    <img src="assets/images/bold_n_splendi_300x.png" alt="Bold & Splendiferous" class="sticker-badge">
+                <div class="about-image">
                     <img src="assets/images/headshot.jpeg" alt="Anderson at Comic Con holding The Heir of Time poster">
+                    <img src="assets/images/bold_n_splendi_300x.png" alt="Bold & Splendiferous" class="sticker-badge">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Quote Section with Pattern Background -->
-    <section class="about-quote pattern-bg">
+    <!-- Reasoning Section: Taking On A Wicked World! -->
+    <section class="about-reasoning section">
         <div class="container">
-            <div class="about-quote-content">
-                <div class="image-box animate-on-scroll">
-                    <div class="image-placeholder"></div>
+            <div class="about-grid about-grid-reverse">
+                <div class="about-image">
+                    <img src="assets/images/headshot.jpeg" alt="Anderson at Comic Con with The Heir of Time">
                 </div>
-                <div class="quote-text animate-on-scroll">
-                    <h2 class="heading-md">
-                        Detailed<br>
-                        <span class="text-pink">Witty &</span><br>
-                        Imaginative
+                <div class="about-text">
+                    <h2 class="reasoning-heading">
+                        <span class="taking-on">Taking On</span><br>
+                        <span class="wicked-world">A Wicked World!</span>
                     </h2>
+                    <div class="reasoning-description">
+                        <p class="reasoning-intro">Are you ever:</p>
+                        <ol class="reasoning-list">
+                            <li>Tired of blending in with the standard and want to evolve your business?</li>
+                            <li>Finding difficulty in explaining your offerings, visions, and values?</li>
+                            <li>Frustrated with second-guessing your business and want to start flourishing in the market?</li>
+                        </ol>
+                        <p class="reasoning-cta">If you check one or all of the above, reach out! I am here to help you with your branding/illustrative needs. I am one button and a form away!</p>
+                        <a href="contact.html" class="btn btn-primary">Work with me</a>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Clients Section -->
-    <section class="section clients-section">
+    <!-- Process Section -->
+    <section class="about-process section">
         <div class="container">
-            <h2 class="heading-md animate-on-scroll">My Clients & Collaborators</h2>
-            <div class="clients-grid">
-                <div class="client-logo animate-on-scroll"></div>
-                <div class="client-logo animate-on-scroll"></div>
-                <div class="client-logo animate-on-scroll"></div>
-                <div class="client-logo animate-on-scroll"></div>
-                <div class="client-logo animate-on-scroll"></div>
-                <div class="client-logo animate-on-scroll"></div>
-                <div class="client-logo animate-on-scroll"></div>
-                <div class="client-logo animate-on-scroll"></div>
+            <div class="process-header">
+                <h2 class="process-heading">My Process</h2>
+                <div class="process-line"></div>
+            </div>
+
+            <div class="process-list">
+                <!-- Process Item 1 -->
+                <div class="process-item">
+                    <div class="process-line"></div>
+                    <div class="process-title-wrapper">
+                        <span class="process-number">#1</span>
+                        <h3 class="process-title">Discovery</h3>
+                    </div>
+                    <div class="process-content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                    </div>
+                </div>
+
+                <!-- Process Item 2 -->
+                <div class="process-item">
+                    <div class="process-line"></div>
+                    <div class="process-title-wrapper">
+                        <span class="process-number">#2</span>
+                        <h3 class="process-title">Onboarding</h3>
+                    </div>
+                    <div class="process-content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                    </div>
+                </div>
+
+                <!-- Process Item 3 -->
+                <div class="process-item">
+                    <div class="process-line"></div>
+                    <div class="process-title-wrapper">
+                        <span class="process-number">#3</span>
+                        <h3 class="process-title">Creative Direction</h3>
+                    </div>
+                    <div class="process-content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                    </div>
+                </div>
+
+                <!-- Process Item 4 -->
+                <div class="process-item">
+                    <div class="process-line"></div>
+                    <div class="process-title-wrapper">
+                        <span class="process-number">#4</span>
+                        <h3 class="process-title">Development</h3>
+                    </div>
+                    <div class="process-content">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+                    </div>
+                </div>
+
+                <!-- Process Item 5 -->
+                <div class="process-item">
+                    <div class="process-line"></div>
+                    <div class="process-title-wrapper">
+                        <span class="process-number">#5</span>
+                        <h3 class="process-title">Delivery</h3>
+                    </div>
+                    <div class="process-content">
+                        <p>Once the deliverables are completed, it is time to send it off to you, the client! I will send over whatever is needed once the remainder 60% of the agreed payment has been sent through.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -92,11 +156,10 @@
     <!-- CTA Section -->
     <section class="cta-section section">
         <div class="container">
-            <h2 class="cta-title animate-on-scroll">
-                <span class="cta-line1">Let's Rock</span>
-                <span class="cta-line2">& Roll</span>
-            </h2>
-            <div class="animate-on-scroll"  style="text-align: right;">
+            <div class="cta-title animate-on-scroll">
+                <span class="cta-line1">Let's Rock<span class="cta-line2">& Roll</span></span>
+            </div>
+            <div class="animate-on-scroll" style="text-align: right;">
                 <a href="contact.html" class="btn btn-primary">Work with me</a>
             </div>
         </div>
@@ -133,5 +196,6 @@
 
     <script src="js/lottie.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/about.js"></script>
 </body>
 </html>
