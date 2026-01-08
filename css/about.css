@@ -1,0 +1,329 @@
+/* ============================================
+   ABOUT PAGE STYLES
+   ============================================ */
+
+/* Opening Section: Hello! I'm Anderson */
+.about-opening {
+    padding-top: 150px;
+    padding-bottom: 100px;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about-grid-reverse {
+    grid-template-columns: 1fr 1fr;
+}
+
+.about-grid-reverse .about-image {
+    order: 1;
+}
+
+.about-grid-reverse .about-text {
+    order: 2;
+}
+
+.about-heading {
+    margin-bottom: 2rem;
+}
+
+.hello-text {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 5rem);
+    color: var(--color-pink);
+    font-style: italic;
+    display: inline-block;
+    line-height: 1;
+}
+
+.name-text {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 5rem);
+    color: var(--color-cream);
+    text-transform: uppercase;
+    display: inline-block;
+    line-height: 1;
+}
+
+.about-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--color-cream);
+}
+
+.about-description p {
+    margin-bottom: 1.5rem;
+}
+
+.about-image {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.about-image img:first-child {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+
+.about-image .sticker-badge {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 150px;
+    height: 150px;
+    animation: rotate360 20s linear infinite;
+}
+
+@keyframes rotate360 {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Reasoning Section: Taking On A Wicked World! */
+.about-reasoning {
+    background: var(--color-black);
+    padding: 100px 0;
+}
+
+.reasoning-heading {
+    margin-bottom: 2rem;
+}
+
+.taking-on {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    color: var(--color-pink);
+    font-style: italic;
+    display: inline-block;
+    line-height: 1;
+}
+
+.wicked-world {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    color: var(--color-cream);
+    text-transform: uppercase;
+    display: inline-block;
+    line-height: 1;
+}
+
+.reasoning-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--color-cream);
+}
+
+.reasoning-intro {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.reasoning-list {
+    margin: 2rem 0;
+    padding-left: 1.5rem;
+}
+
+.reasoning-list li {
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+}
+
+.reasoning-cta {
+    margin: 2rem 0;
+    font-size: 1.15rem;
+}
+
+.reasoning-description .btn {
+    margin-top: 1.5rem;
+}
+
+/* Process Section */
+.about-process {
+    padding: 100px 0;
+    background: var(--color-black);
+}
+
+.process-header {
+    margin-bottom: 3rem;
+}
+
+.process-heading {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: var(--color-cream);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.process-header .process-line {
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 136, 153, 0.3);
+    margin: 0;
+}
+
+.process-list {
+    max-width: 1000px;
+}
+
+.process-item {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.process-item .process-line {
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 136, 153, 0.3);
+    margin-bottom: 2rem;
+}
+
+.process-title-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    transition: all 0.3s ease;
+}
+
+.process-number {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: var(--color-pink);
+    font-style: italic;
+    font-weight: bold;
+    min-width: 120px;
+    flex-shrink: 0;
+}
+
+.process-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    color: var(--color-cream);
+    text-transform: uppercase;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+.process-content {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+    margin-left: 140px;
+}
+
+.process-content p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--color-cream);
+    padding-right: 2rem;
+}
+
+/* Hover effect */
+.process-item:hover .process-title {
+    color: var(--color-pink);
+}
+
+.process-item.active .process-content {
+    max-height: 500px;
+    opacity: 1;
+    margin-bottom: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .about-grid,
+    .about-grid-reverse {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .about-grid-reverse .about-image,
+    .about-grid-reverse .about-text {
+        order: initial;
+    }
+
+    .about-image .sticker-badge {
+        width: 120px;
+        height: 120px;
+    }
+
+    .process-number {
+        min-width: 80px;
+    }
+
+    .process-content {
+        margin-left: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-opening {
+        padding-top: 120px;
+        padding-bottom: 60px;
+    }
+
+    .about-reasoning,
+    .about-process {
+        padding: 60px 0;
+    }
+
+    .about-grid {
+        gap: 2rem;
+    }
+
+    .hello-text,
+    .name-text {
+        font-size: clamp(2.5rem, 10vw, 4rem);
+    }
+
+    .taking-on,
+    .wicked-world {
+        font-size: clamp(2rem, 10vw, 3.5rem);
+    }
+
+    .about-description,
+    .reasoning-description {
+        font-size: 1rem;
+    }
+
+    .about-image .sticker-badge {
+        width: 100px;
+        height: 100px;
+        top: -10px;
+        right: -10px;
+    }
+
+    .process-title-wrapper {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    .process-number {
+        min-width: auto;
+    }
+
+    .process-content {
+        margin-left: 0;
+        padding-left: 0;
+    }
+
+    .process-content p {
+        padding-right: 0;
+    }
+}
