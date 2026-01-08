@@ -261,9 +261,21 @@
         gap: 3rem;
     }
 
-    .about-grid-reverse .about-image,
+    /* Ensure images appear above text on both sections */
+    .about-grid .about-text {
+        order: 2;
+    }
+
+    .about-grid .about-image {
+        order: 1;
+    }
+
     .about-grid-reverse .about-text {
-        order: initial;
+        order: 2;
+    }
+
+    .about-grid-reverse .about-image {
+        order: 1;
     }
 
     .about-image .sticker-badge {
