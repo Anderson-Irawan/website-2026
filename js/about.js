@@ -29,7 +29,7 @@
                 transitionTimeout = setTimeout(() => {
                     item.classList.add('active');
                     isTransitioning = false;
-                }, 650); // Slightly longer than transition duration (0.6s)
+                }, 400); // Slightly longer than close duration (0.35s)
             } else {
                 // No active item, open immediately
                 item.classList.add('active');
@@ -51,7 +51,7 @@
                     activeItem.classList.remove('active');
                     setTimeout(() => {
                         item.classList.add('active');
-                    }, 650);
+                    }, 400);
                 } else {
                     item.classList.add('active');
                 }
