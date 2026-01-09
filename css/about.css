@@ -148,6 +148,24 @@
     margin-top: 1.5rem;
 }
 
+/* Full Width Image Divider Section */
+.about-image-divider {
+    padding: 0;
+    background: var(--color-black);
+}
+
+.divider-image-wrapper {
+    width: 100%;
+    overflow: hidden;
+}
+
+.divider-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
 /* Process Section */
 .about-process {
     padding: 100px 0;
