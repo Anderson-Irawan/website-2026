@@ -69,6 +69,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    img{
+        width: 100%;
+    }
+
 }
 
 .about-image img:first-child {
@@ -150,7 +155,6 @@
 
 .divider-image-wrapper {
     width: 100%;
-    aspect-ratio: 10/4;
     overflow: hidden;
 }
 
