@@ -728,6 +728,18 @@ h4 {
     transform: scale(1.1);
 }
 
+.portfolio-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--transition-smooth);
+    display: block;
+}
+
+.portfolio-item:hover .portfolio-video {
+    transform: scale(1.1);
+}
+
 .portfolio-item-overlay {
     position: absolute;
     top: 0;
