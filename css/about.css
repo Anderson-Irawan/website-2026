@@ -31,6 +31,11 @@
     margin-bottom: 2rem;
 }
 
+.about-btn {
+    display: block;
+    gap: none;
+}
+
 .hello-text {
     font-family: var(--font-marker);
     font-size: clamp(3rem, 8vw, 5rem);
@@ -64,21 +69,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    img{
+        width: 100%;
+    }
+
 }
 
 .about-image img:first-child {
     width: 100%;
     max-width: 500px;
-    border-radius: 8px;
-}
-
-.about-image .sticker-badge {
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 150px;
-    height: 150px;
-    animation: rotate360 20s linear infinite;
 }
 
 @keyframes rotate360 {
@@ -141,7 +141,6 @@
 
 .reasoning-cta {
     margin: 2rem 0;
-    font-size: 1.15rem;
 }
 
 .reasoning-description .btn {
@@ -203,15 +202,16 @@
 
 .process-item .process-line {
     width: 100%;
-    height: 1px;
+    height: 2px;
     background: var(--color-cream);
+    opacity: 0.3;
     margin-bottom: 2rem;
 }
 
 .process-title-wrapper {
     display: flex;
     align-items: baseline;
-    gap: 2rem;
+    gap: 1rem;
     padding: 0 0 1.5rem 0;
     transition: all 0.3s ease;
 }

@@ -1788,9 +1788,9 @@ h4 {
 }
 
 .about-description p {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 100;
-    line-height: 1.2;
+    line-height: 1.1;
     margin-bottom: var(--space-md);
     opacity: 0.9;
 }
