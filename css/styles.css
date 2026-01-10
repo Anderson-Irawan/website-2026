@@ -750,7 +750,7 @@ h4 {
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0) 80%);
     opacity: 0;
     transition: all 0.4s var(--transition-smooth);
 }
@@ -768,8 +768,6 @@ h4 {
     opacity: 0;
     transition: all 0.3s var(--transition-smooth);
     padding: 0.5rem 1rem;
-    background-color: rgba(0, 0, 0, 0.8);
-    border-radius: 4px;
 }
 
 .portfolio-item:hover .portfolio-item-title {
