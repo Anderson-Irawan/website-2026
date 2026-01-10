@@ -748,15 +748,14 @@ h4 {
     right: 0;
     padding: var(--space-md);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
     opacity: 0;
     transition: all 0.4s var(--transition-smooth);
 }
 
 .portfolio-item:hover .portfolio-item-overlay {
-    background-color: rgba(140, 53, 60, 0.3);
     opacity: 1;
 }
 
@@ -768,6 +767,9 @@ h4 {
     transform: translateY(10px);
     opacity: 0;
     transition: all 0.3s var(--transition-smooth);
+    padding: 0.5rem 1rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
 }
 
 .portfolio-item:hover .portfolio-item-title {
