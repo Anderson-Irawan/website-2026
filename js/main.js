@@ -3,11 +3,12 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Lottie Logo Animation
-    initLottieLogo();
-
     // Initialize all modules
+    initSmoothScroll();
+    initHeroPin();
+    initHeroTagline();
     initNavbar();
+    initSocial();
     initScrollAnimations();
     initMobileMenu();
     initSlidingPortfolio();
@@ -15,62 +16,179 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ============================================
-   Lottie Logo Animation
+   Smooth (inertial) Scrolling - Lenis
    ============================================ */
-function initLottieLogo() {
-    const logoContainer = document.getElementById('lottie-logo');
+function initSmoothScroll() {
+    // Honour reduced-motion: leave native scrolling untouched.
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    if (!logoContainer) return;
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js';
+    script.onload = function() {
+        if (typeof window.Lenis === 'undefined') return;
 
-    const animation = lottie.loadAnimation({
-        container: logoContainer,
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: 'assets/animations/logo-ae.json',
-        rendererSettings: {
-            preserveAspectRatio: 'xMidYMid meet',
-            progressiveLoad: false,
-            hideOnTransparent: true,
-            className: 'lottie-svg-class'
+        var lenis = new window.Lenis({
+            lerp: 0.1,            // lower = smoother / more drift
+            wheelMultiplier: 1,
+            smoothWheel: true
+            // smoothTouch defaults off - phones keep their native scroll
+        });
+        window.lenis = lenis;
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
         }
-    });
+        requestAnimationFrame(raf);
 
-    // Force resize after load
-    animation.addEventListener('DOMLoaded', function() {
-        const svgElement = logoContainer.querySelector('svg');
-        if (svgElement) {
-            svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-            svgElement.style.width = '100%';
-            svgElement.style.height = '100%';
-            svgElement.style.maxWidth = '100%';
-            svgElement.style.maxHeight = '100%';
+        // Route same-page anchor jumps through Lenis so they glide too.
+        document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+            a.addEventListener('click', function(e) {
+                var id = a.getAttribute('href');
+                if (id.length < 2) return;
+                var target = document.querySelector(id);
+                if (!target) return;
+                e.preventDefault();
+                lenis.scrollTo(target, { offset: -80 });
+            });
+        });
+    };
+    document.head.appendChild(script);
+}
+
+/* ============================================
+   Hero Pin - delayed scroll before the content
+   below the hero. Desktop + motion only.
+   ============================================ */
+function initHeroPin() {
+    const pin = document.querySelector('.hero-pin');
+    if (!pin || !window.matchMedia) return;
+
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const html = document.documentElement;
+
+    const apply = () => {
+        const on = fine.matches && !reduce.matches &&
+            !html.classList.contains('liquid-hero-reduced');
+        if (on === html.classList.contains('has-hero-pin')) return;
+
+        // Toggling the pin changes the page height by ~1 viewport, which
+        // would shove the scroll position. Measure the delta and keep the
+        // same content parked under the viewport.
+        const before = pin.offsetHeight;
+        html.classList.toggle('has-hero-pin', on);
+        const delta = pin.offsetHeight - before;
+
+        if (delta !== 0 && window.pageYOffset > 0) {
+            const y = Math.max(0, window.pageYOffset + delta);
+            if (window.lenis) window.lenis.scrollTo(y, { immediate: true });
+            else window.scrollTo(0, y);
         }
+    };
+
+    apply();
+    fine.addEventListener('change', apply);
+    reduce.addEventListener('change', apply);
+    // The reduce-motion toggle flips a class on <html>; react to it.
+    new MutationObserver(apply).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
     });
 }
 
 /* ============================================
-   Navbar Scroll Effect
+   Hero Tagline - parallax + fade behind the logo
+   ============================================ */
+function initHeroTagline() {
+    const tag = document.querySelector('[data-hero-tagline]');
+    if (!tag) return;
+
+    // Leave it static for reduced-motion visitors.
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Drift rate: a fraction of the scroll, close to (a little under) the
+    // gradient background's own parallax so the text feels stuck to it.
+    const PARALLAX = 0.22;
+    const FADE = 1.15;      // fully faded by ~0.87 of a viewport scrolled
+    const REST_OPACITY = 0.9;
+
+    const onScroll = () => {
+        const vh = window.innerHeight || 1;
+        const p = (window.pageYOffset || 0) / vh;
+        tag.style.transform =
+            'translate3d(0,' + (-p * PARALLAX * vh).toFixed(1) + 'px,0)';
+        tag.style.opacity =
+            (REST_OPACITY * Math.max(0, 1 - p * FADE)).toFixed(3);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    onScroll();
+}
+
+/* ============================================
+   Social links - clone the footer set into a fixed
+   side rail (desktop) and the burger menu (mobile)
+   ============================================ */
+function initSocial() {
+    const lines = '<span class="side-rail__line"></span>';
+
+    // Left rail: copyright
+    const left = document.createElement('div');
+    left.className = 'side-rail side-rail--left';
+    left.innerHTML = lines +
+        '<div class="side-rail__body">' +
+        '<span class="side-rail__label">Double Dash Creative © 2026</span>' +
+        '</div>' + lines;
+    document.body.appendChild(left);
+
+    const source = document.querySelector('.footer-social');
+    if (!source) return;
+    const markup = source.innerHTML;
+
+    // Right rail: social icons
+    const right = document.createElement('div');
+    right.className = 'side-rail side-rail--right';
+    right.setAttribute('aria-label', 'Social links');
+    right.innerHTML = lines +
+        '<div class="side-rail__body side-rail__social">' + markup + '</div>' +
+        lines;
+    document.body.appendChild(right);
+
+    // Copy into the burger menu (mobile)
+    const navLinks = document.querySelector('.nav-links');
+    if (navLinks) {
+        const li = document.createElement('li');
+        li.className = 'nav-social';
+        li.innerHTML = markup;
+        navLinks.appendChild(li);
+    }
+}
+
+/* ============================================
+   Navbar - fade the black backdrop in on scroll
    ============================================ */
 function initNavbar() {
     const navbar = document.querySelector('.navbar');
-    
     if (!navbar) return;
-    
-    let lastScroll = 0;
-    
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-        
-        // Add scrolled class when scrolling down
-        if (currentScroll > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-        
-        lastScroll = currentScroll;
-    });
+
+    // Most pages: black fades in after ~0.4 of a viewport.
+    // Index (pinned hero): hold it transparent until the hero releases.
+    const heroPin = document.querySelector('.hero-pin');
+    const TRIGGER = 0.4;
+
+    const onScroll = () => {
+        const base = window.innerHeight * TRIGGER;
+        const threshold = heroPin
+            ? Math.max(base, heroPin.offsetHeight - window.innerHeight)
+            : base;
+        navbar.classList.toggle('is-solid', window.pageYOffset > threshold);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
 }
 
 /* ============================================
@@ -273,7 +391,7 @@ window.addEventListener('load', function() {
     document.body.classList.add('loaded');
 
     // Trigger fade-in animations for above-the-fold content
-    const heroElements = document.querySelectorAll('.hero .fade-in');
+    const heroElements = document.querySelectorAll('.liquid-hero .fade-in');
     heroElements.forEach((el, index) => {
         setTimeout(() => {
             el.style.animationPlayState = 'running';

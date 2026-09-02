@@ -220,7 +220,7 @@
     font-family: var(--font-marker);
     font-size: clamp(2.5rem, 5vw, 4rem);
     color: var(--color-red);
-    font-weight: bold;
+    font-weight: 400; /* Instrument Serif ships regular only */
     min-width: 120px;
     flex-shrink: 0;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);

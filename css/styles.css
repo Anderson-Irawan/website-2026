@@ -4,26 +4,44 @@
 
 /* Font Face Declarations */
 @font-face {
-    font-family: 'Fuzamic';
-    src: url('../assets/fonts/Fuzamic-Regular.ttf') format('truetype');
-    font-weight: normal;
+    font-family: 'Big Shoulders';
+    src: url('../assets/fonts/BigShoulders-VariableFont_opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Knewave';
-    src: url('../assets/fonts/Knewave.ttf') format('truetype');
-    font-weight: normal;
+    font-family: 'Archivo';
+    src: url('../assets/fonts/Archivo-VariableFont_wdth,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-stretch: 62% 125%;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Manrope';
-    src: url('../assets/fonts/Manrope.ttf') format('truetype');
+    font-family: 'Archivo';
+    src: url('../assets/fonts/Archivo-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-stretch: 62% 125%;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Instrument Serif';
+    src: url('../assets/fonts/InstrumentSerif-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Instrument Serif';
+    src: url('../assets/fonts/InstrumentSerif-Italic.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
     font-display: swap;
 }
 
@@ -32,20 +50,37 @@
    ============================================ */
 :root {
     /* Primary Colors */
-    --color-red: #FF1739;
-    --color-cream: #FFFDD2;
-    --color-pink: #FF8899;
-    --color-black: #060505;
-    --color-mint: #F5FFEE;
+    --color-red: #FC6935;    /* orange (primary accent) */
+    --color-cream: #FAFAFF;  /* off-white (text on dark) */
+    --color-pink: #2E2B8A;   /* indigo (secondary accent) */
+    --color-black: #000000;
+    --color-mint: #FAFAFF;
 
     /* Neutrals */
-    --color-gray-placeholder: #4a4a4a;
-    --color-gray-dark: #2a2a2a;
+    --color-gray-placeholder: #1c1c1c;
+    --color-gray-dark: #111111;
 
     /* Typography */
-    --font-display: 'Fuzamic', sans-serif;
-    --font-marker: 'Knewave', cursive;
-    --font-body: 'Manrope', sans-serif;
+    --font-display: 'Big Shoulders', 'Archivo', sans-serif;
+    --font-marker: 'Instrument Serif', Georgia, serif;
+    --font-body: 'Archivo', sans-serif;
+
+    /* Fluid type scale - tier 1 (display) to tier 6 (caption).
+       Each clamp keeps a legible floor on small screens and a cap on
+       large ones. Use these everywhere instead of ad-hoc vw / clamp.
+       Rough sizes:            mobile ~375px   desktop ~1440px
+         --fs-1  display          ~46px           ~100px
+         --fs-2  page title       ~36px           ~64px
+         --fs-3  section / card   ~28px           ~44px
+         --fs-4  sub-head / lead  ~22px           ~30px
+         --fs-5  body             ~17px           ~19px
+         --fs-6  caption / label  ~13px           ~15px               */
+    --fs-1: clamp(2.75rem, 1.5rem + 6vw, 6.25rem);
+    --fs-2: clamp(2.15rem, 1.5rem + 3.2vw, 4rem);
+    --fs-3: clamp(1.7rem, 1.35rem + 1.8vw, 2.75rem);
+    --fs-4: clamp(1.3rem, 1.15rem + 0.9vw, 1.9rem);
+    --fs-5: clamp(1.05rem, 1rem + 0.25vw, 1.2rem);
+    --fs-6: clamp(0.82rem, 0.78rem + 0.18vw, 0.92rem);
 
     /* Spacing Scale */
     --space-xs: 0.5rem;
@@ -84,7 +119,7 @@
 }
 
 ::selection {
-  background: rgb(255, 23, 57, 0.7);
+  background: rgb(252, 105, 53, 0.7);
   color: var(--color-black);
 }
 
@@ -93,11 +128,33 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Lenis smooth (inertial) scrolling - required styles */
+.lenis, .lenis body {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+    overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+    pointer-events: none;
+}
+
 body {
     font-family: var(--font-body);
+    font-size: var(--fs-5);
     background-color: var(--color-black);
     color: var(--color-cream);
-    line-height: 1.6;
+    line-height: 1.2;
     overflow-x: hidden;
 }
 
@@ -268,19 +325,19 @@ h4 {
 }
 
 .heading-xl {
-    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-size: var(--fs-1);
 }
 
 .heading-lg {
-    font-size: clamp(2rem, 6vw, 4rem);
+    font-size: var(--fs-2);
 }
 
 .heading-md {
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-size: var(--fs-3);
 }
 
 .heading-sm {
-    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-size: var(--fs-4);
 }
 
 .text-pink {
@@ -354,20 +411,37 @@ h4 {
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: var(--space-md) 0;
-    background-color: var(--color-black);
-    transition: background-color 0.3s var(--transition-smooth);
+    padding: 0.9rem 0;
+    background-color: transparent;
 }
 
-.navbar.scrolled {
-    backdrop-filter: blur(10px);
+/* Nav rides transparent at the top, then a black backdrop fades in
+   once you scroll (see initNavbar in main.js for the trigger point). */
+.navbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-black);
+    opacity: 0;
+    transition: opacity 0.4s var(--transition-smooth);
+    z-index: -1;
+}
+
+.navbar.is-solid::before {
+    opacity: 1;
 }
 
 .navbar .container {
-    display: flex;
-    justify-content: space-between;
+    max-width: none;
+    padding: 0 var(--space-xl);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
 }
+
+.navbar .logo { justify-self: start; margin-left: clamp(0px, 6vw, 7rem); }
+.navbar .nav-links { grid-column: 2; justify-self: center; }
+.navbar .mobile-menu-toggle { grid-column: 3; justify-self: end; }
 
 .logo {
     display: flex;
@@ -377,6 +451,16 @@ h4 {
     color: var(--color-cream);
     transform: scale(1);
     transition: transform 0.1s ease-in-out
+}
+
+.logo-mark {
+    display: block;
+    height: 66px;
+    width: auto;
+}
+
+@media (max-width: 640px) {
+    .logo-mark { height: 48px; }
 }
 
 .logo-and {
@@ -398,15 +482,15 @@ h4 {
 }
 
 .logo svg {
-    width: 55px;
+    width: 40px;
     height: auto;
     color: var(--color-red);
 }
 
 /* Lottie Logo Styling */
 #lottie-logo {
-    width: 55px;
-    height: 73px;
+    width: 40px;
+    height: 53px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -430,7 +514,7 @@ h4 {
 
 .logo-text {
     font-family: var(--font-display);
-    font-size: 2rem;
+    font-size: 1.5rem;
     text-transform: uppercase;
     line-height: 0.9;
     color: var(--color-cream);
@@ -438,16 +522,15 @@ h4 {
 
 .nav-links {
     display: flex;
-    gap: var(--space-xl);
+    gap: var(--space-lg);
     list-style: none;
 }
 
 /* Text Cycling Animation for Nav Links */
 .nav-link-cycle {
     font-family: var(--font-body);
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
     color: var(--color-cream);
     text-decoration: none;
     position: relative;
@@ -484,7 +567,6 @@ h4 {
     font-family: var(--font-body);
     font-size: 0.875rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
     color: var(--color-cream);
     text-decoration: none;
     position: relative;
@@ -554,7 +636,7 @@ h4 {
 
     .nav-links {
         position: fixed;
-        top: 100px;
+        top: 80px;
         left: 0;
         right: 0;
         background-color: var(--color-black);
@@ -574,14 +656,103 @@ h4 {
     }
 }
 
-/* Page Cream Theme */
-.page-cream {
-    background-color: var(--color-cream);
-    color: var(--color-black);
+/* ============================================
+   Side rails - copyright (left) + social (right),
+   built by initSocial in main.js. Both take up the
+   exact same vertical footprint.
+   ============================================ */
+.side-rail {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--color-cream);
+    pointer-events: none;
 }
 
-.page-cream .heading-lg {
-    color: var(--color-black);
+.side-rail--left  { left: var(--space-lg); }
+.side-rail--right { right: var(--space-lg); }
+
+/* equal-length lines above and below the content */
+.side-rail__line {
+    width: 1px;
+    height: 64px;
+    background: currentColor;
+}
+
+/* fixed height so the two rails match exactly */
+.side-rail__body {
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+}
+
+.side-rail__social a {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    color: var(--color-cream);
+    opacity: 1;
+    transition: color 0.25s var(--transition-smooth),
+        transform 0.25s var(--transition-smooth);
+}
+
+.side-rail__social a svg {
+    filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.55));
+}
+
+.side-rail__social a:hover {
+    color: var(--color-red);
+    transform: scale(1.18);
+}
+
+.side-rail__label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.55);
+}
+
+/* copyright rail is desktop/tablet only */
+@media (max-width: 640px) {
+    .side-rail { display: none; }
+}
+
+/* Social icons inside the burger menu (mobile) */
+.nav-social {
+    display: none;
+}
+
+.nav-social a::after {
+    display: none !important; /* kill the nav-link underline bar */
+}
+
+@media (max-width: 640px) {
+    .nav-links .nav-social {
+        display: flex;
+        gap: var(--space-lg);
+        margin-top: var(--space-sm);
+        padding-top: var(--space-lg);
+        border-top: 1px solid rgba(250, 250, 255, 0.15);
+    }
+
+    .nav-links .nav-social a {
+        display: flex;
+        color: var(--color-cream);
+    }
 }
 
 /* ============================================
@@ -815,7 +986,7 @@ h4 {
 .about-preview .content p {
     font-size: 0.9rem;
     line-height: 1.8;
-    color: rgba(255, 253, 210, 0.8);
+    color: rgba(250, 250, 255, 0.8);
 }
 
 .logo-decoration {
@@ -902,19 +1073,18 @@ h4 {
     font-size: 0.875rem;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
     transition: all 0.3s var(--transition-bounce);
 }
 
 .btn-primary {
-    background-color: var(--color-black);
-    color: var(--color-cream);
+    background-color: var(--color-cream);
+    color: var(--color-black);
 }
 
 .btn-primary:hover {
     background-color: transparent;
-    color: var(--color-black);
-    border: thin solid var(--color-black);
+    color: var(--color-cream);
+    border: thin solid var(--color-cream);
 }
 
 .btn-outline {
@@ -996,7 +1166,7 @@ h4 {
 
 .footer-copyright {
     font-size: 0.875rem;
-    color: rgba(255, 253, 210, 0.6);
+    color: rgba(250, 250, 255, 0.6);
 }
 
 @media (max-width: 576px) {
@@ -1022,11 +1192,6 @@ h4 {
 .page-header .heading-accent {
     font-family: var(--font-marker);
     color: var(--color-pink);
-}
-
-.page-cream {
-    background-color: var(--color-cream);
-    color: var(--color-black);
 }
 
 /* ============================================
@@ -1177,7 +1342,7 @@ h4 {
     display: block;
     font-size: 0.875rem;
     margin-bottom: var(--space-xs);
-    color: var(--color-black);
+    color: var(--color-cream);
 }
 
 .form-group input,
@@ -1187,10 +1352,20 @@ h4 {
     padding: 0.875rem 1rem;
     font-family: var(--font-body);
     font-size: 1rem;
-    border: 2px solid var(--color-black);
+    border: 2px solid var(--color-cream);
     background-color: transparent;
-    color: var(--color-black);
+    color: var(--color-cream);
     transition: border-color 0.3s var(--transition-smooth);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: rgba(250, 250, 255, 0.4);
+}
+
+.form-group select option {
+    background-color: var(--color-black);
+    color: var(--color-cream);
 }
 
 .form-group input:focus,
@@ -1207,7 +1382,7 @@ h4 {
 
 .form-group select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23060505' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FAFAFF' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     padding-right: 2.5rem;
@@ -1314,7 +1489,7 @@ h4 {
 
 .case-study-intro .meta {
     font-size: 0.875rem;
-    color: rgba(6, 5, 5, 0.6);
+    color: rgba(0, 0, 0, 0.6);
     text-transform: uppercase;
 }
 
@@ -1333,7 +1508,7 @@ h4 {
     gap: var(--space-lg);
     margin-top: var(--space-xl);
     padding-top: var(--space-xl);
-    border-top: 1px solid rgba(6, 5, 5, 0.2);
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .case-study-meta-grid .meta-item h3 {
@@ -1341,7 +1516,6 @@ h4 {
     font-size: 1rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
     margin-bottom: var(--space-xs);
 }
 
@@ -1612,7 +1786,6 @@ h4 {
     font-size: 0.75rem;
     text-transform: lowercase;
     opacity: 0.6;
-    letter-spacing: 0.05em;
 }
 
 @media (max-width: 640px) {
@@ -1639,116 +1812,155 @@ h4 {
 
 
 /* ============================================
-   NEW: Full-width Portfolio Items
+   Portfolio grid (Homepage + Work page)
    ============================================ */
 .portfolio-section {
-    padding: 0;
+    background-color: var(--color-black);
+    padding: 0 0 clamp(5rem, 12vw, 11rem);
 }
 
-.portfolio-item-full {
+/* All cards the SAME height. Widths follow a 10-card repeating pattern:
+     row 1 (3 cards): 30 / 30 / 40
+     row 2 (2 cards): 50 / 30   - inset 10% from each side
+     row 3 (3 cards): 40 / 30 / 30
+     row 4 (2 cards): 30 / 50   - inset 10% from each side          */
+.work-scatter {
+    --col-gap: clamp(1rem, 3vw, 3rem);
+    /* left/right edge lines up with the "DOUBLE DASH" nav logo:
+       .navbar .container padding (--space-xl) + .navbar .logo margin */
+    margin: 0;
+    padding: 0 calc(var(--space-xl) + clamp(0px, 6vw, 7rem));
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--col-gap);
+    row-gap: clamp(2.5rem, 5vw, 4.5rem);
+    align-items: flex-start;
+}
+
+.work-card {
+    display: flex;
+    flex-direction: column;
+    width: calc(30% - var(--col-gap) * 2 / 3 - 0.5px);
+    text-decoration: none;
+    color: var(--color-cream);
+}
+
+/* rows of 3: the 30% and 40% cards */
+.work-card:nth-child(10n + 3),
+.work-card:nth-child(10n + 6) {
+    width: calc(40% - var(--col-gap) * 2 / 3 - 0.5px);
+}
+
+/* rows of 2: two cards, 10% margin on the leading one */
+.work-card:nth-child(10n + 4) {
+    width: calc(50% - var(--col-gap) / 2 - 0.5px);
+    margin-left: 10%;
+}
+
+.work-card:nth-child(10n + 5),
+.work-card:nth-child(10n + 9) {
+    width: calc(30% - var(--col-gap) / 2 - 0.5px);
+}
+
+.work-card:nth-child(10n + 9) {
+    margin-left: 10%;
+}
+
+.work-card:nth-child(10n + 10) {
+    width: calc(50% - var(--col-gap) / 2 - 0.5px);
+}
+
+.work-card__frame {
     display: block;
     position: relative;
     width: 100%;
-    text-decoration: none;
-    color: var(--color-cream);
+    height: clamp(280px, 34vw, 520px);   /* every card, same height */
     overflow: hidden;
-}
-
-.portfolio-item-full .portfolio-image {
-    width: 100%;
-    height: 70vh;
-    min-height: 400px;
     background-color: var(--color-gray-placeholder);
-    overflow: hidden;
 }
 
-.portfolio-item-full .portfolio-image img,
-.portfolio-item-full .portfolio-image .image-placeholder {
+/* empty (placeholder) frames - visible box on the black page */
+.work-card__frame:empty {
+    background: repeating-linear-gradient(-45deg,
+        #1e1e1e, #1e1e1e 14px, #262626 14px, #262626 28px);
+}
+
+.work-card__img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s var(--transition-smooth);
+    transition: transform 0.7s var(--transition-smooth);
 }
 
-.portfolio-item-full:hover .portfolio-image img,
-.portfolio-item-full:hover .portfolio-image .image-placeholder {
+.work-card:hover .work-card__img {
     transform: scale(1.05);
 }
 
-.portfolio-item-full .portfolio-info {
-    padding: var(--space-lg) var(--container-padding) var(--space-2xl);
-    background-color: var(--color-black);
+.work-card__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-cream);
 }
 
-.portfolio-item-full .portfolio-info h2 {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 3rem);
-    text-transform: uppercase;
-    margin-bottom: var(--space-xs);
+.work-card__title {
+    font-family: var(--font-marker); /* Instrument Serif */
+    font-weight: 400;
+    font-size: var(--fs-3);
+    line-height: 1.05;
+    transition: color 0.3s var(--transition-smooth);
 }
 
-.portfolio-item-full .portfolio-subtitle {
-    font-family: var(--font-marker);
-    font-size: clamp(1rem, 2.5vw, 1.25rem);
-    color: var(--color-pink);
-}
-
-/* ============================================
-   Sliding Portfolio Section (Homepage)
-   ============================================ */
-.portfolio-item-sliding {
+/* reserve the italic footprint so the hover swap never reflows */
+.work-card__title::after {
+    content: attr(data-title);
     display: block;
-    position: relative;
-    text-decoration: none;
-    color: var(--color-cream);
-    width: 100%;
+    height: 0;
     overflow: hidden;
+    font-style: italic;
+    visibility: hidden;
 }
 
-.portfolio-item-sliding .portfolio-images {
-    position: relative;
-    width: 100%;
-    height: 70vh;
-    min-height: 400px;
-    overflow: hidden;
+.work-card:hover .work-card__title {
+    font-style: italic;
+    color: var(--color-red);
 }
 
-.portfolio-item-sliding .portfolio-image-base {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    background-color: var(--color-gray-placeholder);
+.work-card__cat {
+    font-family: var(--font-body);
+    font-size: var(--fs-6);
+
+    color: rgba(250, 250, 255, 0.55);
 }
 
-.portfolio-item-sliding .portfolio-image-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    background-color: var(--color-gray-placeholder);
-    will-change: transform;
+/* See more button under the grid */
+.work-more {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(3rem, 7vw, 6rem);
 }
 
-.portfolio-item-sliding .portfolio-info {
-    padding: var(--space-lg) var(--container-padding) var(--space-2xl);
-    background-color: var(--color-black);
+/* Phones: single full-width column, still all the same height */
+@media (max-width: 760px) {
+    .work-scatter {
+        row-gap: clamp(2.5rem, 9vw, 4rem);
+    }
+
+    .work-scatter .work-card {
+        width: 100%;
+        margin-left: 0;
+    }
 }
 
-.portfolio-item-sliding .portfolio-info h2 {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 5vw, 3rem);
-    text-transform: uppercase;
-    margin-bottom: var(--space-xs);
-}
-
-.portfolio-item-sliding .portfolio-info .portfolio-subtitle {
-    font-family: var(--font-marker);
-    font-size: clamp(1rem, 2.5vw, 1.25rem);
-    color: var(--color-pink);
+@media (max-width: 640px) {
+    .work-scatter {
+        padding: 0 var(--container-padding);
+    }
 }
 
 /* ============================================
@@ -1774,7 +1986,7 @@ h4 {
     display: block;
     text-transform: none;
     font-family: var(--font-marker);
-    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-size: var(--fs-2);
     color: var(--color-red);
     line-height: 1;
 }
@@ -1782,13 +1994,13 @@ h4 {
 .greeting-name {
     display: block;
     font-family: var(--font-display);
-    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-size: var(--fs-4);
     text-transform: uppercase;
     margin-top: var(--space-xs);
 }
 
 .about-description p {
-    font-size: 1rem;
+    font-size: var(--fs-5);
     font-weight: 100;
     line-height: 1.1;
     margin-bottom: var(--space-md);
@@ -2214,7 +2426,7 @@ h4 {
 
 .footer-copyright {
     font-size: 0.875rem;
-    color: rgba(255, 253, 210, 0.6);
+    color: rgba(250, 250, 255, 0.6);
 }
 
 @media (max-width: 576px) {

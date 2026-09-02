@@ -8,13 +8,12 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
-<body class="page-cream">
+<body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo">
-                <div id="lottie-logo"></div>
-                <span class="logo-text">Anderson<br><span class="logo-and">&</span>Designs</span>
+                <img src="assets/logos/logotype.svg" alt="Anderson &amp; Designs" class="logo-mark">
             </a>
             
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
@@ -40,50 +39,57 @@
     </header>
 
     <!-- Portfolio Grid -->
-    <section class="section" style="padding-top: 0;">
-        <div class="container">
-            <div class="portfolio-grid cols-2">
-                <a href="hot.html" class="portfolio-item portfolio-item-video animate-on-scroll">
-                    <video class="portfolio-video" muted playsinline preload="auto">
+    <section class="portfolio-section">
+        <div class="work-scatter">
+
+            <!-- The Heir of Time -->
+            <a href="hot.html" class="work-card portfolio-item-video animate-on-scroll">
+                <span class="work-card__frame">
+                    <video class="work-card__img portfolio-video" muted playsinline preload="auto">
                         <source src="assets/portfolio/theheiroftime/HoT Showcase square.mp4" type="video/mp4">
                         <source src="assets/portfolio/theheiroftime/showcase.webm" type="video/webm">
-                        Your browser does not support the video tag.
                     </video>
-                    <div class="portfolio-item-overlay">
-                        <span class="portfolio-item-title">The Heir of Time</span>
-                    </div>
-                </a>
-                <a href="bci.html" class="portfolio-item animate-on-scroll">
-                    <img src="assets/portfolio/bci/bci logo square.jpg" alt="Bangun Citra Irawan">
-                    <div class="portfolio-item-overlay">
-                        <span class="portfolio-item-title">Bangun Citra Irawan</span>
-                    </div>
-                </a>
-                <a href="furari.html" class="portfolio-item animate-on-scroll">
-                    <img src="assets/portfolio/furari/f-org.jpg" alt="Furari Project">
-                    <div class="portfolio-item-overlay">
-                        <span class="portfolio-item-title">Furari</span>
-                    </div>
-                </a>
-                <a href="mumu.html" class="portfolio-item animate-on-scroll">
-                    <img src="assets/portfolio/mumu/mumu-front-100.jpg" alt="Pastel Mumu Project">
-                    <div class="portfolio-item-overlay">
-                        <span class="portfolio-item-title">Pastel Mumu</span>
-                    </div>
-                </a>
-                <!--<a href="case-study.html" class="portfolio-item animate-on-scroll">
-                    <div class="image-placeholder"></div>
-                    <div class="portfolio-item-overlay">
-                        <span class="portfolio-item-title">Onboarder</span>
-                    </div>
-                </a>
-                <a href="case-study.html" class="portfolio-item animate-on-scroll">
-                    <div class="image-placeholder"></div>
-                    <div class="portfolio-item-overlay">
-                        <span class="portfolio-item-title">Logo Remix</span>
-                    </div>
-                </a>-->
-            </div>
+                </span>
+                <span class="work-card__meta">
+                    <span class="work-card__title" data-title="The Heir of Time">The Heir of Time</span>
+                    <span class="work-card__cat">Brand Identity</span>
+                </span>
+            </a>
+
+            <!-- BCI -->
+            <a href="bci.html" class="work-card animate-on-scroll">
+                <span class="work-card__frame">
+                    <img class="work-card__img" src="assets/portfolio/bci/fence billboard.jpg"
+                        alt="Bangun Citra Irawan fence billboard">
+                </span>
+                <span class="work-card__meta">
+                    <span class="work-card__title" data-title="Bangun Citra Irawan">Bangun Citra Irawan</span>
+                    <span class="work-card__cat">Logo &amp; Brand Identity</span>
+                </span>
+            </a>
+
+            <!-- Pastel Mumu -->
+            <a href="mumu.html" class="work-card animate-on-scroll">
+                <span class="work-card__frame">
+                    <img class="work-card__img" src="assets/portfolio/mumu/mumu-hero-20.jpg" alt="Pastel Mumu hero">
+                </span>
+                <span class="work-card__meta">
+                    <span class="work-card__title" data-title="Pastel Mumu">Pastel Mumu</span>
+                    <span class="work-card__cat">Logo &amp; Brand Identity</span>
+                </span>
+            </a>
+
+            <!-- Furari -->
+            <a href="furari.html" class="work-card animate-on-scroll">
+                <span class="work-card__frame">
+                    <img class="work-card__img" src="assets/portfolio/furari/furari-hero.jpg" alt="Furari hero">
+                </span>
+                <span class="work-card__meta">
+                    <span class="work-card__title" data-title="Furari">Furari</span>
+                    <span class="work-card__cat">Illustrations &amp; Logo</span>
+                </span>
+            </a>
+
         </div>
     </section>
 
@@ -127,8 +133,6 @@
             <p class="footer-copyright">© 2025 Anderson & Designs</p>
         </div>
     </footer>
-
-    <script src="js/lottie.js"></script>
     <script src="js/main.js"></script>
     <script src="js/portfolio-video.js"></script>
 

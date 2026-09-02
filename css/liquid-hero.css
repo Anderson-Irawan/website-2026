@@ -1,0 +1,281 @@
+/* ============================================
+   LIQUID HERO - homepage gradient hero
+   ============================================ */
+
+.liquid-hero {
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #201D1E; /* visible during the first frame */
+}
+
+/* Delayed / "pinned" scroll before the content below.
+   Only armed (desktop + motion) when <html> carries .has-hero-pin. */
+.hero-pin {
+    position: relative;
+}
+
+.has-hero-pin .hero-pin {
+    height: 200vh; /* 1 extra screen of hold; raise/lower to taste */
+}
+
+.has-hero-pin .hero-pin .liquid-hero {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 0;
+}
+
+/* WebGL gradient canvas */
+.liquid-hero__bg {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Centered brand mark.
+   The mark is a touch heavier on its right side, so a small left shift
+   optically centres it. (Value is % of the viewport - the old -11% was
+   left over from when the hero had a headline block beside the logo and
+   is far too much now.) */
+.liquid-hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+    /* translateX = optical centring; translateY drops the mark lower to
+       clear the tagline above it. */
+    transform: translate(-3%, 12vh);
+    /* Let the cursor drive the gradient through the mark. */
+    pointer-events: none;
+}
+
+/* Tagline on the background plane, behind the logo. Driven by
+   initHeroTagline() in main.js for the parallax + fade on scroll. */
+.liquid-hero__tagline {
+    position: absolute;
+    top: 16%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 1; /* above the gradient (0), below the logo (2) */
+    /* vw-based so the block keeps the same proportions / wrap across
+       desktop sizes; phones get a bump below. */
+    width: 42vw;
+    text-align: center;
+    font-family: var(--font-marker);
+    font-weight: 400; /* Instrument Serif ships regular only */
+    font-size: 3.8vw;
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    text-transform: none; /* override the global h1-h4 uppercase */
+    color: var(--color-cream);
+    opacity: 0.9;
+    text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
+    pointer-events: none; /* never intercept the cursor -> gradient/tilt effects */
+    will-change: transform, opacity;
+}
+
+/* Highlighted phrases: italic + underlined; on hover flip to Big
+   Shoulders uppercase. Only these get pointer-events so the rest of the
+   tagline still lets the cursor through to the gradient. */
+.liquid-hero__tagline .tagline-term {
+    pointer-events: auto;
+    font-style: italic;
+    text-decoration: underline;
+    text-underline-offset: 0.1em;
+    text-decoration-thickness: 0.045em;
+}
+
+.liquid-hero__tagline .tagline-term:hover {
+    font-family: var(--font-display); /* Big Shoulders */
+    font-style: normal;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Heavier tail phrase. Instrument Serif has no bold, so this is a
+   synthetic bold - swap to a real weight if it looks rough. */
+.liquid-hero__tagline .tagline-strong {
+    font-weight: 700;
+}
+
+/* Tablet + phone: the desktop's absolute layout doesn't hold on these
+   aspect ratios, so rebuild the same tagline-cap-over-logo stack as a
+   centred column. */
+@media (max-width: 1024px) {
+    .liquid-hero {
+        flex-direction: column;
+        gap: 0;
+        padding: 13vh var(--space-md);
+    }
+
+    .liquid-hero__tagline {
+        position: static;
+        margin: 0 0 -3vh;   /* let the logo bleed up into it, like desktop */
+        width: 72vw;
+        font-size: max(5.2vw, 1.9rem);
+    }
+
+    .liquid-hero__content {
+        transform: translateX(-3%);   /* no vertical drop - it's in flow now */
+    }
+
+    .liquid-hero__mark-tilt {
+        width: 74vw;
+    }
+}
+
+/* Phones: bigger and wider than tablet. */
+@media (max-width: 640px) {
+    .liquid-hero__tagline {
+        margin-bottom: -4vh;
+        width: 88vw;
+        font-size: max(9vw, 2.1rem);
+    }
+
+    .liquid-hero__mark-tilt {
+        width: 94vw;
+    }
+}
+
+/* Black band between the hero and the work section. */
+.hero-divider {
+    background-color: var(--color-black);
+    padding: clamp(6rem, 16vh, 13rem) 0 clamp(2.5rem, 6vh, 5rem);
+    overflow: hidden;
+}
+
+.hero-divider__text {
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+    font-family: var(--font-marker); /* Instrument Serif */
+    font-weight: 400;
+    font-style: italic;
+    /* tier 1 floor (~47px mobile / 120px desktop) but keeps growing
+       on ultra-wide screens so it still spans the band */
+    font-size: max(var(--fs-1), 7vw);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--color-red); /* brand orange (#FC6935) */
+}
+
+/* Holds the three.js <canvas> (the extruded 3D logo) and the flat
+   <img>, which shows until the 3D build is ready and as the
+   no-WebGL fallback. */
+.liquid-hero__mark-tilt {
+    position: relative;
+    width: clamp(300px, 56vw, 760px);
+    aspect-ratio: 209 / 140;
+}
+
+/* The canvas is drawn larger than the logo box so the model never
+   clips against the canvas edge as it tilts/spins. Kept in sync with
+   CANVAS_OVERSCAN in js/logo-3d.js. */
+.liquid-hero__mark-tilt canvas {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 160% !important;
+    height: 160% !important;
+    transform: translate(-50%, -50%);
+    display: block;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.liquid-hero__mark {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 48px rgba(0, 0, 0, 0.5));
+    transition: opacity 0.6s ease;
+    /* Match the 3D logo's start size (1 - SCROLL_GROW in js/logo-3d.js). */
+    transform: scale(0.55);
+}
+
+.liquid-hero__mark-tilt.is-3d canvas { opacity: 1; }
+.liquid-hero__mark-tilt.is-3d .liquid-hero__mark { opacity: 0; }
+
+/* Bottom row: motion toggle, pinned to the lower-right */
+.liquid-hero__footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    padding: 0 var(--space-lg) var(--space-lg);
+    pointer-events: none;
+}
+
+.liquid-hero__footer a,
+.liquid-hero__footer button {
+    pointer-events: auto;
+}
+
+/* Reduce-motion toggle */
+.motion-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    border: thin solid rgba(255, 253, 210, 0.4);
+    border-radius: 999px;
+    background: rgba(32, 29, 30, 0.35);
+    color: var(--color-cream);
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    transition: background 0.3s var(--transition-smooth),
+        border-color 0.3s var(--transition-smooth);
+}
+
+.motion-toggle:hover {
+    background: rgba(32, 29, 30, 0.6);
+    border-color: var(--color-cream);
+}
+
+.motion-toggle__icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-cream);
+    animation: motionTogglePulse 1.6s ease-in-out infinite;
+}
+
+@keyframes motionTogglePulse {
+    0%, 100% { opacity: 0.4; transform: scale(0.8); }
+    50%      { opacity: 1;   transform: scale(1.2); }
+}
+
+.motion-toggle[aria-pressed="true"] .motion-toggle__icon {
+    animation: none;
+    opacity: 1;
+    background: var(--color-red);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .motion-toggle__icon { animation: none; }
+}
