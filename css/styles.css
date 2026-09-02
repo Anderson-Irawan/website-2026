@@ -1073,6 +1073,8 @@ h4 {
     font-size: 0.875rem;
     font-weight: 500;
     text-transform: uppercase;
+    /* always-present border so the hover outline doesn't shift layout */
+    border: thin solid transparent;
     transition: all 0.3s var(--transition-bounce);
 }
 
@@ -1084,7 +1086,7 @@ h4 {
 .btn-primary:hover {
     background-color: transparent;
     color: var(--color-cream);
-    border: thin solid var(--color-cream);
+    border-color: var(--color-cream);
 }
 
 .btn-outline {
@@ -1833,7 +1835,7 @@ h4 {
     display: flex;
     flex-wrap: wrap;
     column-gap: var(--col-gap);
-    row-gap: clamp(2.5rem, 5vw, 4.5rem);
+    row-gap: clamp(4rem, 9vw, 8.5rem);
     align-items: flex-start;
 }
 
@@ -1843,6 +1845,9 @@ h4 {
     width: calc(30% - var(--col-gap) * 2 / 3 - 0.5px);
     text-decoration: none;
     color: var(--color-cream);
+    /* --py set per-card by initCardParallax in main.js */
+    transform: translateY(var(--py, 0px));
+    will-change: transform;
 }
 
 /* rows of 3: the 30% and 40% cards */
@@ -1891,7 +1896,7 @@ h4 {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.7s var(--transition-smooth);
+    transition: transform 0.6s var(--transition-smooth);
 }
 
 .work-card:hover .work-card__img {
@@ -1948,7 +1953,7 @@ h4 {
 /* Phones: single full-width column, still all the same height */
 @media (max-width: 760px) {
     .work-scatter {
-        row-gap: clamp(2.5rem, 9vw, 4rem);
+        row-gap: clamp(3rem, 11vw, 5rem);
     }
 
     .work-scatter .work-card {
@@ -1986,6 +1991,8 @@ h4 {
     display: block;
     text-transform: none;
     font-family: var(--font-marker);
+    font-weight: 700;
+    font-style: italic;
     font-size: var(--fs-2);
     color: var(--color-red);
     line-height: 1;
@@ -2034,7 +2041,7 @@ h4 {
     .btn-primary:hover {
         background-color: transparent;
         color: var(--color-cream);
-        border: thin solid var(--color-cream);
+        border-color: var(--color-cream);
     }
 }
 

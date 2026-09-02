@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollAnimations();
     initMobileMenu();
     initSlidingPortfolio();
+    initCardParallax();
     // initContactForm(); // Disabled - using EmailJS in contact.html instead
 });
 
@@ -127,6 +128,48 @@ function initHeroTagline() {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     onScroll();
+}
+
+/* ============================================
+   Portfolio cards - the whole card drifts at its
+   own gentle rate as it passes the viewport
+   ============================================ */
+function initCardParallax() {
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const cards = document.querySelectorAll('.work-card');
+    if (!cards.length) return;
+
+    // gentle, varied per-card rates ("sprinkled") - px shift per px the
+    // card sits away from the viewport centre. Higher = more lag.
+    const RATES = [0.07, 0.15, 0.1, 0.16, 0.08, 0.12, 0.115, 0.17, 0.09, 0.14];
+    const CAP = 140; // px, so a card near the edge never flies off
+    let ticking = false;
+
+    function update() {
+        ticking = false;
+        const mid = (window.innerHeight || 1) / 2;
+        cards.forEach((card, i) => {
+            const r = card.getBoundingClientRect();
+            if (r.bottom < -160 || r.top > mid * 2 + 160) return;
+            const offset = (r.top + r.height / 2) - mid;   // -above / +below
+            let y = -offset * RATES[i % RATES.length];      // lag toward centre
+            y = Math.max(-CAP, Math.min(CAP, y));
+            card.style.setProperty('--py', y.toFixed(1) + 'px');
+        });
+    }
+
+    function onScroll() {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
 }
 
 /* ============================================

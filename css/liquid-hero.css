@@ -152,13 +152,12 @@
 /* Black band between the hero and the work section. */
 .hero-divider {
     background-color: var(--color-black);
-    padding: clamp(6rem, 16vh, 13rem) 0 clamp(2.5rem, 6vh, 5rem);
+    padding: clamp(6rem, 16vh, 13rem) calc(var(--space-xl) + clamp(0px, 6vw, 7rem)) clamp(3rem, 9vh, 6rem);
     overflow: hidden;
 }
 
 .hero-divider__text {
     margin: 0;
-    text-align: center;
     white-space: nowrap;
     font-family: var(--font-marker); /* Instrument Serif */
     font-weight: 400;
