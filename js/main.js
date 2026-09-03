@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     initHeroPin();
     initHeroTagline();
+    initHeroBgFade();
     initNavbar();
     initSocial();
     initScrollAnimations();
@@ -131,6 +132,48 @@ function initHeroTagline() {
 }
 
 /* ============================================
+   Hero background fade - the fixed liquid gradient
+   fades out to black as the page scrolls toward the
+   "For Dreamers & Daredevils" divider
+   ============================================ */
+function initHeroBgFade() {
+    const bg = document.querySelector('.liquid-hero__bg');
+    const target = document.querySelector('.portfolio-section');
+    if (!bg || !target) return;
+
+    // The nav's black backdrop pops in (its own 0.4s ease) once the
+    // "For Dreamers" divider crosses the middle of the viewport.
+    // initNavbar bows out on this page - see there.
+    const navbar = document.querySelector('.navbar');
+    const divider = document.querySelector('.hero-divider');
+
+    let ticking = false;
+    function update() {
+        ticking = false;
+        const vh = window.innerHeight || 1;
+        const top = target.getBoundingClientRect().top;
+        // Full liquid until the portfolio is ~1.5 screens away; fully
+        // black by the time its top edge is ~2/3 down the viewport.
+        const START = vh * 1.5;   // top distance where the fade begins
+        const END = vh * 0.65;    // top distance where it's fully black
+        const p = Math.max(0, Math.min(1, (top - END) / (START - END)));
+        bg.style.opacity = p.toFixed(3);
+
+        if (navbar && divider) {
+            const dr = divider.getBoundingClientRect();
+            const mid = dr.top + dr.height / 2;
+            navbar.classList.toggle('is-solid', mid < vh * 0.5);
+        }
+    }
+    function onScroll() {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+}
+
+/* ============================================
    Portfolio cards - the whole card drifts at its
    own gentle rate as it passes the viewport
    ============================================ */
@@ -138,17 +181,27 @@ function initCardParallax() {
     if (window.matchMedia &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const cards = document.querySelectorAll('.work-card');
+    // Skip the squish rows - their cards need to stay row-aligned.
+    const cards = Array.from(document.querySelectorAll('.work-card'))
+        .filter(function (c) { return !c.closest('.work-scatter--squish'); });
     if (!cards.length) return;
 
     // gentle, varied per-card rates ("sprinkled") - px shift per px the
     // card sits away from the viewport centre. Higher = more lag.
     const RATES = [0.07, 0.15, 0.1, 0.16, 0.08, 0.12, 0.115, 0.17, 0.09, 0.14];
     const CAP = 140; // px, so a card near the edge never flies off
+    // No parallax once the grid collapses to a single stacked column
+    // (matches the .work-scatter 760px breakpoint in styles.css).
+    const stackedMQ = window.matchMedia
+        ? window.matchMedia('(max-width: 760px)') : null;
     let ticking = false;
 
     function update() {
         ticking = false;
+        if (stackedMQ && stackedMQ.matches) {
+            cards.forEach((card) => card.style.removeProperty('--py'));
+            return;
+        }
         const mid = (window.innerHeight || 1) / 2;
         cards.forEach((card, i) => {
             const r = card.getBoundingClientRect();
@@ -218,8 +271,11 @@ function initNavbar() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
 
+    // Homepage: the backdrop is driven by initHeroBgFade so it tracks
+    // the background fade to black exactly.
+    if (document.querySelector('.liquid-hero__bg')) return;
+
     // Most pages: black fades in after ~0.4 of a viewport.
-    // Index (pinned hero): hold it transparent until the hero releases.
     const heroPin = document.querySelector('.hero-pin');
     const TRIGGER = 0.4;
 
@@ -277,27 +333,28 @@ function initMobileMenu() {
     const navLinks = document.querySelector('.nav-links');
     
     if (!menuToggle || !navLinks) return;
-    
+
+    function setMenu(open) {
+        navLinks.classList.toggle('active', open);
+        menuToggle.classList.toggle('active', open);
+        menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        // lock the page behind the full-screen overlay
+        document.documentElement.classList.toggle('menu-open', open);
+        if (window.lenis) open ? window.lenis.stop() : window.lenis.start();
+    }
+
     menuToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        menuToggle.classList.toggle('active');
+        setMenu(!navLinks.classList.contains('active'));
     });
-    
-    // Close menu when clicking on a link
-    const links = navLinks.querySelectorAll('a');
-    links.forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            menuToggle.classList.remove('active');
-        });
+
+    // Close on link tap
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => setMenu(false));
     });
-    
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!menuToggle.contains(e.target) && !navLinks.contains(e.target)) {
-            navLinks.classList.remove('active');
-            menuToggle.classList.remove('active');
-        }
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setMenu(false);
     });
 }
 

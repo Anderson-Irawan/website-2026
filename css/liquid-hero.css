@@ -2,6 +2,13 @@
    LIQUID HERO - homepage gradient hero
    ============================================ */
 
+/* The gradient canvas is fixed behind the whole page (see
+   .liquid-hero__bg). It fades out to this black as the page scrolls
+   toward the .hero-divider, so everything below reads as solid black. */
+body {
+    background-color: var(--color-black);
+}
+
 .liquid-hero {
     position: relative;
     width: 100%;
@@ -9,8 +16,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-    background: #201D1E; /* visible during the first frame */
+    /* clip the horizontal spill of the oversized 3D logo canvas (it's
+       230% wide) so it never widens the page, but leave the vertical
+       axis visible so the logo can still drift up/down on scroll */
+    overflow-x: clip;
+    background: transparent;
 }
 
 /* Delayed / "pinned" scroll before the content below.
@@ -30,14 +40,19 @@
     min-height: 0;
 }
 
-/* WebGL gradient canvas */
+/* WebGL gradient canvas - fixed to the viewport and pinned behind
+   every section. The page background shows it from the top down until
+   an opaque section (the .hero-divider onward) scrolls over it. */
 .liquid-hero__bg {
-    position: absolute;
+    position: fixed;
     inset: 0;
     display: block;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: -1;
+    /* opacity is driven per-scroll-frame by initHeroBgFade() in main.js;
+       the transition just smooths the steps between rAF updates */
+    transition: opacity 0.15s linear;
 }
 
 /* Centered brand mark.
@@ -110,49 +125,10 @@
     font-weight: 700;
 }
 
-/* Tablet + phone: the desktop's absolute layout doesn't hold on these
-   aspect ratios, so rebuild the same tagline-cap-over-logo stack as a
-   centred column. */
-@media (max-width: 1024px) {
-    .liquid-hero {
-        flex-direction: column;
-        gap: 0;
-        padding: 13vh var(--space-md);
-    }
-
-    .liquid-hero__tagline {
-        position: static;
-        margin: 0 0 -3vh;   /* let the logo bleed up into it, like desktop */
-        width: 72vw;
-        font-size: max(5.2vw, 1.9rem);
-    }
-
-    .liquid-hero__content {
-        transform: translateX(-3%);   /* no vertical drop - it's in flow now */
-    }
-
-    .liquid-hero__mark-tilt {
-        width: 74vw;
-    }
-}
-
-/* Phones: bigger and wider than tablet. */
-@media (max-width: 640px) {
-    .liquid-hero__tagline {
-        margin-bottom: -4vh;
-        width: 88vw;
-        font-size: max(9vw, 2.1rem);
-    }
-
-    .liquid-hero__mark-tilt {
-        width: 94vw;
-    }
-}
-
-/* Black band between the hero and the work section. */
+/* Band between the hero and the work section. Transparent - it sits on
+   the page-wide gradient background, which is still mostly liquid here. */
 .hero-divider {
-    background-color: var(--color-black);
-    padding: clamp(6rem, 16vh, 13rem) calc(var(--space-xl) + clamp(0px, 6vw, 7rem)) clamp(3rem, 9vh, 6rem);
+    padding: clamp(6rem, 24vw, 19.5rem) calc(var(--space-xl) + clamp(0px, 6vw, 7rem)) clamp(3rem, 9vh, 6rem);
     overflow: hidden;
 }
 
@@ -187,12 +163,15 @@
     position: absolute;
     left: 50%;
     top: 50%;
-    width: 160% !important;
-    height: 160% !important;
+    width: 230% !important;
+    height: 230% !important;
     transform: translate(-50%, -50%);
     display: block;
     opacity: 0;
     transition: opacity 0.6s ease;
+    /* the oversized canvas overlaps siblings once the hero drops its
+       overflow clip - cursor logic lives on window, so it needs no hits */
+    pointer-events: none;
 }
 
 .liquid-hero__mark {
@@ -209,6 +188,65 @@
 
 .liquid-hero__mark-tilt.is-3d canvas { opacity: 1; }
 .liquid-hero__mark-tilt.is-3d .liquid-hero__mark { opacity: 0; }
+
+/* ------------------------------------------------------------------
+   Tablet + phone. The desktop's absolute layout doesn't hold on these
+   aspect ratios, so rebuild the tagline-over-logo stack as a centred
+   column. These blocks are LAST in the file on purpose - they must
+   win over the unscoped .liquid-hero__mark* rules above.
+   Note: the logo SIZE bump is phones-only (<=640); tablet keeps the
+   desktop mark size.
+   ------------------------------------------------------------------ */
+@media (max-width: 1024px) {
+    .liquid-hero {
+        flex-direction: column;
+        justify-content: center;
+        gap: 0;
+        padding: 13vh var(--space-md);
+    }
+
+    .liquid-hero__tagline {
+        position: static;
+        margin: 0 0 -2vh;
+        width: 72vw;
+        font-size: max(5.2vw, 1.9rem);
+    }
+
+    .liquid-hero__content {
+        transform: translate(-3%, 4vh);
+        padding: var(--space-sm);
+    }
+}
+
+/* Phones: let the mark run edge to edge (and past, clipped) so it
+   dominates the hero. Keep in sync with logo-3d.js SMALL_SCREEN. */
+@media (max-width: 640px) {
+    .liquid-hero__content {
+        transform: translate(-3%, 3vh);
+    }
+
+    .liquid-hero__tagline {
+        margin-bottom: -2vh;
+        width: 88vw;
+        font-size: max(9vw, 2.1rem);
+    }
+
+    .liquid-hero__mark-tilt {
+        width: 110vw;
+    }
+
+    .liquid-hero__mark {
+        transform: scale(0.92);   /* matches 1 - SCROLL_GROW on phones */
+    }
+
+    .hero-divider {
+        padding-top: clamp(2rem, 7vh, 5rem);
+    }
+
+    .hero-divider__text {
+        text-align: center;
+    }
+}
 
 /* Bottom row: motion toggle, pinned to the lower-right */
 .liquid-hero__footer {

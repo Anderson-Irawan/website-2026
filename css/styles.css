@@ -632,27 +632,65 @@ h4 {
 @media (max-width: 640px) {
     .mobile-menu-toggle {
         display: flex;
+        position: relative;
+        z-index: 1001; /* stays above the overlay */
     }
 
+    /* brand mark stays visible on top of the open overlay */
+    .navbar .logo {
+        position: relative;
+        z-index: 1001;
+    }
+
+    /* Full-screen takeover menu. Covers the viewport (inset: 0) - no
+       off-screen transforms, so it can never widen the page. */
     .nav-links {
         position: fixed;
-        top: 80px;
-        left: 0;
-        right: 0;
-        background-color: var(--color-black);
+        inset: 0;
+        width: 100%;
+        z-index: 1000;
+        margin: 0;
+        background-color: rgba(0, 0, 0, 0.85);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
         flex-direction: column;
-        padding: var(--space-lg);
-        gap: var(--space-lg);
-        transform: translateX(100%);
+        align-items: stretch;      /* items span the full width */
+        justify-content: center;
+        gap: var(--space-md);
+        padding: var(--space-4xl) var(--container-padding) var(--space-2xl);
         opacity: 0;
+        visibility: hidden;
         pointer-events: none;
-        transition: all 0.3s var(--transition-smooth);
+        transition: opacity 0.35s var(--transition-smooth),
+            visibility 0s linear 0.35s;
     }
 
     .nav-links.active {
-        transform: translateY(0);
         opacity: 1;
+        visibility: visible;
         pointer-events: all;
+        transition: opacity 0.35s var(--transition-smooth);
+    }
+
+    .nav-links li {
+        width: 100%;
+    }
+
+    .nav-links a,
+    .nav-link-cycle {
+        display: block;
+        width: 100%;
+        text-align: left;
+        font-family: var(--font-marker);   /* Instrument Serif */
+        font-weight: 400;
+        text-transform: none;
+        font-size: var(--fs-2);
+    }
+
+    /* lock the page behind the open menu */
+    .menu-open,
+    .menu-open body {
+        overflow: hidden;
     }
 }
 
@@ -743,7 +781,7 @@ h4 {
 @media (max-width: 640px) {
     .nav-links .nav-social {
         display: flex;
-        gap: var(--space-lg);
+        gap: var(--space-sm);
         margin-top: var(--space-sm);
         padding-top: var(--space-lg);
         border-top: 1px solid rgba(250, 250, 255, 0.15);
@@ -752,6 +790,11 @@ h4 {
     .nav-links .nav-social a {
         display: flex;
         color: var(--color-cream);
+    }
+
+    .nav-links .nav-social a svg {
+        width: 30px;
+        height: 30px;
     }
 }
 
@@ -1817,7 +1860,8 @@ h4 {
    Portfolio grid (Homepage + Work page)
    ============================================ */
 .portfolio-section {
-    background-color: var(--color-black);
+    /* no background - the page-wide gradient behind it fades to black
+       across this section (initHeroBgFade in main.js) */
     padding: 0 0 clamp(5rem, 12vw, 11rem);
 }
 
@@ -1835,7 +1879,7 @@ h4 {
     display: flex;
     flex-wrap: wrap;
     column-gap: var(--col-gap);
-    row-gap: clamp(4rem, 9vw, 8.5rem);
+    row-gap: clamp(4rem, 9vw, 18rem);
     align-items: flex-start;
 }
 
@@ -1875,13 +1919,163 @@ h4 {
     width: calc(50% - var(--col-gap) / 2 - 0.5px);
 }
 
+/* ==================================================================
+   Homepage portfolio - ROW SYSTEM
+   ==================================================================
+   index.html wraps the grid in <div class="work-scatter work-scatter--rows">.
+   Inside it, group the cards into rows:
+
+       <div class="work-row">
+           <a class="work-card" style="--w: 30"> ... </a>   1 to 3 per row
+           <a class="work-card" style="--w: 40"> ... </a>
+       </div>
+
+   Each row is centred, so a row whose widths don't add up to 100%
+   bundles toward the middle of the page on its own.
+
+   Per-card knobs, set on the <a class="work-card">:
+       style="--w: 40"              width, as a % of the row   (default 33)
+       style="--v: center"          vertical align in the row:
+                                      flex-start (top, default) | center |
+                                      flex-end (bottom) | stretch
+       style="--y: 3rem"            manual vertical nudge (down +, up -)
+       style="--h: 26rem"           frame height (any length; default is
+                                      clamp(20rem, 26vh, 30rem))
+       class="... work-card--tall"   height preset - portrait
+       class="... work-card--short"  height preset - letterbox
+   Combine them: style="--w: 40; --v: flex-end; --y: -1.5rem; --h: 30rem"
+
+   No per-row CSS to write. Rows stack into one column below 760px.
+   work.html keeps the repeating 10-card grid above.
+   ================================================================== */
+.work-scatter--rows {
+    flex-direction: column;
+}
+
+.work-scatter--rows .work-row {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--col-gap);
+    row-gap: var(--col-gap);
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.work-scatter--rows .work-card {
+    /* --w = this card's share of the row (%). One gap's worth is shaved
+       off so a full 3-up row (e.g. 33 + 33 + 33) still fits on the line. */
+    width: calc(var(--w, 33) * 1% - var(--col-gap) * 2 / 3);
+    /* --v = where the card sits vertically within the row;
+       --y = an extra manual nudge on top of that. */
+    align-self: var(--v, flex-start);
+    margin: 0;
+    margin-top: var(--y, 0px);
+}
+
+@media (max-width: 760px) {
+    .work-scatter--rows .work-row {
+        flex-direction: column;
+        row-gap: clamp(3rem, 11vw, 5rem);
+    }
+
+    .work-scatter--rows .work-card {
+        width: 100%;
+        align-self: auto;
+        margin-top: 0;
+    }
+}
+
+/* ==================================================================
+   Work page - SQUISH ROWS
+   ==================================================================
+   3 equal cards per <div class="work-row">. Hovering one card grows
+   it to 40% of the row and squishes the other two to 30% each
+   (flex-grow 4 : 3 : 3). Cards use the same frame / image-swap /
+   hover-video / meta as everywhere else.
+   work.html: <div class="work-scatter work-scatter--squish">
+   ================================================================== */
+.work-scatter--squish {
+    flex-direction: column;
+    row-gap: clamp(3rem, 7vw, 6rem);
+    /* full-bleed but inset to clear the fixed social / copyright rails */
+    max-width: 1680px;
+    margin-inline: auto;
+    padding-inline: clamp(1.5rem, 7vw, 7.5rem);
+}
+
+.work-scatter--squish .work-row {
+    display: flex;
+    column-gap: var(--col-gap);
+    align-items: flex-start;
+    width: 100%;
+}
+
+.work-scatter--squish .work-row > .work-card {
+    flex: 1 1 0;              /* rest state: an equal third */
+    width: auto;
+    min-width: 0;             /* let the squished cards collapse */
+    margin: 0;
+    transition: flex-grow 0.5s var(--transition-smooth);
+}
+
+@media (hover: hover) {
+    .work-scatter--squish .work-row:hover > .work-card { flex-grow: 3; }
+    .work-scatter--squish .work-row:hover > .work-card:hover { flex-grow: 4; }
+}
+
+.work-scatter--squish .work-row:focus-within > .work-card { flex-grow: 3; }
+.work-scatter--squish .work-row:focus-within > .work-card:focus-visible { flex-grow: 4; }
+
+/* "In the works" filler tile */
+.work-card--soon {
+    cursor: default;
+}
+
+.work-card--soon .work-card__frame {
+    background: repeating-linear-gradient(-45deg,
+        #1e1e1e, #1e1e1e 14px, #262626 14px, #262626 28px);
+}
+
+.work-card--soon .work-card__title,
+.work-card--soon .work-card__cat {
+    color: var(--muted, rgba(250, 250, 255, 0.5));
+}
+
+@media (max-width: 760px) {
+    .work-scatter--squish .work-row {
+        flex-direction: column;
+        row-gap: clamp(2.5rem, 9vw, 4rem);
+    }
+
+    .work-scatter--squish .work-row > .work-card {
+        flex-grow: 1 !important;   /* stacked: no squish */
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .work-scatter--squish .work-row > .work-card { transition: none; }
+}
+
 .work-card__frame {
     display: block;
     position: relative;
     width: 100%;
-    height: clamp(280px, 34vw, 520px);   /* every card, same height */
+    /* default height; --h (set inline, or by the presets below) wins */
+    height: var(--h, clamp(20rem, 26vh, 30rem));
     overflow: hidden;
+    border-radius: var(--radius-lg);
     background-color: var(--color-gray-placeholder);
+}
+
+/* portrait frame - good for vertically-oriented brands (~70% taller) */
+.work-card--tall {
+    --h: clamp(34rem, 44vh, 51rem);
+}
+
+/* letterbox frame - good for wide billboard / signage shots */
+.work-card--short {
+    --h: clamp(15rem, 19vh, 21rem);
 }
 
 /* empty (placeholder) frames - visible box on the black page */
@@ -1896,11 +2090,23 @@ h4 {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s var(--transition-smooth);
+    transition: transform 0.6s var(--transition-smooth),
+        opacity 0.5s var(--transition-smooth);
 }
 
 .work-card:hover .work-card__img {
     transform: scale(1.05);
+}
+
+/* Second still that cross-fades in over the first on hover. Add a
+   <img class="work-card__img work-card__img--hover"> as the LAST child
+   of .work-card__frame to give any card this behaviour. */
+.work-card__img--hover {
+    opacity: 0;
+}
+
+.work-card:hover .work-card__img--hover {
+    opacity: 1;
 }
 
 .work-card__meta {
@@ -1972,7 +2178,8 @@ h4 {
    NEW: About Section (Home Page)
    ============================================ */
 .about-section {
-    background-color: var(--color-black);
+    /* no background - inherits the page-wide gradient, fully black by
+       the time it scrolls into view */
 }
 
 .about-content {

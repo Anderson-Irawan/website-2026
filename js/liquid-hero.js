@@ -232,9 +232,11 @@
       if (idle) clearTimeout(idle);
       idle = setTimeout(function () { tAmt = 0; }, 500);
     }
-    canvas.addEventListener('pointermove', pointerTo);
-    canvas.addEventListener('pointerdown', pointerTo);
-    canvas.addEventListener('pointerleave', function () { tAmt = 0; });
+    // Listen on the window, not the canvas: the canvas sits at z-index -1
+    // behind the page content, so it never receives pointer events itself.
+    global.addEventListener('pointermove', pointerTo, { passive: true });
+    global.addEventListener('pointerdown', pointerTo, { passive: true });
+    document.addEventListener('pointerleave', function () { tAmt = 0; });
 
     // Draw a single frame with the current state.
     function render() {
@@ -281,12 +283,17 @@
     start();
     render();
 
-    // Stop drawing when the hero is scrolled away or the tab is hidden.
+    // Stop drawing when the hero area is scrolled away or the tab is
+    // hidden. The canvas itself is now position:fixed (always on
+    // screen), so watch the hero wrapper instead.
     if (global.IntersectionObserver) {
+      var watch = canvas.closest('.hero-pin')
+        || document.querySelector('.hero-pin, .liquid-hero')
+        || canvas;
       new IntersectionObserver(function (entries) {
         visible = entries[0].isIntersecting;
         if (visible) sync();
-      }, { threshold: 0 }).observe(canvas);
+      }, { threshold: 0 }).observe(watch);
     }
 
     document.addEventListener('visibilitychange', function () {

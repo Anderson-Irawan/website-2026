@@ -38,13 +38,20 @@
         </div>
     </header>
 
-    <!-- Portfolio Grid -->
+    <!-- Portfolio Grid - squish rows: 3 equal cards per row; hovering
+         one grows it to 40% of the row, the other two squish to 30%. -->
     <section class="portfolio-section">
-        <div class="work-scatter">
+        <div class="work-scatter work-scatter--squish">
 
+          <div class="work-row">
             <!-- PagiKopi -->
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
+            <a href="#" class="work-card portfolio-item-video">
+                <span class="work-card__frame">
+                    <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
+                        poster="assets/portfolio/pagikopi/Packaging overview.jpg">
+                        <source src="assets/portfolio/pagikopi/PagiKopi overview.mp4" type="video/mp4">
+                    </video>
+                </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="PagiKopi">PagiKopi</span>
                     <span class="work-card__cat">Brand Identity</span>
@@ -56,6 +63,8 @@
                 <span class="work-card__frame">
                     <img class="work-card__img" src="assets/portfolio/bci/fence billboard.jpg"
                         alt="Bangun Citra Irawan fence billboard">
+                    <img class="work-card__img work-card__img--hover" loading="lazy"
+                        src="assets/portfolio/bci/stationaries.jpg" alt="Bangun Citra Irawan stationery">
                 </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="Bangun Citra Irawan">Bangun Citra Irawan</span>
@@ -77,11 +86,15 @@
                     <span class="work-card__cat">Brand Identity</span>
                 </span>
             </a>
+          </div>
 
+          <div class="work-row">
             <!-- Pastel Mumu -->
             <a href="mumu.html" class="work-card">
                 <span class="work-card__frame">
                     <img class="work-card__img" src="assets/portfolio/mumu/mumu-hero-20.jpg" alt="Pastel Mumu hero">
+                    <img class="work-card__img work-card__img--hover" loading="lazy"
+                        src="assets/portfolio/mumu/mumu-mockup-storefront.jpg" alt="Pastel Mumu storefront">
                 </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="Pastel Mumu">Pastel Mumu</span>
@@ -93,6 +106,8 @@
             <a href="furari.html" class="work-card">
                 <span class="work-card__frame">
                     <img class="work-card__img" src="assets/portfolio/furari/furari-hero.jpg" alt="Furari hero">
+                    <img class="work-card__img work-card__img--hover" loading="lazy"
+                        src="assets/portfolio/furari/signboard.jpg" alt="Furari signboard">
                 </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="Furari">Furari</span>
@@ -100,48 +115,20 @@
                 </span>
             </a>
 
-            <!-- Placeholders hidden for now - uncomment one at a time as real projects are ready -->
-            <!--
-            <a href="#" class="work-card">
+            <!-- In the works - swap for a real <a class="work-card"> when ready -->
+            <span class="work-card work-card--soon">
                 <span class="work-card__frame"></span>
                 <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
+                    <span class="work-card__title" data-title="In the Works">In the Works</span>
+                    <span class="work-card__cat">Coming Soon</span>
                 </span>
-            </a>
+            </span>
+          </div>
 
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
-
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
-
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
-
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
-            -->
+          <!-- ADD A ROW: copy a <div class="work-row"> with exactly 3
+               <a class="work-card"> inside (same card markup as above).
+               For a hover video use the PagiKopi / Heir of Time pattern
+               (portfolio-item-video + <video class="... portfolio-video">). -->
 
         </div>
     </section>

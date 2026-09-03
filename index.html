@@ -13,6 +13,10 @@
 </head>
 
 <body>
+    <!-- Liquid gradient background - fixed behind the whole page,
+         covered by the opaque sections from .hero-divider onward -->
+    <canvas class="liquid-hero__bg" data-liquid-hero></canvas>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
@@ -37,9 +41,6 @@
     <!-- Hero Section -->
     <div class="hero-pin">
         <section class="liquid-hero">
-            <!-- Liquid gradient background -->
-            <canvas class="liquid-hero__bg" data-liquid-hero></canvas>
-
             <h2 class="liquid-hero__tagline" data-hero-tagline>Building <span class="tagline-term">Brand Systems</span> &amp; <span class="tagline-term">Digital Designs</span> for Founders <span class="tagline-strong">Forging a Path Forward</span></h2>
 
             <div class="liquid-hero__content">
@@ -60,35 +61,16 @@
     <!-- Divider between hero and work -->
     <section class="hero-divider">
         <h2 class="hero-divider__text">For Dreamers <br> &amp; Daredevils</h2>
+        <p>since 2023</p>
     </section>
 
     <!-- Portfolio Section -->
     <section class="portfolio-section">
-        <div class="work-scatter">
-
-            <!-- PagiKopi -->
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="PagiKopi">PagiKopi</span>
-                    <span class="work-card__cat">Brand Identity</span>
-                </span>
-            </a>
-
-            <!-- BCI -->
-            <a href="bci.html" class="work-card">
-                <span class="work-card__frame">
-                    <img class="work-card__img" src="assets/portfolio/bci/fence billboard.jpg"
-                        alt="Bangun Citra Irawan fence billboard">
-                </span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Bangun Citra Irawan">Bangun Citra Irawan</span>
-                    <span class="work-card__cat">Logo &amp; Brand Identity</span>
-                </span>
-            </a>
-
+        
+        <div class="work-scatter work-scatter--rows">
+          <div class="work-row">
             <!-- The Heir of Time -->
-            <a href="hot.html" class="work-card portfolio-item-video">
+            <a href="hot.html" class="work-card portfolio-item-video" style="--w: 40; --v: flex-end;">
                 <span class="work-card__frame">
                     <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
                         poster="assets/portfolio/theheiroftime/heiroftime-cover.jpg">
@@ -102,10 +84,46 @@
                 </span>
             </a>
 
-            <!-- Pastel Mumu -->
-            <a href="mumu.html" class="work-card">
+            <!-- PagiKopi -->
+            <a href="#" class="work-card work-card--tall portfolio-item-video" style="--w: 26">
                 <span class="work-card__frame">
-                    <img class="work-card__img" src="assets/portfolio/mumu/mumu-hero-20.jpg" alt="Pastel Mumu hero">
+                    <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
+                        poster="assets/portfolio/pagikopi/Packaging overview.jpg">
+                        <source src="assets/portfolio/pagikopi/PagiKopi overview.mp4" type="video/mp4">
+                    </video>
+                </span>
+                <span class="work-card__meta">
+                    <span class="work-card__title" data-title="PagiKopi">PagiKopi</span>
+                    <span class="work-card__cat">Brand Identity</span>
+                </span>
+            </a>
+
+            
+          </div>
+
+          <div class="work-row">
+            <!-- BCI -->
+            <a href="bci.html" class="work-card" style="--w: 56">
+                <span class="work-card__frame">
+                    <img class="work-card__img" src="assets/portfolio/bci/glow sign.png"
+                        alt="Bangun Citra Irawan fence billboard">
+                    <img class="work-card__img work-card__img--hover" loading="lazy"
+                        src="assets/portfolio/bci/fence billboard.jpg" alt="Bangun Citra Irawan stationery">
+                </span>
+                <span class="work-card__meta">
+                    <span class="work-card__title" data-title="Bangun Citra Irawan">Bangun Citra Irawan</span>
+                    <span class="work-card__cat">Logo &amp; Brand Identity</span>
+                </span>
+            </a>
+          </div>
+
+          <div class="work-row">
+            <!-- Pastel Mumu -->
+            <a href="mumu.html" class="work-card" style="--w: 48">
+                <span class="work-card__frame">
+                    <img class="work-card__img" src="assets/portfolio/mumu/mumu-mockup-storefront.jpg" alt="Pastel Mumu hero">
+                    <img class="work-card__img work-card__img--hover" loading="lazy"
+                        src="assets/portfolio/mumu/mumu-cover_1-80.jpg" alt="Pastel Mumu storefront">
                 </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="Pastel Mumu">Pastel Mumu</span>
@@ -114,58 +132,45 @@
             </a>
 
             <!-- Furari -->
-            <a href="furari.html" class="work-card">
+            <a href="furari.html" class="work-card" style="--w: 30; --h: 30rem;">
                 <span class="work-card__frame">
-                    <img class="work-card__img" src="assets/portfolio/furari/furari-hero.jpg" alt="Furari hero">
+                    <img class="work-card__img" src="assets/portfolio/furari/billboard.jpg" alt="Furari hero">
+                    <img class="work-card__img work-card__img--hover" loading="lazy"
+                        src="assets/portfolio/furari/furari-hero.jpg" alt="Furari Cat">
                 </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="Furari">Furari</span>
                     <span class="work-card__cat">Illustrations &amp; Logo</span>
                 </span>
             </a>
+          </div>
 
-            <!-- Placeholders hidden for now - uncomment one at a time as real projects are ready -->
-            <!--
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
+            <!-- ================================================================
+                 ADD A ROW: copy this block, drop in 1-3 cards, tune each --w.
+                 Widths in a row don't have to add to 100 - a short row just
+                 sits centred. --w defaults to 33 if you leave it off.
 
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
+            <div class="work-row">
+                <a href="project.html" class="work-card" style="--w: 30">
+                    <span class="work-card__frame">
+                        <img class="work-card__img" src="assets/portfolio/…/still.jpg" alt="…">
+                        <img class="work-card__img work-card__img--hover" loading="lazy"
+                             src="assets/portfolio/…/hover.jpg" alt="…">
+                    </span>
+                    <span class="work-card__meta">
+                        <span class="work-card__title" data-title="Project Name">Project Name</span>
+                        <span class="work-card__cat">Category</span>
+                    </span>
+                </a>
+                <a href="project2.html" class="work-card" style="--w: 40; --h: 40rem; --v: center"> … </a>
+                <a href="project3.html" class="work-card" style="--w: 26; --h: 18rem; --v: flex-end; --y: -1rem"> … </a>
+            </div>
 
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
-
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
-
-            <a href="#" class="work-card">
-                <span class="work-card__frame"></span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="Placeholder">Placeholder</span>
-                    <span class="work-card__cat">Category</span>
-                </span>
-            </a>
-            -->
+                 For a hover VIDEO instead of a second image, use the PagiKopi /
+                 Heir of Time pattern: add  portfolio-item-video  to the <a>,
+                 and put a <video class="work-card__img portfolio-video" ...
+                 poster="…"> in the frame instead of the two <img>s.
+                 ================================================================ -->
 
         </div>
 

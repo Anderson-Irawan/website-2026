@@ -44,7 +44,10 @@
 
             portfolioItem.addEventListener('mouseleave', () => {
                 video.pause();
-                video.currentTime = 0; // Reset to start
+                video.currentTime = 0;
+                // Restore the poster still (a paused video shows its first
+                // frame, not the poster, so reload to bring the poster back)
+                if (video.getAttribute('poster')) video.load();
             });
         }
     });

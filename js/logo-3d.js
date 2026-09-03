@@ -7,9 +7,10 @@
    The flat <img> inside [data-logo-3d] is shown instead of the
    3D build when:
      - the visitor has reduced motion on (toggle or OS setting)
-     - the device has no hover (touch)
      - WebGL / three.js fails to load
-   In those cases the 3D scene is never built.
+   In those cases the 3D scene is never built. The 3D logo (spin,
+   grow, parallax) runs on touch / small screens too - only the
+   cursor tilt needs a pointer, and it just stays neutral without one.
    ============================================================ */
 import * as THREE from 'three';
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
@@ -29,12 +30,29 @@ const SPIN_RECENTER = 39;      // SVG units pushed right at the half-turn so the
 const SPIN_END_SHIFT = 0;      // SVG units the mark ends up shifted right by the
                                // end of the scroll spin (0 = finishes where it
                                // started, at the CSS -4.5%).
-const SCROLL_GROW = 0.45;      // starts at (1 - SCROLL_GROW) size and grows to full
-                               // over one viewport of scroll
+// starts at (1 - SCROLL_GROW) size and grows to full over one viewport
+// of scroll. On phones the mark starts near full size and fills the
+// screen; tablet + desktop keep the smaller mark. Re-evaluated live on
+// resize (syncBreakpoint below) so it's right no matter what width the
+// page loaded at. Matches CSS: the size bump lives in max-width:640px.
+const smallMQ = window.matchMedia
+  ? window.matchMedia('(max-width: 640px)') : null;
+let SMALL_SCREEN = !!(smallMQ && smallMQ.matches);
+let SCROLL_GROW = SMALL_SCREEN ? 0.1 : 0.45;
+function fitMargin() { return SMALL_SCREEN ? 0.9 : 1.0; }
+function syncBreakpoint() {
+  const s = !!(smallMQ && smallMQ.matches);
+  if (s === SMALL_SCREEN) return false;
+  SMALL_SCREEN = s;
+  SCROLL_GROW = s ? 0.1 : 0.45;
+  return true;
+}
 const LEAVE_PARALLAX = -60;    // SVG units the logo drifts as the hero scrolls
                                // away. - = drifts down / lags behind the page,
                                // + = lifts up ahead of it. 0 to disable.
-const CANVAS_OVERSCAN = 1.6;   // canvas size vs logo box (keep in sync with CSS)
+const CANVAS_OVERSCAN = 2.3;   // canvas size vs logo box (keep in sync with CSS).
+                               // Needs enough headroom that LEAVE_PARALLAX
+                               // never drifts the model off the canvas edge.
 const PIVOT_OFFSET_X = 0;      // shift the spin axis, in SVG units (+ = right)
 const PIVOT_OFFSET_Y = 0;      // shift the spin axis, in SVG units (+ = down)
 const MATERIAL = {
@@ -48,20 +66,17 @@ const MATERIAL = {
 
 const reduceMQ = window.matchMedia
   ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
-const hoverMQ = window.matchMedia
-  ? window.matchMedia('(hover: none)') : null;
 
 /* Show the plain SVG instead of the 3D logo. */
 function flatMode() {
   return document.documentElement.classList.contains('liquid-hero-reduced') ||
-    (reduceMQ && reduceMQ.matches) ||
-    (hoverMQ && hoverMQ.matches);
+    (reduceMQ && reduceMQ.matches);
 }
 
 const host = document.querySelector('[data-logo-3d]');
 if (host) {
   let scene3d = null;   // built lazily, once
-  const relevantMedia = [reduceMQ, hoverMQ];
+  const relevantMedia = [reduceMQ];
 
   // When the flat <img> is the one on screen, mirror the 3D logo's
   // scroll behaviour: grow from small to full over the first viewport,
@@ -81,7 +96,7 @@ if (host) {
       'translateY(' + shiftPct.toFixed(2) + '%) scale(' + scale.toFixed(3) + ')';
   }
   window.addEventListener('scroll', updateFlatScale, { passive: true });
-  window.addEventListener('resize', updateFlatScale);
+  window.addEventListener('resize', () => { syncBreakpoint(); updateFlatScale(); });
 
   function update() {
     if (flatMode()) {
@@ -143,10 +158,9 @@ function build(host) {
   let ready = false;
   let logoSize = new THREE.Vector3(1, 1, 1);
 
-  // On-screen size of the logo relative to its box; 1.0 matches the
-  // flat <img>'s `object-fit: contain`. Spin room comes from
-  // CANVAS_OVERSCAN, not from shrinking the logo here.
-  const FIT_MARGIN = 1.0;
+  // On-screen size of the logo relative to its box; fitMargin() is 1.0
+  // on tablet/desktop (matches the flat <img>'s `object-fit: contain`)
+  // and 0.9 on phones so the mark overspills and fills the screen.
 
   new SVGLoader().load(SVG_URL, (data) => {
     const group = new THREE.Group();
@@ -197,7 +211,7 @@ function build(host) {
     const fitH = (logoSize.y / 2) / Math.tan(vFov / 2);
     const fitW = (logoSize.x / 2) / Math.tan(hFov / 2);
     camera.position.z =
-      Math.max(fitH, fitW) * FIT_MARGIN * CANVAS_OVERSCAN + logoSize.z / 2;
+      Math.max(fitH, fitW) * fitMargin() * CANVAS_OVERSCAN + logoSize.z / 2;
 
     camera.updateProjectionMatrix();
   }
@@ -245,7 +259,10 @@ function build(host) {
 
   document.addEventListener('pointerleave', () => { target.x = target.y = 0; });
   window.addEventListener('blur', () => { target.x = target.y = 0; });
-  window.addEventListener('resize', () => { if (active && ready) resize(); });
+  window.addEventListener('resize', () => {
+    syncBreakpoint();
+    if (active && ready) resize();
+  });
 
   if (window.IntersectionObserver) {
     new IntersectionObserver((entries) => {
