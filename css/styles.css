@@ -5,7 +5,7 @@
 /* Font Face Declarations */
 @font-face {
     font-family: 'Big Shoulders';
-    src: url('../assets/fonts/BigShoulders-VariableFont_opsz,wght.ttf') format('truetype');
+    src: url('../assets/fonts/BigShoulders-VariableFont_opsz,wght.woff2') format('woff2');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -13,7 +13,7 @@
 
 @font-face {
     font-family: 'Archivo';
-    src: url('../assets/fonts/Archivo-VariableFont_wdth,wght.ttf') format('truetype');
+    src: url('../assets/fonts/Archivo-VariableFont_wdth,wght.woff2') format('woff2');
     font-weight: 100 900;
     font-stretch: 62% 125%;
     font-style: normal;
@@ -22,7 +22,7 @@
 
 @font-face {
     font-family: 'Archivo';
-    src: url('../assets/fonts/Archivo-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+    src: url('../assets/fonts/Archivo-Italic-VariableFont_wdth,wght.woff2') format('woff2');
     font-weight: 100 900;
     font-stretch: 62% 125%;
     font-style: italic;
@@ -31,7 +31,7 @@
 
 @font-face {
     font-family: 'Instrument Serif';
-    src: url('../assets/fonts/InstrumentSerif-Regular.ttf') format('truetype');
+    src: url('../assets/fonts/InstrumentSerif-Regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -39,7 +39,7 @@
 
 @font-face {
     font-family: 'Instrument Serif';
-    src: url('../assets/fonts/InstrumentSerif-Italic.ttf') format('truetype');
+    src: url('../assets/fonts/InstrumentSerif-Italic.woff2') format('woff2');
     font-weight: 400;
     font-style: italic;
     font-display: swap;
@@ -1941,12 +1941,15 @@ h4 {
        style="--y: 3rem"            manual vertical nudge (down +, up -)
        style="--h: 26rem"           frame height (any length; default is
                                       clamp(20rem, 26vh, 30rem))
+       style="--p: 0.12"            scroll-parallax drift rate (default is
+                                      a preset that varies per card;
+                                      0 = this card doesn't drift)
        class="... work-card--tall"   height preset - portrait
        class="... work-card--short"  height preset - letterbox
-   Combine them: style="--w: 40; --v: flex-end; --y: -1.5rem; --h: 30rem"
+   Combine them: style="--w: 40; --v: flex-end; --h: 30rem; --p: 0.05"
 
-   No per-row CSS to write. Rows stack into one column below 760px.
-   work.html keeps the repeating 10-card grid above.
+   No per-row CSS to write. Below 760px the rows stack into one
+   full-width column (each card keeps its own --h) and parallax is off.
    ================================================================== */
 .work-scatter--rows {
     flex-direction: column;
@@ -1991,9 +1994,9 @@ h4 {
    ==================================================================
    3 equal cards per <div class="work-row">. Hovering one card grows
    it to 40% of the row and squishes the other two to 30% each
-   (flex-grow 4 : 3 : 3). Cards use the same frame / image-swap /
-   hover-video / meta as everywhere else.
-   work.html: <div class="work-scatter work-scatter--squish">
+   (flex-grow 4 : 3 : 3). Same frame / image-swap / hover-video / meta
+   as everywhere else. work.html: <div class="work-scatter work-scatter--squish">
+   Below 760px it stacks to one full-width column like the index rows.
    ================================================================== */
 .work-scatter--squish {
     flex-direction: column;
@@ -2028,9 +2031,7 @@ h4 {
 .work-scatter--squish .work-row:focus-within > .work-card:focus-visible { flex-grow: 4; }
 
 /* "In the works" filler tile */
-.work-card--soon {
-    cursor: default;
-}
+.work-card--soon { cursor: default; }
 
 .work-card--soon .work-card__frame {
     background: repeating-linear-gradient(-45deg,
@@ -2039,17 +2040,23 @@ h4 {
 
 .work-card--soon .work-card__title,
 .work-card--soon .work-card__cat {
-    color: var(--muted, rgba(250, 250, 255, 0.5));
+    color: rgba(250, 250, 255, 0.5);
 }
 
 @media (max-width: 760px) {
+    .work-scatter--squish {
+        max-width: none;
+        padding-inline: var(--container-padding);
+    }
+
     .work-scatter--squish .work-row {
         flex-direction: column;
         row-gap: clamp(2.5rem, 9vw, 4rem);
     }
 
     .work-scatter--squish .work-row > .work-card {
-        flex-grow: 1 !important;   /* stacked: no squish */
+        flex: none;          /* stop the flex sizing - just stack full width */
+        width: 100%;
     }
 }
 

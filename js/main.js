@@ -181,20 +181,31 @@ function initCardParallax() {
     if (window.matchMedia &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    // Skip the squish rows - their cards need to stay row-aligned.
+    // Skip the squish rows (work.html) - those cards stay row-aligned.
     const cards = Array.from(document.querySelectorAll('.work-card'))
         .filter(function (c) { return !c.closest('.work-scatter--squish'); });
     if (!cards.length) return;
 
-    // gentle, varied per-card rates ("sprinkled") - px shift per px the
-    // card sits away from the viewport centre. Higher = more lag.
-    const RATES = [0.07, 0.15, 0.1, 0.16, 0.08, 0.12, 0.115, 0.17, 0.09, 0.14];
+    // Per-card drift rate: px of lag per px the card sits from the
+    // viewport centre. Set it on the card with  style="--p: 0.12"
+    //   --p: 0     -> that card doesn't move
+    //   higher     -> more lag / drift
+    // Cards without a --p fall back to this "sprinkled" default set.
+    const FALLBACK = [0.07, 0.15, 0.1, 0.16, 0.08, 0.12, 0.115, 0.17, 0.09, 0.14];
     const CAP = 140; // px, so a card near the edge never flies off
     // No parallax once the grid collapses to a single stacked column
     // (matches the .work-scatter 760px breakpoint in styles.css).
     const stackedMQ = window.matchMedia
         ? window.matchMedia('(max-width: 760px)') : null;
     let ticking = false;
+    let rates = [];
+
+    function readRates() {
+        rates = cards.map(function (card, i) {
+            var v = parseFloat(getComputedStyle(card).getPropertyValue('--p'));
+            return isNaN(v) ? FALLBACK[i % FALLBACK.length] : v;
+        });
+    }
 
     function update() {
         ticking = false;
@@ -207,7 +218,7 @@ function initCardParallax() {
             const r = card.getBoundingClientRect();
             if (r.bottom < -160 || r.top > mid * 2 + 160) return;
             const offset = (r.top + r.height / 2) - mid;   // -above / +below
-            let y = -offset * RATES[i % RATES.length];      // lag toward centre
+            let y = -offset * rates[i];                     // lag toward centre
             y = Math.max(-CAP, Math.min(CAP, y));
             card.style.setProperty('--py', y.toFixed(1) + 'px');
         });
@@ -220,8 +231,9 @@ function initCardParallax() {
         }
     }
 
+    readRates();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', function () { readRates(); onScroll(); });
     update();
 }
 
