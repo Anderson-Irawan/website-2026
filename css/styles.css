@@ -1003,7 +1003,7 @@ h4 {
 .image-placeholder::after {
     content: 'Image';
     font-family: var(--font-body);
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--color-cream);
     font-size: 0.875rem;
 }
 
@@ -1029,7 +1029,7 @@ h4 {
 .about-preview .content p {
     font-size: 0.9rem;
     line-height: 1.8;
-    color: rgba(250, 250, 255, 0.8);
+    color: var(--color-cream);
 }
 
 .logo-decoration {
@@ -1155,11 +1155,6 @@ h4 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.footer-copyright {
-    font-size: 0.875rem;
-    color: rgba(250, 250, 255, 0.6);
 }
 
 @media (max-width: 576px) {
@@ -1353,7 +1348,7 @@ h4 {
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: rgba(250, 250, 255, 0.4);
+    color: var(--color-red);
 }
 
 .form-group select option {
@@ -1482,7 +1477,7 @@ h4 {
 
 .case-study-intro .meta {
     font-size: 0.875rem;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--color-red);
     text-transform: uppercase;
 }
 
@@ -1956,27 +1951,41 @@ h4 {
 }
 
 .work-scatter--squish .work-row {
+    /* the usable width once the two gutters are taken out */
+    --span: calc(100% - 2 * var(--col-gap));
+
     display: flex;
     column-gap: var(--col-gap);
     align-items: flex-start;
     width: 100%;
 }
 
+/* Sized off a fixed one-third track rather than flex-grow, so a row
+   holding one or two cards (after filtering) keeps the same column
+   widths as a full row instead of stretching to fill. */
 .work-scatter--squish .work-row > .work-card {
-    flex: 1 1 0;              /* rest state: an equal third */
+    flex: 0 0 calc(var(--span) / 3);
     width: auto;
     min-width: 0;             /* let the squished cards collapse */
     margin: 0;
-    transition: flex-grow 0.5s var(--transition-smooth);
+    transition: flex-basis 0.5s var(--transition-smooth);
 }
 
 @media (hover: hover) {
-    .work-scatter--squish .work-row:hover > .work-card { flex-grow: 3; }
-    .work-scatter--squish .work-row:hover > .work-card:hover { flex-grow: 4; }
+    .work-scatter--squish .work-row:hover > .work-card {
+        flex-basis: calc(var(--span) * 0.3);
+    }
+    .work-scatter--squish .work-row:hover > .work-card:hover {
+        flex-basis: calc(var(--span) * 0.4);
+    }
 }
 
-.work-scatter--squish .work-row:focus-within > .work-card { flex-grow: 3; }
-.work-scatter--squish .work-row:focus-within > .work-card:focus-visible { flex-grow: 4; }
+.work-scatter--squish .work-row:focus-within > .work-card {
+    flex-basis: calc(var(--span) * 0.3);
+}
+.work-scatter--squish .work-row:focus-within > .work-card:focus-visible {
+    flex-basis: calc(var(--span) * 0.4);
+}
 
 /* "In the works" filler tile */
 .work-card--soon { cursor: default; }
@@ -1986,10 +1995,8 @@ h4 {
         #1e1e1e, #1e1e1e 14px, #262626 14px, #262626 28px);
 }
 
-.work-card--soon .work-card__title,
-.work-card--soon .work-card__cat {
-    color: rgba(250, 250, 255, 0.5);
-}
+/* "In the works" tiles keep the normal title/category colours - the
+   striped frame already reads as a placeholder */
 
 @media (max-width: 760px) {
     .work-scatter--squish {
@@ -2101,7 +2108,7 @@ h4 {
     font-family: var(--font-body);
     font-size: var(--fs-6);
 
-    color: rgba(250, 250, 255, 0.55);
+    color: var(--color-red);
 }
 
 /* See more button under the grid */
@@ -2137,13 +2144,32 @@ h4 {
        the time it scrolls into view */
 }
 
+/* Match the portfolio's gutters so the about block lines up with the
+   work grid (and the "DOUBLE DASH" nav logo) instead of sitting in the
+   narrower 1200px .container. */
+.about-section > .container {
+    max-width: none;
+    padding-inline: calc(var(--space-xl) + clamp(0px, 6vw, 7rem));
+}
+
 .about-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-2xl);
-    align-items: start;
-    place-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: stretch;     /* the text column matches the photo's height */
+    justify-items: stretch;   /* was place-items:center, which stopped
+                                 the image filling its column */
 }
+
+/* Two equal halves against the photo: the heading sits at the top of
+   the image, the body starts level with its middle. */
+.about-text {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+}
+
+.about-text > .about-greeting { align-self: start; margin-bottom: 0; }
+.about-text > .about-body { align-self: start; }
 
 .about-greeting {
     margin-bottom: var(--space-lg);
@@ -2168,12 +2194,26 @@ h4 {
     margin-top: var(--space-xs);
 }
 
+/* the copy runs in two columns under the heading */
+.about-description {
+    columns: 2;
+    column-gap: clamp(1.5rem, 3vw, 3rem);
+}
+
 .about-description p {
     font-size: var(--fs-5);
     font-weight: 100;
     line-height: 1.1;
     margin-bottom: var(--space-md);
-    opacity: 0.9;
+    break-inside: avoid;   /* keep each paragraph whole in one column */
+}
+
+/* "Salam kenal" - the greeting leads in the serif */
+.about-description .salam {
+    font-family: var(--font-marker);   /* Instrument Serif */
+    font-style: italic;
+    font-weight: 400;                  /* it ships regular + italic only */
+    font-size: calc(var(--fs-5) + 4px);
 }
 
 .about-description p:last-child {
@@ -2188,6 +2228,7 @@ h4 {
     width: 100%;
     height: auto;
     display: block;
+    border-radius: var(--radius-lg);   /* matches the work card frames */
 }
 
 .about-btn {
@@ -2231,9 +2272,26 @@ h4 {
 }
 
 @media (max-width: 640px) {
+    .about-section > .container {
+        padding-inline: var(--container-padding);
+    }
+
     .about-content {
         grid-template-columns: 1fr;
         gap: var(--space-xl);
+    }
+
+    /* stacked: normal top-down flow, no half-and-half split, one column */
+    .about-text {
+        display: block;
+    }
+
+    .about-description {
+        columns: 1;
+    }
+
+    .about-text > .about-greeting {
+        margin-bottom: var(--space-lg);
     }
 
     .about-image {
@@ -2541,11 +2599,6 @@ h4 {
     align-items: center;
 }
 
-.footer-copyright {
-    font-size: 0.875rem;
-    color: rgba(250, 250, 255, 0.6);
-}
-
 @media (max-width: 576px) {
     .footer .container {
         flex-direction: column;
@@ -2575,7 +2628,7 @@ body {
     --outro-gutter: clamp(1.5rem, 6vw, 7rem);
     --outro-ink: var(--color-black);
     --outro-accent: var(--color-pink);      /* indigo #2E2B8A */
-    --outro-muted: rgba(0, 0, 0, 0.62);
+    --outro-muted: var(--color-pink);   /* indigo, not a grey */
     --outro-line: rgba(0, 0, 0, 0.2);
 
     background-color: transparent;
@@ -2594,15 +2647,32 @@ body {
 /* ── CTA band ─────────────────────────────────────────────── */
 /* the black rounded slab wraps the line AND the button */
 .cta-band {
+    --cta-pad-y: clamp(1.6rem, 4vw, 3rem);
+
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: clamp(1.5rem, 5vw, 4rem);
     margin: clamp(2.5rem, 7vw, 5rem) var(--outro-gutter) clamp(3rem, 8vw, 6rem);
-    padding: clamp(1.6rem, 4vw, 3rem) clamp(1.9rem, 4.5vw, 3.5rem);
+    padding-block: var(--cta-pad-y);
+    padding-inline: clamp(1.9rem, 4.5vw, 3.5rem);
     border-radius: clamp(1rem, 2.5vw, 2rem);
-    background-color: var(--color-black);
+    background-color: var(--color-pink);   /* indigo #2E2B8A on the orange */
+    transition: padding-block 0.7s var(--transition-smooth);
+}
+
+/* Scrolled into view: the slab grows 30% of its resting height at the
+   top and bottom, then settles back once it leaves. --cta-grow is that
+   30% in px, measured by initCtaExpand() in main.js (percentage padding
+   would resolve against width, not height). */
+.cta-band.is-open {
+    padding-block: calc(var(--cta-pad-y) + var(--cta-grow, 0px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta-band { transition: none; }
+    .cta-band.is-open { padding-block: var(--cta-pad-y); }
 }
 
 .cta-band .btn {
@@ -2619,6 +2689,63 @@ body {
     line-height: 1;
     text-transform: none;                   /* beat the global h1-h4 rule */
     text-wrap: balance;
+}
+
+/* ── hover gif pop ────────────────────────────────────────────
+   Put .gif-pop on any element and drop an
+   <img class="gif-pop__img"> inside it; hovering pops the image
+   up above. Add .gif-pop--below to pop downward instead (used by
+   the navbar logo, which has nothing above it).
+   initCtaSpark() in main.js adds the cursor drift and removes the
+   <img> if the file is missing. */
+.gif-pop { position: relative; }
+
+.gif-pop__img {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.6rem);
+    width: clamp(160px, 17vw, 260px);
+    /* the global img{max-width:100%} would otherwise clamp this to the
+       width of its trigger - tiny on the navbar logo */
+    max-width: none;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+    transform: translate(calc(-50% + var(--gx, 0px)), 10px) rotate(var(--tilt, -5deg)) scale(0.9);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 60;
+    transition: opacity 0.25s var(--transition-smooth),
+        transform 0.4s var(--transition-bounce);
+}
+
+.gif-pop:hover .gif-pop__img {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--gx, 0px)), 0) rotate(var(--tilt, -5deg)) scale(1);
+}
+
+.gif-pop--below .gif-pop__img {
+    bottom: auto;
+    top: calc(100% + 0.6rem);
+    transform: translate(calc(-50% + var(--gx, 0px)), -10px) rotate(var(--tilt, -5deg)) scale(0.9);
+}
+
+.gif-pop--below:hover .gif-pop__img {
+    transform: translate(calc(-50% + var(--gx, 0px)), 0) rotate(var(--tilt, -5deg)) scale(1);
+}
+
+/* the footer wordmark needs a box to anchor the pop to */
+.footer-logo-pop { display: inline-block; }
+
+/* a different lean per instance, so they don't all read as one asset */
+.footer-logo-pop         { --tilt: 5deg; }
+.salam.gif-pop           { --tilt: -8deg; }
+.tagline-strong.gif-pop  { --tilt: -3deg; }
+.cta-spark               { --tilt: 6deg; }
+
+/* no hover on touch - don't leave one stuck open after a tap */
+@media (hover: none) {
+    .gif-pop__img { display: none; }
 }
 
 /* "Rock & Roll" - hovering it pops a gif up above the words.
@@ -2638,11 +2765,12 @@ body {
     left: 50%;
     bottom: calc(100% + 0.25em);
     width: clamp(150px, 19vw, 280px);
+    max-width: none;
     height: auto;
     border-radius: 12px;
     box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
     /* --gx is nudged by the cursor (initCtaSpark in main.js) */
-    transform: translate(calc(-50% + var(--gx, 0px)), 10px) rotate(-5deg) scale(0.9);
+    transform: translate(calc(-50% + var(--gx, 0px)), 10px) rotate(var(--tilt, -5deg)) scale(0.9);
     opacity: 0;
     pointer-events: none;
     z-index: 3;
@@ -2652,7 +2780,7 @@ body {
 
 .cta-spark:hover .cta-spark__gif {
     opacity: 1;
-    transform: translate(calc(-50% + var(--gx, 0px)), 0) rotate(-5deg) scale(1);
+    transform: translate(calc(-50% + var(--gx, 0px)), 0) rotate(var(--tilt, -5deg)) scale(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2896,4 +3024,226 @@ body {
 @media (prefers-reduced-motion: reduce) {
     .page-loader__mark { animation: none; }
     .page-loader { transition: opacity 0.2s linear; }
+}
+
+/* ==================================================================
+   WORK CATEGORY TAGS + FILTER BAR
+   ==================================================================
+   Both are generated from WORK_CATEGORIES in js/main.js. In the HTML
+   you only ever set  data-cats="logo brand print"  on a .work-card.
+   ================================================================== */
+
+/* ── the pills under each card title ──────────────────────── */
+.work-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.3rem 0.5rem 0.3rem 0.65rem;
+    border: 1px solid var(--color-red);
+    border-radius: 999px;
+    color: var(--color-red);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.tag svg {
+    width: 13px;
+    height: 13px;
+    flex: none;
+}
+
+/* ── filter bar (work.html only) ──────────────────────────── */
+.work-filters {
+    margin: 0 auto clamp(2rem, 5vw, 3.5rem);
+    padding-inline: clamp(1.5rem, 7vw, 7.5rem);
+    max-width: 1680px;
+}
+
+.work-filters__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* the collapsed toggle is mobile-only */
+.work-filters__toggle { display: none; }
+
+.work-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.8rem 0.55rem 1rem;
+    border: 1px solid var(--color-cream);
+    border-radius: 999px;
+    background: none;
+    color: var(--color-cream);
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.25s var(--transition-smooth),
+        color 0.25s var(--transition-smooth),
+        border-color 0.25s var(--transition-smooth);
+}
+
+.work-filter svg {
+    width: 15px;
+    height: 15px;
+    flex: none;
+}
+
+/* The padding above is lopsided on purpose - the trailing icon needs
+   less optical space than a text edge. "All" has no icon, so it needs
+   even padding or its label reads off centre. */
+.work-filter[data-cat="all"] {
+    padding-inline: 0.95rem;
+}
+
+.work-filter:hover {
+    border-color: var(--color-red);
+    color: var(--color-red);
+}
+
+.work-filter[aria-pressed="true"] {
+    background-color: var(--color-red);
+    border-color: var(--color-red);
+    color: var(--color-black);
+}
+
+.work-filter:focus-visible {
+    outline: 2px solid var(--color-red);
+    outline-offset: 3px;
+}
+
+/* [hidden] needs restating - .work-empty sets no display of its own,
+   but an author `display` would beat the UA's [hidden]{display:none}. */
+.work-empty[hidden] {
+    display: none !important;
+}
+
+/* Cards settle in after the rows are repacked by a filter change. */
+@keyframes workCardIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.work-card--enter {
+    animation: workCardIn 0.45s var(--transition-smooth) both;
+    animation-delay: calc(var(--i, 0) * 55ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .work-card--enter { animation: none; }
+}
+
+/* nothing matched */
+.work-empty {
+    padding: clamp(2rem, 6vw, 4rem) clamp(1.5rem, 7vw, 7.5rem);
+    font-family: var(--font-marker);
+    font-size: var(--fs-3);
+    color: var(--color-red);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .work-filter { transition: none; }
+}
+
+@media (max-width: 640px) {
+    .work-filters { padding-inline: var(--container-padding); }
+    .work-empty { padding-inline: var(--container-padding); }
+
+    /* ── mobile: the chips collapse into a dropdown ── */
+    .work-filters__toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        width: 100%;
+        padding: 0.85rem 1rem;
+        border: 1px solid var(--color-cream);
+        border-radius: var(--radius-md);
+        background: none;
+        color: var(--color-cream);
+        font-family: var(--font-body);
+        font-size: 0.85rem;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .work-filters__state {
+        margin-left: auto;
+        color: var(--color-red);
+    }
+
+    .work-filters__chev {
+        width: 16px;
+        height: 16px;
+        flex: none;
+        transition: transform 0.3s var(--transition-smooth);
+    }
+
+    .work-filters.is-open .work-filters__chev { transform: rotate(180deg); }
+
+    .work-filters.is-open .work-filters__toggle {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-color: transparent;
+    }
+
+    .work-filters__list {
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        border: 1px solid var(--color-cream);
+        border-top: 0;
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        overflow: hidden;
+    }
+
+    .work-filters.is-open .work-filters__list { display: flex; }
+
+    .work-filters__list .work-filter {
+        justify-content: flex-start;
+        border: 0;
+        border-radius: 0;
+        padding: 0.8rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .work-filters__list .work-filter + .work-filter {
+        border-top: 1px solid rgba(250, 250, 255, 0.18);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .work-filters__chev { transition: none; }
+}
+
+/* ── work.html page title ─────────────────────────────────── */
+.page-header__title {
+    margin: 0;
+    font-family: var(--font-marker);   /* Instrument Serif */
+    font-weight: 400;
+    font-size: var(--fs-1);
+    line-height: 1;
+    text-transform: none;              /* beat the global h1-h4 rule */
+    color: var(--color-cream);
+}
+
+/* line the title up with the filter bar and the card grid */
+.page-header > .container {
+    max-width: 1680px;
+    padding-inline: clamp(1.5rem, 7vw, 7.5rem);
+}
+
+@media (max-width: 640px) {
+    .page-header > .container { padding-inline: var(--container-padding); }
 }

@@ -6,7 +6,13 @@
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
     portfolioVideos.forEach(video => {
-        const portfolioItem = video.closest('.portfolio-item-video');
+        // The hover target is whichever card the video sits in. Don't
+        // require .portfolio-item-video - a video dropped into any card
+        // should just work, rather than failing silently because the
+        // marker class was left off the wrapping <a>.
+        const portfolioItem = video.closest(
+            '.portfolio-item-video, .work-card, .portfolio-item'
+        ) || video.parentElement;
 
         if (!portfolioItem) return;
 

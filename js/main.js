@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavbar();
     initSocial();
     initOutro();
+    initWorkTags();
+    initWorkFilters();
+    initCtaExpand();
     initParallax();
     initCtaSpark();
     initScrollAnimations();
@@ -118,17 +121,15 @@ function initHeroTagline() {
 
     // Drift rate: a fraction of the scroll, close to (a little under) the
     // gradient background's own parallax so the text feels stuck to it.
+    // No opacity fade - it applied to the whole layer, which dragged the
+    // hover gif inside .tagline-strong down with it.
     const PARALLAX = 0.22;
-    const FADE = 1.15;      // fully faded by ~0.87 of a viewport scrolled
-    const REST_OPACITY = 0.9;
 
     const onScroll = () => {
         const vh = window.innerHeight || 1;
         const p = (window.pageYOffset || 0) / vh;
         tag.style.transform =
             'translate3d(0,' + (-p * PARALLAX * vh).toFixed(1) + 'px,0)';
-        tag.style.opacity =
-            (REST_OPACITY * Math.max(0, 1 - p * FADE)).toFixed(3);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
@@ -209,6 +210,260 @@ function initPageLoader() {
     });
 }
 
+/* ══════════════════════════════════════════════════════════════
+   WORK CATEGORIES
+   ══════════════════════════════════════════════════════════════
+   THIS IS THE ONLY PLACE CATEGORIES ARE DEFINED.
+
+   To tag a project, put the slugs on its card in the HTML:
+
+       <a class="work-card" data-cats="logo brand print">
+
+   Two or three is the intent. The pills under the title and the
+   filter bar on work.html are both generated from this list, so
+   you never write pill markup or SVG by hand.
+
+   To rename a category, change its label below.
+   To add one, add a slug + label + icon paths below.
+   ══════════════════════════════════════════════════════════════ */
+const WORK_CATEGORIES = {
+    logo: {
+        label: 'Logo Design',
+        icon: '<circle cx="9.5" cy="9.5" r="5.5"/><rect x="9" y="9" width="11" height="11" rx="2"/>'
+    },
+    brand: {
+        label: 'Brand System',
+        icon: '<path d="M12 3 21 7.6 12 12.2 3 7.6 12 3Z"/><path d="M3 12.4 12 17l9-4.6"/><path d="M3 16.8 12 21.4l9-4.6"/>'
+    },
+    illustration: {
+        label: 'Illustrations',
+        icon: '<path d="M14.5 3.6 20.4 9.5 9.9 20H4v-5.9L14.5 3.6Z"/><path d="M12.6 5.5 18.5 11.4"/><path d="M4 20c1.6-1.2 2.2-2.6 2-4.2"/>'
+    },
+    motion: {
+        label: 'Motion Graphics',
+        icon: '<path d="M10 7.6 17.5 12 10 16.4V7.6Z"/><path d="M6.2 6.4 6.2 17.6"/><path d="M3 8.8 3 15.2"/>'
+    },
+    web: {
+        label: 'Web & Digital',
+        icon: '<rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M3 9.2h18"/><path d="M6.2 6.9h.01M8.9 6.9h.01"/>'
+    },
+    social: {
+        label: 'Social Media',
+        icon: '<path d="M20.5 12.4c0 4-3.8 7.2-8.5 7.2a9.9 9.9 0 0 1-2.7-.37L4 21l1.5-3.6A6.9 6.9 0 0 1 3.5 12.4C3.5 8.4 7.3 5.2 12 5.2s8.5 3.2 8.5 7.2Z"/><path d="M9.2 12.3h.01M12 12.3h.01M14.8 12.3h.01"/>'
+    },
+    print: {
+        label: 'Print & Packaging',
+        icon: '<path d="M3.4 7.7 12 3.4l8.6 4.3v8.6L12 20.6l-8.6-4.3V7.7Z"/><path d="M3.4 7.7 12 12l8.6-4.3"/><path d="M12 12v8.6"/>'
+    }
+};
+
+const WORK_FILTER_MAX = 3;   // how many filters can be on at once
+
+function catIcon(slug) {
+    const cat = WORK_CATEGORIES[slug];
+    if (!cat) return '';
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+        'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ' +
+        'aria-hidden="true">' + cat.icon + '</svg>';
+}
+
+function cardCats(card) {
+    return (card.getAttribute('data-cats') || '')
+        .split(/\s+/)
+        .filter(function (s) { return s && WORK_CATEGORIES[s]; });
+}
+
+/* Build the tag pills under every card title, on any page. */
+function initWorkTags() {
+    document.querySelectorAll('.work-card[data-cats]').forEach(function (card) {
+        const meta = card.querySelector('.work-card__meta');
+        if (!meta || meta.querySelector('.work-card__tags')) return;
+
+        const cats = cardCats(card);
+        if (!cats.length) return;
+
+        const wrap = document.createElement('span');
+        wrap.className = 'work-card__tags';
+        wrap.innerHTML = cats.map(function (slug) {
+            return '<span class="tag">' + WORK_CATEGORIES[slug].label +
+                catIcon(slug) + '</span>';
+        }).join('');
+
+        // the pills stand in for the old single category line
+        const old = meta.querySelector('.work-card__cat');
+        if (old) old.remove();
+        meta.appendChild(wrap);
+    });
+}
+
+/* Filter bar - only builds where <div data-work-filters> exists (work.html).
+   Multi-select up to WORK_FILTER_MAX; picking another drops the oldest. */
+function initWorkFilters() {
+    const bar = document.querySelector('[data-work-filters]');
+    if (!bar) return;
+
+    const scatter = document.querySelector('.work-scatter');
+    if (!scatter) return;
+
+    const PER_ROW = 3;
+
+    // Every card, in source order. This array is the source of truth -
+    // the .work-row divs get rebuilt around it on every filter change,
+    // so the surviving cards always repack into full rows instead of
+    // leaving holes where a hidden card used to sit. Moving the nodes
+    // (rather than cloning) keeps their video and hover listeners.
+    const cards = Array.from(scatter.querySelectorAll('.work-card'));
+    if (!cards.length) return;
+
+    // only offer categories that something actually uses
+    const used = Object.keys(WORK_CATEGORIES).filter(function (slug) {
+        return cards.some(function (c) { return cardCats(c).indexOf(slug) !== -1; });
+    });
+
+    // On mobile the chips collapse behind a toggle; on desktop the
+    // toggle is hidden by CSS and the list is always open.
+    bar.innerHTML =
+        '<button type="button" class="work-filters__toggle" aria-expanded="false" ' +
+        'aria-controls="work-filter-list">' +
+        '<span>Filter</span>' +
+        '<span class="work-filters__state">All</span>' +
+        '<svg class="work-filters__chev" viewBox="0 0 24 24" fill="none" ' +
+        'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+        'stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>' +
+        '</button>' +
+        '<div class="work-filters__list" id="work-filter-list">' +
+        '<button type="button" class="work-filter" data-cat="all" aria-pressed="true">All</button>' +
+        used.map(function (slug) {
+            return '<button type="button" class="work-filter" data-cat="' + slug +
+                '" aria-pressed="false">' + WORK_CATEGORIES[slug].label +
+                catIcon(slug) + '</button>';
+        }).join('') +
+        '</div>';
+
+    const buttons = Array.from(bar.querySelectorAll('.work-filter'));
+    const allBtn = bar.querySelector('[data-cat="all"]');
+    const toggle = bar.querySelector('.work-filters__toggle');
+    const state = bar.querySelector('.work-filters__state');
+    let active = [];   // oldest first
+
+    toggle.addEventListener('click', function () {
+        const open = bar.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    function render() {
+        buttons.forEach(function (b) {
+            const slug = b.getAttribute('data-cat');
+            b.setAttribute('aria-pressed',
+                slug === 'all' ? String(active.length === 0)
+                               : String(active.indexOf(slug) !== -1));
+        });
+
+        // what the collapsed mobile toggle reads
+        state.textContent = active.length === 0
+            ? 'All'
+            : (active.length === 1 ? WORK_CATEGORIES[active[0]].label
+                                   : active.length + ' selected');
+
+        const visible = cards.filter(function (card) {
+            if (active.length === 0) return true;
+            const cats = cardCats(card);
+            return active.some(function (a) { return cats.indexOf(a) !== -1; });
+        });
+
+        relayout(visible);
+
+        const empty = document.querySelector('[data-work-empty]');
+        if (empty) empty.hidden = visible.length > 0;
+    }
+
+    /* Rebuild the rows around whichever cards survived the filter, so
+       they repack three-up instead of leaving gaps. */
+    function relayout(visible) {
+        const frag = document.createDocumentFragment();
+
+        for (let i = 0; i < visible.length; i += PER_ROW) {
+            const row = document.createElement('div');
+            row.className = 'work-row';
+            visible.slice(i, i + PER_ROW).forEach(function (card, n) {
+                card.style.setProperty('--i', String(n));
+                card.classList.remove('work-card--enter');
+                row.appendChild(card);
+            });
+            frag.appendChild(row);
+        }
+
+        // drop the old rows (their cards are already re-parented above,
+        // and anything filtered out is simply left detached)
+        scatter.querySelectorAll('.work-row').forEach(function (r) { r.remove(); });
+        scatter.prepend(frag);
+
+        // retrigger the entrance on the cards now on screen
+        requestAnimationFrame(function () {
+            visible.forEach(function (card) {
+                card.classList.add('work-card--enter');
+            });
+        });
+    }
+
+    bar.addEventListener('click', function (e) {
+        const btn = e.target.closest('.work-filter');
+        if (!btn) return;
+        const slug = btn.getAttribute('data-cat');
+
+        if (slug === 'all') {
+            active = [];
+        } else {
+            const at = active.indexOf(slug);
+            if (at !== -1) {
+                active.splice(at, 1);                 // toggle off
+            } else {
+                active.push(slug);
+                if (active.length > WORK_FILTER_MAX) active.shift();  // drop oldest
+            }
+        }
+        render();
+    });
+
+    allBtn.setAttribute('aria-pressed', 'true');
+    render();
+}
+
+/* ============================================
+   CTA band grows on approach
+   The black slab gains 10% of its resting height
+   as padding top and bottom while it's on screen,
+   and settles back once it leaves.
+   ============================================ */
+function initCtaExpand() {
+    const band = document.querySelector('.cta-band');
+    if (!band || !window.IntersectionObserver) return;
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    // Percentage padding resolves against width, so measure the height
+    // ourselves. Measure with the class off so we always read the rest size.
+    function measure() {
+        const wasOpen = band.classList.contains('is-open');
+        band.classList.remove('is-open');
+        band.style.setProperty('--cta-grow', '0px');
+        const rest = band.offsetHeight;
+        band.style.setProperty('--cta-grow', (rest * 0.3).toFixed(1) + 'px');
+        if (wasOpen) band.classList.add('is-open');
+    }
+
+    measure();
+    window.addEventListener('resize', measure);
+
+    // Bottom margin is positive so it starts opening before the band
+    // actually reaches the viewport; top margin is negative so it starts
+    // closing while it's still partly on screen, rather than at the
+    // moment it clears the edge.
+    new IntersectionObserver(function (entries) {
+        band.classList.toggle('is-open', entries[0].isIntersecting);
+    }, { rootMargin: '-20% 0px 30% 0px' }).observe(band);
+}
+
 /* ============================================
    Generic scroll parallax
    Any element with data-parallax="<rate>" drifts
@@ -262,8 +517,8 @@ function initParallax() {
    missing so no broken image shows up
    ============================================ */
 function initCtaSpark() {
-    document.querySelectorAll('.cta-spark').forEach(function (spark) {
-        const gif = spark.querySelector('.cta-spark__gif');
+    document.querySelectorAll('.cta-spark, .gif-pop').forEach(function (spark) {
+        const gif = spark.querySelector('.cta-spark__gif, .gif-pop__img');
         if (!gif) return;
 
         gif.addEventListener('error', function () { gif.remove(); });

@@ -95,7 +95,6 @@ body {
     letter-spacing: -0.015em;
     text-transform: none; /* override the global h1-h4 uppercase */
     color: var(--color-cream);
-    opacity: 0.9;
     text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
     pointer-events: none; /* never intercept the cursor -> gradient/tilt effects */
     will-change: transform, opacity;
@@ -123,6 +122,15 @@ body {
    synthetic bold - swap to a real weight if it looks rough. */
 .liquid-hero__tagline .tagline-strong {
     font-weight: 700;
+    /* the tagline is pointer-events:none so the cursor reaches the
+       gradient; this phrase opts back in so its gif pop can fire */
+    pointer-events: auto;
+}
+
+/* The tagline sits at z-index 1, below the logo at 2, so its gif would
+   pop out behind the mark. Lift the whole layer only while it's hovered. */
+.liquid-hero__tagline:has(.gif-pop:hover) {
+    z-index: 5;
 }
 
 /* Band between the hero and the work section. Transparent - it sits on
