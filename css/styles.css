@@ -1157,58 +1157,6 @@ h4 {
     align-items: center;
 }
 
-.footer-social {
-    display: flex;
-    gap: var(--space-sm);
-}
-
-.footer-social a {
-    width: 40px;
-    height: 40px;
-    background-color: var(--color-black);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s var(--transition-smooth);
-}
-
-.footer-social a svg {
-    color: var(--color-cream);
-    transition: color 0.3s var(--transition-smooth);
-}
-
-.footer-social a:nth-child(1):hover {
-    background-color: #E4405F;
-}
-
-.footer-social a:nth-child(1):hover svg {
-    color: var(--color-black);
-}
-
-.footer-social a:nth-child(2):hover {
-    background-color: #0A66C2;
-}
-
-.footer-social a:nth-child(2):hover svg {
-    color: var(--color-black);
-}
-
-.footer-social a:nth-child(3):hover {
-    background-color: #1769FF;
-}
-
-.footer-social a:nth-child(3):hover svg {
-    color: var(--color-black);
-}
-
-.footer-social a:nth-child(4):hover {
-    background-color: var(--color-pink);
-}
-
-.footer-social a:nth-child(4):hover svg {
-    color: var(--color-black);
-}
-
 .footer-copyright {
     font-size: 0.875rem;
     color: rgba(250, 250, 255, 0.6);
@@ -2593,58 +2541,6 @@ h4 {
     align-items: center;
 }
 
-.footer-social {
-    display: flex;
-    gap: var(--space-sm);
-}
-
-.footer-social a {
-    width: 40px;
-    height: 40px;
-    background-color: var(--color-black);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s var(--transition-smooth);
-}
-
-.footer-social a svg {
-    color: var(--color-cream);
-    transition: color 0.3s var(--transition-smooth);
-}
-
-.footer-social a:nth-child(1):hover {
-    background-color: #E4405F;
-}
-
-.footer-social a:nth-child(1):hover svg {
-    color: var(--color-black);
-}
-
-.footer-social a:nth-child(2):hover {
-    background-color: #0A66C2;
-}
-
-.footer-social a:nth-child(2):hover svg {
-    color: var(--color-black);
-}
-
-.footer-social a:nth-child(3):hover {
-    background-color: #1769FF;
-}
-
-.footer-social a:nth-child(3):hover svg {
-    color: var(--color-black);
-}
-
-.footer-social a:nth-child(4):hover {
-    background-color: var(--color-pink);
-}
-
-.footer-social a:nth-child(4):hover svg {
-    color: var(--color-black);
-}
-
 .footer-copyright {
     font-size: 0.875rem;
     color: rgba(250, 250, 255, 0.6);
@@ -2656,4 +2552,348 @@ h4 {
         gap: var(--space-md);
         text-align: center;
     }
+}
+/* ==================================================================
+   OUTRO - CTA band + full-screen footer
+   ==================================================================
+   Sits at the bottom of every page. When it scrolls into view the
+   PAGE background itself turns brand orange, and the navbar + both
+   side rails clear out of frame. initOutro() in main.js toggles
+   .outro-active on <html>; everything below reacts to that.
+   ================================================================== */
+
+/* the page background is what changes - the outro block is see-through */
+body {
+    transition: background-color 0.8s var(--transition-smooth);
+}
+
+.outro-active body {
+    background-color: var(--color-red);
+}
+
+.outro {
+    --outro-gutter: clamp(1.5rem, 6vw, 7rem);
+    --outro-ink: var(--color-black);
+    --outro-accent: var(--color-pink);      /* indigo #2E2B8A */
+    --outro-muted: rgba(0, 0, 0, 0.62);
+    --outro-line: rgba(0, 0, 0, 0.2);
+
+    background-color: transparent;
+    color: var(--outro-ink);
+}
+
+/* ── scroll parallax ──────────────────────────────────────── */
+/* Any element with data-parallax="<rate>" drifts as it crosses the
+   viewport; initParallax() in main.js sets --py. Higher rate = more
+   lag. Off below 760px and under prefers-reduced-motion. */
+[data-parallax] {
+    transform: translateY(var(--py, 0px));
+    will-change: transform;
+}
+
+/* ── CTA band ─────────────────────────────────────────────── */
+/* the black rounded slab wraps the line AND the button */
+.cta-band {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    margin: clamp(2.5rem, 7vw, 5rem) var(--outro-gutter) clamp(3rem, 8vw, 6rem);
+    padding: clamp(1.6rem, 4vw, 3rem) clamp(1.9rem, 4.5vw, 3.5rem);
+    border-radius: clamp(1rem, 2.5vw, 2rem);
+    background-color: var(--color-black);
+}
+
+.cta-band .btn {
+    text-transform: none;       /* "Get in Touch!" reads as written */
+}
+
+.cta-band__box {
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-marker);        /* Instrument Serif */
+    font-style: normal;                     /* "Ready to" stays upright */
+    font-weight: 400;
+    font-size: clamp(2.1rem, 6vw, 4.75rem);
+    line-height: 1;
+    text-transform: none;                   /* beat the global h1-h4 rule */
+    text-wrap: balance;
+}
+
+/* "Rock & Roll" - hovering it pops a gif up above the words.
+   Drop your clip in at assets/images/rock-and-roll.gif; if the file
+   isn't there initCtaSpark() removes the <img> so nothing breaks. */
+.cta-spark {
+    position: relative;
+    display: inline-block;
+    font-style: italic;                     /* the italic marks it as the hot phrase */
+    transition: color 0.3s var(--transition-smooth);
+}
+
+.cta-spark:hover { color: var(--color-red); }
+
+.cta-spark__gif {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.25em);
+    width: clamp(150px, 19vw, 280px);
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+    /* --gx is nudged by the cursor (initCtaSpark in main.js) */
+    transform: translate(calc(-50% + var(--gx, 0px)), 10px) rotate(-5deg) scale(0.9);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    transition: opacity 0.25s var(--transition-smooth),
+        transform 0.4s var(--transition-bounce);
+}
+
+.cta-spark:hover .cta-spark__gif {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--gx, 0px)), 0) rotate(-5deg) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta-spark__gif { transition: opacity 0.2s linear; }
+}
+
+/* ── full-screen footer ───────────────────────────────────── */
+.site-footer {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.75rem);
+    padding: clamp(2rem, 5vw, 4rem) var(--outro-gutter) 1.75rem;
+    /* no top rule - the orange band is the divider */
+}
+
+/* the thanks + shark row soaks up all the leftover height, so the link
+   row and copyright sit tight together at the bottom */
+.footer-top {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: center;
+    gap: clamp(2rem, 6vw, 5rem);
+}
+
+.footer-thanks {
+    margin: 0;
+    font-family: var(--font-marker);
+    font-weight: 400;
+    font-size: clamp(1.9rem, 4.4vw, 3.4rem);
+    line-height: 1.02;
+    text-transform: none;
+    color: var(--outro-ink);
+}
+
+.footer-logotype {
+    display: block;
+    width: clamp(170px, 24vw, 330px);
+    height: auto;
+    margin-top: clamp(0.9rem, 2.4vw, 1.6rem);
+    color: var(--outro-ink);        /* the wordmark inherits this */
+}
+
+/* shark, same gentle bounce as the contact page */
+.footer-art img {
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+    margin-inline: auto;
+    display: block;
+    animation: sharkBounce 3s ease-in-out infinite;
+}
+
+/* One short row: Portfolio | About | Contact | socials.
+   Stacks only on mobile. */
+.footer-links {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);   /* Home | Portfolio | About | Contact | socials */
+    align-items: center;
+    gap: clamp(0.75rem, 2.5vw, 2rem);
+}
+
+.footer-links > a {
+    font-family: var(--font-marker);
+    font-size: var(--fs-4);
+    line-height: 1.1;
+    color: var(--outro-ink);
+    text-decoration: none;
+    transition: color 0.3s var(--transition-smooth);
+}
+
+.footer-links > a:hover {
+    color: var(--outro-accent);
+    font-style: italic;
+}
+
+/* social icons: initSocial() clones this into the right side rail
+   and the burger menu */
+.site-footer .footer-social {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;   /* lines the icons up with "Back to top" */
+    gap: clamp(0.85rem, 2vw, 1.4rem);
+}
+
+.site-footer .footer-social a {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    height: auto;
+    padding: 0;
+    background: none;
+    color: var(--outro-ink);
+    transition: color 0.3s var(--transition-smooth),
+        transform 0.3s var(--transition-bounce);
+}
+
+.site-footer .footer-social a:hover {
+    color: var(--outro-accent);
+    transform: scale(1.15);
+}
+
+.site-footer .footer-social a svg {
+    width: 28px;
+    height: 28px;
+    flex: none;
+    color: inherit;
+}
+
+.footer-base {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    padding-top: 0.9rem;
+    font-size: var(--fs-6);
+    color: var(--outro-muted);
+}
+
+.footer-base b { color: var(--outro-ink); font-weight: 600; }
+
+.footer-base a {
+    color: var(--outro-muted);
+    text-decoration: none;
+    transition: color 0.3s var(--transition-smooth);
+}
+
+.footer-base a:hover { color: var(--outro-accent); }
+
+/* ── nav + side rails clear out while the outro is on screen ── */
+.navbar {
+    transition: transform 0.55s var(--transition-smooth),
+        opacity 0.4s var(--transition-smooth);
+}
+
+.side-rail {
+    transform: translateY(-50%) translateX(var(--slide, 0));
+    transition: transform 0.65s var(--transition-smooth),
+        opacity 0.45s var(--transition-smooth);
+}
+
+.outro-active .navbar {
+    transform: translateY(-110%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.outro-active .side-rail--left  { --slide: -180%; opacity: 0; }
+.outro-active .side-rail--right { --slide: 180%; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+    .navbar, .side-rail, .footer-art img { transition: none; animation: none; }
+}
+
+@media (max-width: 900px) {
+    .footer-top { grid-template-columns: 1fr; }
+    .footer-art { order: -1; }
+    .footer-art img { max-width: 320px; }
+}
+
+/* smaller screens: stack the line above the button, both centred */
+@media (max-width: 760px) {
+    .cta-band {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: clamp(1.25rem, 5vw, 2rem);
+    }
+
+    .cta-band .btn { width: 100%; }
+
+    /* the 4-up link row is the only place that stacks */
+    .footer-links {
+        grid-template-columns: 1fr;
+        justify-items: start;
+        gap: 0.85rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .footer-base { flex-direction: column; align-items: flex-start; }
+}
+
+/* ==================================================================
+   PAGE LOADER - spinning mark, stepped to 12 fps
+   ==================================================================
+   Hidden by default so the site is never stuck behind it if JS fails.
+   A one-line script in <head> adds .is-loading to <html> before first
+   paint; initPageLoader() in main.js clears it on load and puts it
+   back when you click through to another page.
+   ================================================================== */
+.page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    background-color: var(--color-black);
+    perspective: 800px;              /* the mark turns in depth, not flat */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.45s var(--transition-smooth),
+        visibility 0s linear 0.45s;
+}
+
+.is-loading .page-loader {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.25s var(--transition-smooth);
+}
+
+.page-loader__mark {
+    width: clamp(84px, 12vw, 150px);
+    height: auto;
+    transform-style: preserve-3d;
+
+    /* same soft shadow the hero mark uses */
+    filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.5));
+
+    /* 12 discrete frames per turn, one turn per 1.2s */
+    animation: ddLoaderSpin 1.2s steps(12, end) infinite;
+}
+
+/* Y-axis turn, same axis as the hero's extruded model, with a small
+   fixed X tilt so the bevel catches. Runs 15deg -> 375deg rather than
+   0 -> 360 so no frame lands exactly on 90 or 270, where a flat plane
+   would be edge-on and vanish. */
+@keyframes ddLoaderSpin {
+    from { transform: rotateX(-10deg) rotateY(15deg); }
+    to   { transform: rotateX(-10deg) rotateY(375deg); }
+}
+
+/* don't let the page scroll behind the overlay */
+.is-loading body { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+    .page-loader__mark { animation: none; }
+    .page-loader { transition: opacity 0.2s linear; }
 }

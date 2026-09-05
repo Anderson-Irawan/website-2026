@@ -4,12 +4,16 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all modules
+    initPageLoader();
     initSmoothScroll();
     initHeroPin();
     initHeroTagline();
     initHeroBgFade();
     initNavbar();
     initSocial();
+    initOutro();
+    initParallax();
+    initCtaSpark();
     initScrollAnimations();
     initMobileMenu();
     initSlidingPortfolio();
@@ -129,6 +133,152 @@ function initHeroTagline() {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     onScroll();
+}
+
+/* ============================================
+   Outro - while the orange CTA/footer block is on
+   screen, clear the navbar and both side rails out
+   of frame (CSS does the moving; this just flips
+   .outro-active on <html>)
+   ============================================ */
+function initOutro() {
+    const outro = document.querySelector('[data-outro]');
+    if (!outro || !window.IntersectionObserver) return;
+
+    const root = document.documentElement;
+    new IntersectionObserver(function (entries) {
+        root.classList.toggle('outro-active', entries[0].isIntersecting);
+    }, { rootMargin: '0px 0px -35% 0px' }).observe(outro);
+}
+
+/* ============================================
+   Page loader - the spinning mark shown on first
+   load and again while moving between pages
+   ============================================ */
+function initPageLoader() {
+    const root = document.documentElement;
+    const loader = document.querySelector('.page-loader');
+    if (!loader) { root.classList.remove('is-loading'); return; }
+
+    const MIN_MS = 450;   // keep it up at least this long so it can't flash
+    const MAX_MS = 6000;  // failsafe: never trap the visitor behind it
+    const start = performance.now();
+    let done = false;
+
+    function hide() {
+        if (done) return;
+        done = true;
+        root.classList.remove('is-loading');
+    }
+
+    function hideWhenReady() {
+        const waited = performance.now() - start;
+        setTimeout(hide, Math.max(0, MIN_MS - waited));
+    }
+
+    if (document.readyState === 'complete') hideWhenReady();
+    else window.addEventListener('load', hideWhenReady);
+    setTimeout(hide, MAX_MS);
+
+    // Bring it back on the way out, so the spin covers the page swap.
+    document.addEventListener('click', function (e) {
+        const link = e.target.closest && e.target.closest('a[href]');
+        if (!link || e.defaultPrevented) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        if (link.target && link.target !== '_self') return;
+
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('mailto:') ||
+            href.startsWith('tel:')) return;
+
+        // same-origin only, and not a jump to the page we're already on
+        let url;
+        try { url = new URL(href, location.href); } catch (err) { return; }
+        if (url.origin !== location.origin) return;
+        if (url.pathname === location.pathname && url.hash) return;
+
+        e.preventDefault();
+        done = false;
+        root.classList.add('is-loading');
+        setTimeout(function () { location.href = url.href; }, 320);
+    });
+
+    // Coming back via the browser's back/forward cache
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) { done = false; hide(); }
+    });
+}
+
+/* ============================================
+   Generic scroll parallax
+   Any element with data-parallax="<rate>" drifts
+   as it crosses the viewport. Higher rate = more
+   lag. Off on mobile and under reduced-motion.
+   ============================================ */
+function initParallax() {
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const els = Array.from(document.querySelectorAll('[data-parallax]'));
+    if (!els.length) return;
+
+    const CAP = 90;   // px, so nothing drifts into its neighbours
+    const stackedMQ = window.matchMedia
+        ? window.matchMedia('(max-width: 760px)') : null;
+    let ticking = false;
+
+    function update() {
+        ticking = false;
+        const vh = window.innerHeight || 1;
+
+        if (stackedMQ && stackedMQ.matches) {
+            els.forEach(function (el) { el.style.removeProperty('--py'); });
+            return;
+        }
+
+        const mid = vh / 2;
+        els.forEach(function (el) {
+            const r = el.getBoundingClientRect();
+            if (r.bottom < -200 || r.top > vh + 200) return;
+            const rate = parseFloat(el.getAttribute('data-parallax')) || 0;
+            let y = -((r.top + r.height / 2) - mid) * rate;
+            y = Math.max(-CAP, Math.min(CAP, y));
+            el.style.setProperty('--py', y.toFixed(1) + 'px');
+        });
+    }
+
+    function onScroll() {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+}
+
+/* ============================================
+   "Rock & Roll" hover gif - drifts with the
+   cursor, and removes itself if the file is
+   missing so no broken image shows up
+   ============================================ */
+function initCtaSpark() {
+    document.querySelectorAll('.cta-spark').forEach(function (spark) {
+        const gif = spark.querySelector('.cta-spark__gif');
+        if (!gif) return;
+
+        gif.addEventListener('error', function () { gif.remove(); });
+
+        spark.addEventListener('pointermove', function (e) {
+            const r = spark.getBoundingClientRect();
+            if (!r.width) return;
+            const x = (e.clientX - (r.left + r.width / 2)) / r.width; // -0.5 .. 0.5
+            spark.style.setProperty('--gx', (x * 30).toFixed(1) + 'px');
+        }, { passive: true });
+
+        spark.addEventListener('pointerleave', function () {
+            spark.style.setProperty('--gx', '0px');
+        });
+    });
 }
 
 /* ============================================
@@ -255,7 +405,11 @@ function initSocial() {
 
     const source = document.querySelector('.footer-social');
     if (!source) return;
-    const markup = source.innerHTML;
+    // The footer lists icon + handle name; the rail and the burger menu
+    // want icons only, so clone and drop the labels.
+    const iconsOnly = source.cloneNode(true);
+    iconsOnly.querySelectorAll('.footer-social__name').forEach(n => n.remove());
+    const markup = iconsOnly.innerHTML;
 
     // Right rail: social icons
     const right = document.createElement('div');
@@ -470,16 +624,17 @@ function initSlidingPortfolio() {
    ============================================ */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function(e) {
+        const id = this.getAttribute('href');
+        // Bare "#" placeholders and "#top" have no element to find - let the
+        // browser handle them rather than cancelling the click and throwing.
+        if (!id || id.length < 2) return;
+
+        let target = null;
+        try { target = document.querySelector(id); } catch (err) { return; }
+        if (!target) return;
+
         e.preventDefault();
-        
-        const target = document.querySelector(this.getAttribute('href'));
-        
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 });
 
