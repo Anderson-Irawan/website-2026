@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact | Anderson & Designs</title>
+    <title>Contact | Double Dash Creative</title>
     <meta name="description"
         content="Work with me - let's bring your brand vision to life. Get in touch for logo design, branding, and bespoke art projects.">
     <link rel="stylesheet" href="css/styles.css">
@@ -21,9 +21,9 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <span class="logo">
+            <a href="index.html" class="logo">
                 <img src="assets/logos/logotype.svg" alt="Double Dash Creative" class="logo-mark">
-            </span>
+            </a>
 
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
                 <span></span>
@@ -32,8 +32,7 @@
             </button>
 
             <ul class="nav-links">
-                <li><a href="index.html" class="nav-link-cycle"><span data-text="Home">Home</span></a></li>
-                <li><a href="work.html" class="nav-link-cycle"><span data-text="Portfolio">Portfolio</span></a></li>
+                <li><a href="projects.html" class="nav-link-cycle"><span data-text="Projects">Projects</span></a></li>
                 <li><a href="about.html" class="nav-link-cycle"><span data-text="About">About</span></a></li>
                 <li><a href="contact.html" class="nav-link-cycle"><span data-text="Contact">Contact</span></a></li>
             </ul>
@@ -45,22 +44,22 @@
         <div class="container">
             <div class="contact-layout">
                 <div class="contact-form">
-                    <h1 class="heading-lg fade-in">Work With Me</h1>
+                    <h1 class="page-header__title fade-in">Work With Me.</h1>
 
                     <form id="contact-form">
                         <div class="form-group fade-in fade-in-delay-1">
                             <label for="name">Name*</label>
-                            <input type="text" id="name" name="name" required placeholder="John Doe">
+                            <input type="text" id="name" name="name" required placeholder="">
                         </div>
 
                         <div class="form-group fade-in fade-in-delay-1">
                             <label for="company">Brand/Company Name*</label>
-                            <input type="text" id="company" name="company" required placeholder="Zleek Creative Studio">
+                            <input type="text" id="company" name="company" required placeholder="">
                         </div>
 
                         <div class="form-group fade-in fade-in-delay-2">
                             <label for="email">Email*</label>
-                            <input type="email" id="email" name="email" required placeholder="sample@email.com">
+                            <input type="email" id="email" name="email" required placeholder="">
                         </div>
 
                         <div class="form-group fade-in fade-in-delay-2">
@@ -167,7 +166,9 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         (function(){
-            emailjs.init("4u-BgAW5KBkjGDofp");
+            /* v4 wants an options object; the bare-string form is the v3
+               signature and is deprecated. */
+            emailjs.init({ publicKey: "4u-BgAW5KBkjGDofp" });
         })();
     </script>
 
@@ -212,7 +213,7 @@
                             submitButton.style.backgroundColor = '';
                         }, 3000);
 
-                        console.log('EmailJS Error:', error);
+                        console.error('EmailJS error:', error);
                     });
             });
         });

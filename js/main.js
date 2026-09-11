@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initHeroTagline();
     initHeroBgFade();
     initNavbar();
+    initNavTint();
+    initNavHide();
+    initMotionToggle();
     initSocial();
     initOutro();
     initWorkTags();
@@ -177,9 +180,17 @@ function initPageLoader() {
         setTimeout(hide, Math.max(0, MIN_MS - waited));
     }
 
-    if (document.readyState === 'complete') hideWhenReady();
+    // A page whose content arrives after load - the case studies, which
+    // fetch their sheet - can hold the loader by setting window.PAGE_READY
+    // to a promise before this runs. Otherwise it lifts on window load.
+    const gate = window.PAGE_READY &&
+        typeof window.PAGE_READY.then === 'function' ? window.PAGE_READY : null;
+
+    if (gate) gate.then(hideWhenReady, hideWhenReady);
+    else if (document.readyState === 'complete') hideWhenReady();
     else window.addEventListener('load', hideWhenReady);
-    setTimeout(hide, MAX_MS);
+
+    setTimeout(hide, MAX_MS);   // never trap anyone behind a slow fetch
 
     // Bring it back on the way out, so the spin covers the page swap.
     document.addEventListener('click', function (e) {
@@ -220,7 +231,7 @@ function initPageLoader() {
        <a class="work-card" data-cats="logo brand print">
 
    Two or three is the intent. The pills under the title and the
-   filter bar on work.html are both generated from this list, so
+   filter bar on projects.html are both generated from this list, so
    you never write pill markup or SVG by hand.
 
    To rename a category, change its label below.
@@ -296,7 +307,7 @@ function initWorkTags() {
     });
 }
 
-/* Filter bar - only builds where <div data-work-filters> exists (work.html).
+/* Filter bar - only builds where <div data-work-filters> exists (projects.html).
    Multi-select up to WORK_FILTER_MAX; picking another drops the oldest. */
 function initWorkFilters() {
     const bar = document.querySelector('[data-work-filters]');
@@ -586,7 +597,10 @@ function initCardParallax() {
     if (window.matchMedia &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    // Skip the squish rows (work.html) - those cards stay row-aligned.
+    // the toggle in the navbar, which persists across pages
+    if (document.documentElement.classList.contains('liquid-hero-reduced')) return;
+
+    // Skip the squish rows (projects.html) - those cards stay row-aligned.
     const cards = Array.from(document.querySelectorAll('.work-card'))
         .filter(function (c) { return !c.closest('.work-scatter--squish'); });
     if (!cards.length) return;
@@ -709,6 +723,126 @@ function initNavbar() {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+}
+
+/* ============================================
+   Hide the bar on the way down, bring it back on
+   the way up
+   ============================================ */
+function initNavHide() {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+
+    const root = document.documentElement;
+
+    // Ignore scrolls smaller than this: trackpads and phone momentum
+    // produce a lot of tiny direction flips, and reacting to those makes
+    // the bar flicker.
+    const THRESHOLD = 8;
+
+    // Never hide near the top. Hiding immediately makes the bar feel
+    // twitchy on the first flick of the wheel.
+    const REVEAL_ABOVE = 140;
+
+    let last = window.pageYOffset || 0;
+    let ticking = false;
+
+    function update() {
+        ticking = false;
+        const y = window.pageYOffset || 0;
+        const delta = y - last;
+
+        if (Math.abs(delta) < THRESHOLD) return;
+
+        /* The takeover menu is part of the bar, so it stays put while
+           that is open, and while the outro has the bar in its compact
+           state at the very bottom of the page. */
+        const hold = root.classList.contains('menu-open');
+
+        navbar.classList.toggle('is-hidden', !hold && delta > 0 && y > REVEAL_ABOVE);
+        last = y;
+    }
+
+    window.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+    }, { passive: true });
+}
+
+/* ============================================
+   Motion toggle
+
+   liquid-hero.js already drives this button, but only on a page that has
+   a hero canvas: with no canvas it HIDES the button and returns. So on
+   the projects page it would be dead. This takes over there.
+
+   Same localStorage key and same <html> class as liquid-hero.js, which
+   is what makes the setting carry from one page to the next.
+   ============================================ */
+function initMotionToggle() {
+    const buttons = document.querySelectorAll('[data-liquid-hero-toggle]');
+    if (!buttons.length) return;
+
+    // the homepage has a canvas, so liquid-hero.js owns the button there
+    if (document.querySelector('[data-liquid-hero]')) return;
+
+    const KEY = 'liquid-hero:reduced';
+    const root = document.documentElement;
+
+    function stored() {
+        try { return localStorage.getItem(KEY) === '1'; } catch (e) { return false; }
+    }
+
+    function apply(on) {
+        root.classList.toggle('liquid-hero-reduced', on);
+        buttons.forEach(function (b) {
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+            const label = b.querySelector('.motion-toggle__label');
+            if (label) label.textContent = on ? 'Enable Motion' : 'Reduce Motion';
+        });
+    }
+
+    apply(stored());
+
+    buttons.forEach(function (b) {
+        b.addEventListener('click', function () {
+            const on = !root.classList.contains('liquid-hero-reduced');
+            try { localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) { }
+            apply(on);
+
+            /* the parallax listeners are bound once at load, so turning it
+               back on mid-page needs them wired up now */
+            if (!on && typeof initCardParallax === 'function') initCardParallax();
+        });
+    });
+}
+
+/* ============================================
+   Nav tint - the bar borrows a coloured band's colour
+   ============================================ */
+function initNavTint() {
+    const navbar = document.querySelector('.navbar');
+    const band = document.querySelector('[data-nav-tint]');
+    if (!navbar || !band) return;
+
+    let io = null;
+
+    /* The root's top edge is pushed down by the bar's own height, so the
+       band stops intersecting the moment its bottom edge passes the
+       bottom of the bar - which is exactly when the black background
+       arrives underneath it. */
+    function watch() {
+        if (io) io.disconnect();
+        io = new IntersectionObserver(function (entries) {
+            navbar.classList.toggle('is-tinted', entries[0].isIntersecting);
+        }, { rootMargin: (-navbar.offsetHeight) + 'px 0px 0px 0px' });
+        io.observe(band);
+    }
+
+    watch();
+    // the bar changes height at breakpoints, so the margin is remeasured
+    window.addEventListener('resize', watch);
 }
 
 /* ============================================

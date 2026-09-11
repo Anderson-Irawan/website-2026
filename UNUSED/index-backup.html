@@ -1,67 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Anderson & Designs</title>
-    <meta name="description" content="A collection of my greatest hits - logo design, branding, and bespoke art projects.">
+    <title>Home (backup: hand-written cards) | Double Dash Creative</title>
+    <meta name="description"
+        content="Logo and graphic designer helping startups visualize their flare through bold, imaginative design.">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/liquid-hero.css">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <script>document.documentElement.classList.add("is-loading");</script>
 </head>
-<body>
+
+<body class="page-home">
     <!-- Loading screen: spinning mark, hidden again by initPageLoader() -->
     <div class="page-loader" role="status" aria-label="Loading">
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
     </div>
 
+    <!-- Liquid gradient background - fixed behind the whole page,
+         covered by the opaque sections from .hero-divider onward -->
+    <canvas class="liquid-hero__bg" data-liquid-hero></canvas>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <span class="logo">
+            <a href="index.html" class="logo">
                 <img src="assets/logos/logotype.svg" alt="Double Dash Creative" class="logo-mark">
-            </span>
-            
+            </a>
+
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
-            
+
             <ul class="nav-links">
-                <li><a href="index.html" class="nav-link-cycle"><span data-text="Home">Home</span></a></li>
-                <li><a href="work.html" class="nav-link-cycle"><span data-text="Portfolio">Portfolio</span></a></li>
+                <li><a href="projects.html" class="nav-link-cycle"><span data-text="Projects">Projects</span></a></li>
                 <li><a href="about.html" class="nav-link-cycle"><span data-text="About">About</span></a></li>
                 <li><a href="contact.html" class="nav-link-cycle"><span data-text="Contact">Contact</span></a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Page Header -->
-    <header class="page-header">
-        <div class="container">
-            <h1 class="page-header__title fade-in">Selected Work.</h1>
-        </div>
-    </header>
+    <!-- Hero Section -->
+    <div class="hero-pin">
+        <section class="liquid-hero">
+            <h2 class="liquid-hero__tagline" data-hero-tagline>Building <span class="tagline-term">Brand Systems</span> &amp; <span class="tagline-term">Digital Designs</span> for Founders <span class="tagline-strong gif-pop gif-pop--below">Forging a Path Forward<img class="gif-pop__img" src="assets/images/forwards.gif" alt="" aria-hidden="true" loading="lazy"></span></h2>
 
-    <!-- Portfolio Grid - squish rows: 3 equal cards per row; hovering
-         one grows it to 40% of the row, the other two squish to 30%.
-         Stacks to one full-width column on mobile. -->
+            <div class="liquid-hero__content">
+                <div class="liquid-hero__mark-tilt fade-in" data-logo-3d>
+                    <img src="assets/logos/logo-prime.svg" alt="Double Dash Creative" class="liquid-hero__mark">
+                </div>
+            </div>
+
+            <div class="liquid-hero__footer fade-in fade-in-delay-2">
+                <button class="motion-toggle" type="button" data-liquid-hero-toggle aria-pressed="false">
+                    <span class="motion-toggle__icon" aria-hidden="true"></span>
+                    <span class="motion-toggle__label">Reduce Motion</span>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Divider between hero and work -->
+    <section class="hero-divider">
+        <h2 class="hero-divider__text">For Dreamers <br> &amp; Daredevils</h2>
+        <p>est. 2023</p>
+    </section>
+
+    <!-- Work Section -->
     <section class="portfolio-section">
-
-        <!-- Filter bar builds itself from WORK_CATEGORIES in js/main.js -->
-        <div class="work-filters" data-work-filters></div>
-
-        <div class="work-scatter work-scatter--squish">
-
+        
+        <!-- Cards for projects held in Sanity are swapped in by
+               js/sanity-cards.js. Each card keeps its inline --w/--h/--v,
+               so the composition here is preserved. Anything not yet in
+               the CMS stays exactly as written below. -->
+          <div class="work-scatter work-scatter--rows">
           <div class="work-row">
             <!-- The Heir of Time -->
-            <a href="hot.html" class="work-card portfolio-item-video" data-cats="brand logo motion">
+            <a href="case-study.html?p=hot" class="work-card portfolio-item-video" data-cats="brand logo motion" style="--w: 55; --h: 24rem; --v: center;">
                 <span class="work-card__frame">
                     <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
                         poster="assets/portfolio/theheiroftime/heiroftime-cover.jpg">
-                        <source src="assets/portfolio/theheiroftime/HoT Showcase square.mp4" type="video/mp4">
-                        <source src="assets/portfolio/theheiroftime/showcase.webm" type="video/webm">
+                        <source src="assets/videos/HoT Showcase square.mp4" type="video/mp4">
                     </video>
                 </span>
                 <span class="work-card__meta">
@@ -70,11 +93,11 @@
             </a>
 
             <!-- PagiKopi -->
-            <a href="#" class="work-card portfolio-item-video" data-cats="brand print motion">
+            <a href="case-study.html?p=pagikopi" class="work-card portfolio-item-video" data-cats="brand print motion" style="--w: 40; --h: 40rem">
                 <span class="work-card__frame">
                     <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
                         poster="assets/portfolio/pagikopi/Packaging overview.jpg">
-                        <source src="assets/portfolio/pagikopi/PagiKopi overview.mp4" type="video/mp4">
+                        <source src="assets/videos/PagiKopi overview.mp4" type="video/mp4">
                     </video>
                 </span>
                 <span class="work-card__meta">
@@ -82,36 +105,40 @@
                 </span>
             </a>
 
+            
+          </div>
+
+          <div class="work-row">
             <!-- BCI -->
-            <a href="bci.html" class="work-card portfolio-item-video" data-cats="logo brand print">
+            <a href="case-study.html?p=bci" class="work-card portfolio-item-video" data-cats="logo brand print" style="--w: 40; --h: 24rem; --v: center;">
                 <span class="work-card__frame">
                     <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
                         poster="assets/portfolio/bci/glow sign.jpg">
-                        <source src="assets/portfolio/bci/bci animation hover.mp4" type="video/mp4">
+                        <source src="assets/videos/bci animation hover.mp4" type="video/mp4">
                     </video>
                 </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="Bangun Citra Irawan">Bangun Citra Irawan</span>
                 </span>
             </a>
-          </div>
 
-          <div class="work-row">
-            <!-- Kynara -->
-            <a href="/" class="work-card portfolio-item-video" data-cats="logo brand web">
+            <!-- KYNARA -->
+            <a class="work-card portfolio-item-video" data-cats="logo brand web" style="--w: 50; --h: 36rem">
                 <span class="work-card__frame">
                     <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
                         poster="assets/portfolio/kynara/kynara-box.jpg">
-                        <source src="assets/portfolio/kynara/kynara web hover.mp4" type="video/mp4">
+                        <source src="assets/videos/kynara web hover.mp4" type="video/mp4">
                     </video>
                 </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="Kynara">Kynara</span>
                 </span>
             </a>
+          </div>
 
+          <div class="work-row">
             <!-- Pastel Mumu -->
-            <a href="mumu.html" class="work-card" data-cats="logo brand social">
+            <a href="case-study.html?p=mumu" class="work-card" data-cats="logo brand social" style="--w: 33; --h: 24rem;">
                 <span class="work-card__frame">
                     <img class="work-card__img" loading="lazy" decoding="async"
                         src="assets/portfolio/mumu/mumu-mockup-storefront.jpg" alt="Pastel Mumu storefront">
@@ -124,22 +151,20 @@
             </a>
 
             <!-- I Scream -->
-            <a href="furari.html" class="work-card portfolio-item-video" data-cats="illustration social print">
+            <a class="work-card portfolio-item-video" data-cats="illustration social print" style="--w: 33; --h: 30rem;">
                 <span class="work-card__frame">
                     <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
                         poster="assets/portfolio/iscream/iscream stickers.jpg">
-                        <source src="assets/portfolio/iscream/iscream animation.mp4" type="video/mp4">
+                        <source src="assets/videos/iscream animation.mp4" type="video/mp4">
                     </video>
                 </span>
                 <span class="work-card__meta">
                     <span class="work-card__title" data-title="I Scream">I Scream</span>
                 </span>
             </a>
-          </div>
 
-          <div class="work-row">
             <!-- Furari -->
-            <a href="furari.html" class="work-card" data-cats="illustration web">
+            <a href="case-study.html?p=furari" class="work-card" data-cats="illustration web" style="--w: 33; --h: 18rem; --v: center">
                 <span class="work-card__frame">
                     <img class="work-card__img" loading="lazy" decoding="async"
                         src="assets/portfolio/furari/tshirt 2.jpg" alt="Furari t-shirt">
@@ -150,35 +175,73 @@
                     <span class="work-card__title" data-title="Furari">Furari</span>
                 </span>
             </a>
-
-            <!-- City of Bristol College - add an href when the case study exists -->
-            <span class="work-card portfolio-item-video" data-cats="motion social web">
-                <span class="work-card__frame">
-                    <video class="work-card__img portfolio-video" muted playsinline preload="metadata"
-                        poster="assets/portfolio/cobc/cobc-cover.jpg">
-                        <source src="assets/portfolio/cobc/Intro Portrait.mp4" type="video/mp4">
-                    </video>
-                </span>
-                <span class="work-card__meta">
-                    <span class="work-card__title" data-title="City of Bristol College">City of Bristol College</span>
-                </span>
-            </span>
-            
           </div>
 
-          <!-- ADD A ROW: copy a <div class="work-row"> with exactly 3
-               <a class="work-card"> inside (same card markup as above).
-               For a hover video use the PagiKopi / Heir of Time pattern.
+            <!-- ================================================================
+                 ADD A ROW: copy this block, drop in 1-3 cards, tune each --w.
 
-               CATEGORIES: set data-cats on the card, 2-3 slugs, space
-               separated. The pills under the title and the filter bar
-               are both generated from it. Valid slugs:
-                 logo  brand  illustration  motion  web  social  print
-               e.g. <a class="work-card" data-cats="logo brand print"> -->
+                 CATEGORIES: set data-cats on the card, 2-3 slugs:
+                   logo  brand  illustration  motion  web  social  print
+                 e.g. <a class="work-card" data-cats="logo brand print">
+
+                 Widths in a row don't have to add to 100 - a short row just
+                 sits centred. --w defaults to 33 if you leave it off.
+
+            <div class="work-row">
+                <a href="project.html" class="work-card" style="--w: 30">
+                    <span class="work-card__frame">
+                        <img class="work-card__img" src="assets/portfolio/…/still.jpg" alt="…">
+                        <img class="work-card__img work-card__img--hover" loading="lazy"
+                             src="assets/portfolio/…/hover.jpg" alt="…">
+                    </span>
+                    <span class="work-card__meta">
+                        <span class="work-card__title" data-title="Project Name">Project Name</span>
+                    </span>
+                </a>
+                <a href="project2.html" class="work-card" style="--w: 40; --h: 40rem; --v: center"> … </a>
+                <a href="project3.html" class="work-card" style="--w: 26; --h: 18rem; --v: flex-end; --y: -1rem"> … </a>
+            </div>
+
+                 For a hover VIDEO instead of a second image, use the PagiKopi /
+                 Heir of Time pattern: add  portfolio-item-video  to the <a>,
+                 and put a <video class="work-card__img portfolio-video" ...
+                 poster="…"> in the frame instead of the two <img>s.
+                 ================================================================ -->
 
         </div>
 
-        <p class="work-empty" data-work-empty hidden>Nothing in those categories yet.</p>
+        <div class="work-more animate-on-scroll">
+            <a href="projects.html" class="btn btn-primary">See More</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section section">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <!--<h2 class="about-greeting animate-on-scroll">
+                        <span class="greeting-hello">Hello!</span>
+                        <span class="greeting-name">I'm Anderson</span>
+                    </h2>-->
+                    <h2 class="about-greeting animate-on-scroll">
+                        <span class="greeting-hello">Settling with basic is so yesterday, always see things for what it could be.</span>
+                    </h2>
+                    <!-- body sits in the lower half, so it starts level with
+                         the middle of the photo -->
+                    <div class="about-body">
+                        <div class="about-description animate-on-scroll">
+                            <p><span class="salam gif-pop">Salam kenal<img class="gif-pop__img" src="assets/images/hello.gif" alt="" aria-hidden="true" loading="lazy"></span>, I'm Anderson. I grew up in Surabaya, Indonesia and started my design journey back in 2021. Specializing in creating logos and branding systems, I have also developed expertise in web design and illustration. Inspired by art galleries and comic books, I won't settle with being basic. I challenge new ideas and break rules to see what a logo and brand could possibly become.</p>
+                            <p>That's what Double Dash means to me.</p>
+                            <p>Dash means a plethora of things. To help you dash out to find bold and brilliant ideas. To me dashing to get something out when needed. To created a dashing looking product. Then take all that and double down. So stop the head scratching, let's pull out the big guns, and dash to make your dreams a reality!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image animate-on-scroll">
+                    <img src="assets/photos/headshot.jpg" alt="Anderson Irawan, founder of Double Dash Creative">
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- CTA Section -->
@@ -244,8 +307,22 @@
 
       </footer>
     </div>
+
+    <script src="js/liquid-hero.js" defer></script>
     <script src="js/main.js"></script>
     <script src="js/portfolio-video.js"></script>
 
+    <!-- 3D extruded logo (three.js) -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+    </script>
+    <script type="module" src="js/logo-3d.js"></script>
+
 </body>
+
 </html>

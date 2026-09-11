@@ -256,7 +256,6 @@ body {
     }
 }
 
-/* Bottom row: motion toggle, pinned to the lower-right */
 .liquid-hero__footer {
     position: absolute;
     left: 0;
@@ -278,49 +277,3 @@ body {
 }
 
 /* Reduce-motion toggle */
-.motion-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.85rem;
-    border: thin solid rgba(255, 253, 210, 0.4);
-    border-radius: 999px;
-    background: rgba(32, 29, 30, 0.35);
-    color: var(--color-cream);
-    font-family: var(--font-body);
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    cursor: pointer;
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
-    transition: background 0.3s var(--transition-smooth),
-        border-color 0.3s var(--transition-smooth);
-}
-
-.motion-toggle:hover {
-    background: rgba(32, 29, 30, 0.6);
-    border-color: var(--color-cream);
-}
-
-.motion-toggle__icon {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--color-cream);
-    animation: motionTogglePulse 1.6s ease-in-out infinite;
-}
-
-@keyframes motionTogglePulse {
-    0%, 100% { opacity: 0.4; transform: scale(0.8); }
-    50%      { opacity: 1;   transform: scale(1.2); }
-}
-
-.motion-toggle[aria-pressed="true"] .motion-toggle__icon {
-    animation: none;
-    opacity: 1;
-    background: var(--color-red);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .motion-toggle__icon { animation: none; }
-}

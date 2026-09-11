@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Furari | Case Study | Anderson & Designs</title>
-    <meta name="description"
-        content="Furari case study - The new kitten on the block. A vibrant brand identity for a Japanese-inspired cat cafe.">
+     <title>Projects | Double Dash Creative</title>
+    <meta name="description" content="A collection of my greatest hits - logo design, branding, and bespoke art projects.">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <script>document.documentElement.classList.add("is-loading");</script>
+    <!-- Apply the saved motion setting before anything paints, so a
+         reduced-motion visitor never sees a frame of movement first. -->
+    <script>try{if(localStorage.getItem('liquid-hero:reduced')==='1')document.documentElement.classList.add('liquid-hero-reduced');}catch(e){}</script>
 </head>
-
-<body>
+<body class="page-projects">
     <!-- Loading screen: spinning mark, hidden again by initPageLoader() -->
     <div class="page-loader" role="status" aria-label="Loading">
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
@@ -21,196 +21,53 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
-            <span class="logo">
+            <a href="index.html" class="logo">
                 <img src="assets/logos/logotype.svg" alt="Double Dash Creative" class="logo-mark">
-            </span>
-
-            <button class="mobile-menu-toggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-
+            </a>
+            
+            
             <ul class="nav-links">
-                <li><a href="index.html" class="nav-link-cycle"><span data-text="Home">Home</span></a></li>
-                <li><a href="work.html" class="nav-link-cycle"><span data-text="Portfolio">Portfolio</span></a></li>
+                <li><a href="projects.html" class="nav-link-cycle"><span data-text="Projects">Projects</span></a></li>
                 <li><a href="about.html" class="nav-link-cycle"><span data-text="About">About</span></a></li>
                 <li><a href="contact.html" class="nav-link-cycle"><span data-text="Contact">Contact</span></a></li>
             </ul>
+
+            <div class="nav-actions">
+                <button class="motion-toggle" type="button" data-liquid-hero-toggle aria-pressed="false">
+                    <span class="motion-toggle__icon" aria-hidden="true"></span>
+                    <span class="motion-toggle__label">Reduce Motion</span>
+                </button>
+                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero Image -->
-    <section class="case-study-hero fade-in">
-        <img src="assets/portfolio/bci/glow sign.jpg" alt="Bangun Citra Irawan illuminated sign">
-    </section>
-
-    <!-- Intro Section -->
-    <section class="case-study-intro">
-        <div class="work-container">
-            <div class="case-study-intro-grid">
-                <div class="title-section">
-                    <h1 class="heading-lg fade-in">BANGUN CITRA IRAWAN</h1>
-                    <p class="meta fade-in fade-in-delay-1">Logo & Branding</p>
-                </div>
-                <div class="description fade-in fade-in-delay-2">
-                    <p>
-                        Bangun Citra Irawan is a company run by the greatest man I know, my dad. So when he rattled me
-                        for a logo and a brand system, I delivered one to him without hesitation.
-                    </p>
-                    <p>
-                        BCI aims to be beyond the norm, to stand out above all else. The company wanted to not feel
-                        rigid, so we looked to something that exudes future-facing. BCI was never about one product, but
-                        many variations of services.
-                    </p>
-                    <p>
-                        The rounded approach was favored, with the yellow dot representing the morning sun. The brand
-                        system features a strong blue, paired with a dark and light shade for official purposes.
-                        Additionally, the batik pattern uses assets present in the logo to extend the branding while
-                        staying true to our Indonesian roots
-                    </p>
-                    <!--<div class="case-study-meta-grid">
-                        <div class="meta-item">
-                            <h3>PROJECT</h3>
-                            <p>Illustration + Visual Identity</p>
-                        </div>
-                        <div class="meta-item">
-                            <h3>DELIVERABLES</h3>
-                            <p>Logo + Visual Guidelines<br>Print + Merchandise</p>
-                        </div>
-                        <div class="meta-item">
-                            <h3>TIMELINE</h3>
-                            <p>6-8 Weeks</p>
-                        </div>
-                    </div>-->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Character Illustrations -->
-    <section class="case-study-full-image animate-on-scroll" style="background-color: #FAFAFF;">
-        <img src="assets/portfolio/bci/fence billboard.jpg"
-            alt="Bangun Citra Irawan fence billboard">
-    </section>
-
-    <!-- Catching a Tailwind Section 
-    <section class="section" style="background-color: var(--color-black); color: var(--color-cream);">
+    <!-- Page Header -->
+    <header class="page-header">
         <div class="container">
-            <div class="case-study-solution">
-                <div class="content animate-on-scroll">
-                    <h2 class="heading-lg" style="color: var(--color-cream);">CATCHING A TAILWIND</h2>
-                </div>
-                <div class="content animate-on-scroll">
-                    <p>
-                        The concept of cute animals on t-shirts was done countless times before, especially in
-                        Indonesia. The approach to this trend is normally falls on either the forestry/jungle side or
-                        the domesticated cute side. I knew in order to appeal to audiences, we needed a fresh plan -
-                        something that struck the in-between but also added another element.
-                    </p>
-                    <br>
-                    <p>
-                        There were now two challenges for me: to incorporate all themes into one mascot and figure how
-                        it all makes sense in one brand. I pushed out the sweetest, pleasing visuals and while
-                        referencing organic curves to my artwork. I consistently keep in mind of the platform this will
-                        be primarily marketed to, Instagram and Facebook. </p>
-                </div>
-            </div>
+            <h1 class="page-header__title fade-in">Selected Projects.</h1>
         </div>
-    </section>-->
+    </header>
 
-    <!-- Logo Variations -->
-    <section class="case-study-full-image animate-on-scroll" style="background-color: #FAFAFF;">
-        <img src="assets/portfolio/bci/stationaries.jpg" alt="Bangun Citra Irawan stationery set">
-    </section>
+    <!-- Work Grid - squish rows: 3 equal cards per row; hovering
+         one grows it to 40% of the row, the other two squish to 30%.
+         Stacks to one full-width column on mobile. -->
+    <section class="portfolio-section">
 
-    <!-- Color Palette 
-    <section class="case-study-images animate-on-scroll">
-        <div class="image-box">
-            <img src="assets/portfolio/furari/f-pink.jpg" alt="Furari color palette - orange">
-        </div>
-        <div class="image-box">
-            <img src="assets/portfolio/furari/f-org.jpg" alt="Furari color palette - pink">
-        </div>
-        <div class="image-box">
-            <img src="assets/portfolio/furari/f-purple.jpg" alt="Furari color palette - purple">
-        </div>
-        <div class="image-box">
-            <img src="assets/portfolio/furari/f-blue.jpg" alt="Furari color palette - dark">
-        </div>
-    </section>-->
+        <!-- Filter bar builds itself from WORK_CATEGORIES in js/main.js -->
+        <div class="work-filters" data-work-filters></div>
 
-    <!-- Appetizing Apparel Section
-    <section class="sm-section" style="background-color: var(--color-black); color: var(--color-cream);">
-        <div class="case-study-solution">
-            <div class="content-img animate-on-scroll">
-                <h2 class="heading-lg" style="color: var(--color-cream);">APPETIZING APPAREL</h2>
-                <p>
-                    The concept of cute animals on t-shirts was done countless times before, especially in
-                    Indonesia. The approach to this trend is normally falls on either the forestry/jungle side or
-                    the domesticated cute side. I knew in order to appeal to audiences, we needed a fresh plan -
-                    something that struck the in-between but also added another element.
-                </p>
-                <br>
-                <p>
-                    There were now two challenges for me: to incorporate all themes into one mascot and figure how
-                    it all makes sense in one brand. I pushed out the sweetest, pleasing visuals and while
-                    referencing organic curves to my artwork. I consistently keep in mind of the platform this will
-                    be primarily marketed to, Instagram and Facebook. </p>
-            </div>
-            <div class="image-box animate-on-scroll">
-                <img src="assets/portfolio/furari/matcha cat-100.jpg" alt="Furari character in armchair with coffee">
-            </div>
-        </div>
-    </section> -->
+          <!-- Empty on purpose: every card is built from Sanity by
+               js/sanity-cards.js, ordered by each project's order field.
+               The old hand-written markup is archived in
+               projects-draft.html while the rest are migrated. -->
+          <div class="work-scatter work-scatter--squish" data-sanity-cards></div>
 
-    <!-- Product Mockups Grid 
-    <section class="case-study-mockups animate-on-scroll">
-        <div class="image-box">
-            <img src="assets/portfolio/bci/mark paper.jpg" alt="Bangun Citra Irawan logo mark on paper">
-        </div>
-        <div class="image-box">
-            <img src="assets/portfolio/furari/tshirt 1.png" alt="Furari t-shirt mockup">
-        </div>
-    </section>-->
-
-    <section class="case-study-mockups animate-on-scroll">
-        <div class="image-box">
-            <img src="assets/portfolio/bci/mark paper.jpg" alt="Bangun Citra Irawan logo mark on paper">
-        </div>
-        <div class="image-box">
-            <img src="assets/portfolio/bci/stamp.jpg" alt="Bangun Citra Irawan rubber stamp">
-        </div>
-    </section>
-
-    <!--<section class="section" style="background-color: var(--color-black); color: var(--color-cream);">
-        <div class="container">
-            <div class="case-study-solution">
-                <div class="content animate-on-scroll">
-                    <h2 class="heading-lg" style="color: var(--color-cream);">ADOPTING TRENDS</h2>
-                </div>
-                <div class="content animate-on-scroll">
-                    <p>
-                        The target demographic for these products are normally a fond of current trends. My client and I
-                        hopped on many discussions to plan out the strategy to creating the mascots.
-                    </p>
-                    <br>
-                    <p>
-                        Believe or not, the direction of this project was very different at the start; aiming for a
-                        petite and rounded approach. The outcome was something pure. Oddly, this was not quite fitting
-                        to hit the target audience - too mainstream and too forgettable.</p>
-                    <br>
-                    <p>
-                        We explored the quirky nature of the regular house cat - unbothered, domesticated, but always up
-                        to something. We took those ideas and came up with two ideas we found the strongest.</p>
-                </div>
-            </div>
-        </div>
-    </section>-->
-
-    <!-- Final Logo Mockup -->
-    <section class="case-study-full-image animate-on-scroll">
-        <img src="assets/portfolio/bci/business card stack.jpg" alt="Stack of Bangun Citra Irawan business cards">
+        <p class="work-empty" data-work-empty hidden>Nothing in those categories yet.</p>
     </section>
 
     <!-- CTA Section -->
@@ -277,6 +134,8 @@
       </footer>
     </div>
     <script src="js/main.js"></script>
-</body>
+    <script src="js/portfolio-video.js"></script>
+    <script src="js/sanity-cards.js"></script>
 
+</body>
 </html>
