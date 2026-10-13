@@ -1,0 +1,10 @@
+# doubledashcreative.com
+# Everything on this site is public and meant to be found.
+# Nothing is disallowed on purpose: the case study pages build themselves
+# with JavaScript, and blocking any file they fetch would stop crawlers
+# rendering them at all.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://doubledashcreative.com/sitemap.xml

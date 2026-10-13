@@ -39,7 +39,7 @@
 .hello-text {
     font-family: var(--font-marker);
     font-size: clamp(3rem, 8vw, 5rem);
-    color: var(--color-red);
+    color: var(--color-orange);
     display: inline-block;
     line-height: 1;
     text-transform: none;
@@ -103,7 +103,7 @@
 .taking-on {
     font-family: var(--font-marker);
     font-size: clamp(2.5rem, 7vw, 4.5rem);
-    color: var(--color-red);
+    color: var(--color-orange);
     display: inline-block;
     line-height: 1;
 }
@@ -219,7 +219,7 @@
 .process-number {
     font-family: var(--font-marker);
     font-size: clamp(2.5rem, 5vw, 4rem);
-    color: var(--color-red);
+    color: var(--color-orange);
     font-weight: 400; /* Instrument Serif ships regular only */
     min-width: 120px;
     flex-shrink: 0;
@@ -257,7 +257,7 @@
 
 /* Hover effect */
 .process-item:hover .process-title {
-    color: var(--color-pink);
+    color: var(--color-blue);
 }
 
 .process-item:hover .process-number {

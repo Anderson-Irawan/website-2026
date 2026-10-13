@@ -11,16 +11,19 @@ document.addEventListener('DOMContentLoaded', function() {
     initHeroBgFade();
     initNavbar();
     initNavTint();
-    initNavHide();
+    // initNavHide();  // Disabled - the bar stays up the whole way down,
+    //                 // including over the footer. Re-enable this one line
+    //                 // to bring back hide-on-scroll-down.
     initMotionToggle();
-    initSocial();
+    // initSocial();  // Disabled - the function below is commented out, so
+    //                // calling it threw a ReferenceError and killed every
+    //                // init after this line.
     initOutro();
     initWorkTags();
     initWorkFilters();
     initCtaExpand();
     initParallax();
     initCtaSpark();
-    initScrollAnimations();
     initMobileMenu();
     initSlidingPortfolio();
     initCardParallax();
@@ -231,7 +234,7 @@ function initPageLoader() {
        <a class="work-card" data-cats="logo brand print">
 
    Two or three is the intent. The pills under the title and the
-   filter bar on projects.html are both generated from this list, so
+   filter bar on the home page are both generated from this list, so
    you never write pill markup or SVG by hand.
 
    To rename a category, change its label below.
@@ -268,7 +271,6 @@ const WORK_CATEGORIES = {
     }
 };
 
-const WORK_FILTER_MAX = 3;   // how many filters can be on at once
 
 function catIcon(slug) {
     const cat = WORK_CATEGORIES[slug];
@@ -296,8 +298,8 @@ function initWorkTags() {
         const wrap = document.createElement('span');
         wrap.className = 'work-card__tags';
         wrap.innerHTML = cats.map(function (slug) {
-            return '<span class="tag">' + WORK_CATEGORIES[slug].label +
-                catIcon(slug) + '</span>';
+            /* label only - the icons said nothing the words did not */
+            return '<span class="tag">' + WORK_CATEGORIES[slug].label + '</span>';
         }).join('');
 
         // the pills stand in for the old single category line
@@ -307,8 +309,9 @@ function initWorkTags() {
     });
 }
 
-/* Filter bar - only builds where <div data-work-filters> exists (projects.html).
-   Multi-select up to WORK_FILTER_MAX; picking another drops the oldest. */
+/* Filter bar - only builds where <div data-work-filters> exists (the home page).
+   One filter at a time: picking another replaces it, and tapping the
+   live one clears back to All. */
 function initWorkFilters() {
     const bar = document.querySelector('[data-work-filters]');
     if (!bar) return;
@@ -316,7 +319,7 @@ function initWorkFilters() {
     const scatter = document.querySelector('.work-scatter');
     if (!scatter) return;
 
-    const PER_ROW = 3;
+    const PER_ROW = 2;
 
     // Every card, in source order. This array is the source of truth -
     // the .work-row divs get rebuilt around it on every filter change,
@@ -373,8 +376,7 @@ function initWorkFilters() {
         // what the collapsed mobile toggle reads
         state.textContent = active.length === 0
             ? 'All'
-            : (active.length === 1 ? WORK_CATEGORIES[active[0]].label
-                                   : active.length + ' selected');
+            : WORK_CATEGORIES[active[0]].label;
 
         const visible = cards.filter(function (card) {
             if (active.length === 0) return true;
@@ -422,16 +424,13 @@ function initWorkFilters() {
         if (!btn) return;
         const slug = btn.getAttribute('data-cat');
 
-        if (slug === 'all') {
-            active = [];
+        /* One at a time. `active` stays an array so render() and the
+           visibility test below do not care, it just never holds more
+           than a single slug. */
+        if (slug === 'all' || active.indexOf(slug) !== -1) {
+            active = [];                  // All, or tapping the live filter off
         } else {
-            const at = active.indexOf(slug);
-            if (at !== -1) {
-                active.splice(at, 1);                 // toggle off
-            } else {
-                active.push(slug);
-                if (active.length > WORK_FILTER_MAX) active.shift();  // drop oldest
-            }
+            active = [slug];              // replaces whatever was set
         }
         render();
     });
@@ -567,18 +566,42 @@ function initHeroBgFade() {
     function update() {
         ticking = false;
         const vh = window.innerHeight || 1;
+
+        // How far out of focus the gradient is: 0 while the hero is sharp,
+        // 1 once it is fully blurred behind the work. Tracks the scroll
+        // continuously rather than snapping at a threshold. The css reads
+        // it for opacity, blur radius and scale all at once.
         const top = target.getBoundingClientRect().top;
-        // Full liquid until the portfolio is ~1.5 screens away; fully
-        // black by the time its top edge is ~2/3 down the viewport.
-        const START = vh * 1.5;   // top distance where the fade begins
-        const END = vh * 0.65;    // top distance where it's fully black
-        const p = Math.max(0, Math.min(1, (top - END) / (START - END)));
-        bg.style.opacity = p.toFixed(3);
+        const START = vh * 1.2;   // distance at which the blur begins
+        const END = vh * 0.3;     // distance at which it is fully blurred
+        const amb = Math.min(1, Math.max(0, (START - top) / (START - END)));
+        bg.style.setProperty('--amb', amb.toFixed(3));
+
+        // Freeze the canvas the moment any blur lands on it. Under a blur a
+        // still frame and a moving one are indistinguishable, and this way
+        // the per-frame filtering is done on a static image rather than on
+        // a canvas that is also redrawing itself.
+        const hero = window.liquidHero && window.liquidHero.instances &&
+            window.liquidHero.instances[0];
+        if (hero && hero.setFrozen) hero.setFrozen(amb > 0.01);
 
         if (navbar && divider) {
             const dr = divider.getBoundingClientRect();
             const mid = dr.top + dr.height / 2;
             navbar.classList.toggle('is-solid', mid < vh * 0.5);
+        }
+
+        // The divider phrase blurs as the projects come in: 0 until their
+        // top has climbed to 75% of the way down the screen, 1 once it
+        // reaches 30% down. The fade starts once the blur is half done. The phrase
+        // itself scrolls with the page. Applies under reduced motion too.
+        if (divider) {
+            const wr = target.getBoundingClientRect();
+            const p = Math.min(1, Math.max(0, (vh * 0.75 - wr.top) / (vh * 0.45)));
+            const fade = Math.min(1, Math.max(0, (p - 0.5) * 2));
+            const root = document.documentElement.style;
+            root.setProperty('--work-p', p.toFixed(3));
+            root.setProperty('--work-fade', fade.toFixed(3));
         }
     }
     function onScroll() {
@@ -600,7 +623,7 @@ function initCardParallax() {
     // the toggle in the navbar, which persists across pages
     if (document.documentElement.classList.contains('liquid-hero-reduced')) return;
 
-    // Skip the squish rows (projects.html) - those cards stay row-aligned.
+    // Skip the squish rows - those cards stay row-aligned.
     const cards = Array.from(document.querySelectorAll('.work-card'))
         .filter(function (c) { return !c.closest('.work-scatter--squish'); });
     if (!cards.length) return;
@@ -660,7 +683,7 @@ function initCardParallax() {
    Social links - clone the footer set into a fixed
    side rail (desktop) and the burger menu (mobile)
    ============================================ */
-function initSocial() {
+/*function initSocial() {
     const lines = '<span class="side-rail__line"></span>';
 
     // Left rail: copyright
@@ -697,7 +720,7 @@ function initSocial() {
         li.innerHTML = markup;
         navLinks.appendChild(li);
     }
-}
+}*/
 
 /* ============================================
    Navbar - fade the black backdrop in on scroll
@@ -846,41 +869,6 @@ function initNavTint() {
 }
 
 /* ============================================
-   Scroll Animations (Intersection Observer)
-   ============================================ */
-function initScrollAnimations() {
-    const animatedElements = document.querySelectorAll('.animate-on-scroll');
-    
-    if (animatedElements.length === 0) return;
-    
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px 0px -100px 0px',
-        threshold: 0.1
-    };
-    
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                // Add staggered delay based on element position
-                const delay = index * 100;
-                
-                setTimeout(() => {
-                    entry.target.classList.add('visible');
-                }, delay);
-                
-                // Unobserve after animation
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-    
-    animatedElements.forEach(element => {
-        observer.observe(element);
-    });
-}
-
-/* ============================================
    Mobile Menu Toggle
    ============================================ */
 function initMobileMenu() {
@@ -945,7 +933,7 @@ function initContactForm() {
         );
         
         // Open mailto link
-        window.location.href = `mailto:irawanandersonputra@gmail.com?subject=${subject}&body=${body}`;
+        window.location.href = `mailto:hello@doubledashcreative.com?subject=${subject}&body=${body}`;
     });
 }
 
@@ -1045,12 +1033,4 @@ document.querySelectorAll('.portfolio-item').forEach(item => {
    ============================================ */
 window.addEventListener('load', function() {
     document.body.classList.add('loaded');
-
-    // Trigger fade-in animations for above-the-fold content
-    const heroElements = document.querySelectorAll('.liquid-hero .fade-in');
-    heroElements.forEach((el, index) => {
-        setTimeout(() => {
-            el.style.animationPlayState = 'running';
-        }, index * 150);
-    });
 });

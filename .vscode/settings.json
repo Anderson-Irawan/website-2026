@@ -1,0 +1,9 @@
+{
+    // 5500, not 5501: Sanity's CORS allowlist is per-origin and the PORT is
+    // part of the origin. Only http://localhost:5500 and http://127.0.0.1:5500
+    // are allowed on this project, so on any other port the browser blocks
+    // the content request and both project grids come up empty.
+    // To use a different port, allowlist it first, from the studio folder:
+    //   npx sanity cors add http://localhost:<port>
+    "liveServer.settings.port": 5500
+}

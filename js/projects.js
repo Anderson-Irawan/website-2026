@@ -4,7 +4,7 @@
    The content lives in a Google Sheet. Edit the sheet, refresh the site
    - there is nothing to re-upload. Setup is in content/SHEET-SETUP.md.
 
-   Pages are  case-study.html?p=<project>
+   Pages are  /work/<project>, listed on the home page
 
    THE COLUMNS
      project   which case study the row belongs to
@@ -41,6 +41,19 @@ const SANITY = {
    File > Share > Publish to web > Comma-separated values (.csv) */
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSrdv6YAEKeOIZoAZhfAtO8Gjmh5l32fDEx-QDb1QHP0YRMM-nGQW_WKENFOQqsQvjkodoygqeDVKp-/pub?output=csv';
 
+/* Clean case study urls are produced by .htaccess plus case.php, and a
+   local dev server has neither. Anything that is not the live host gets
+   the template with a query string instead, which the renderer below
+   still understands. That keeps Live Server, a phone on the LAN and a
+   bare file:// preview all working.
+
+   Duplicated in sanity-cards.js on purpose: the two never load on the
+   same page, so there is nothing to share them through. */
+function caseUrl(slug) {
+    const live = /(^|\.)doubledashcreative\.com$/.test(location.hostname);
+    return live ? '/work/' + slug : 'case-study.html?p=' + slug;
+}
+
 /* Editing locally? Use the uncached API so a publish shows on the next
    refresh. In production use the CDN, which is faster and far cheaper
    but holds a 60 second cache - fine for visitors, maddening when you
@@ -50,9 +63,14 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
     : 'apicdn.sanity.io';
 
 (function () {
-    const LOCAL = 'content/projects.csv';
-    const ASSETS = 'assets/portfolio/';
-    const VIDEOS = 'assets/videos/';
+    /* Root-relative, not relative. These pages are served at /work/<slug>,
+       one level down, so 'assets/videos/x.mp4' would resolve against
+       /work/ and 404 - which is exactly what happened to every case study
+       video the moment the urls changed. A leading slash pins them to the
+       site root wherever the page itself lives. */
+    const LOCAL = '/content/projects.csv';
+    const ASSETS = '/assets/portfolio/';
+    const VIDEOS = '/assets/videos/';
     const VIDEO = /\.(mp4|webm|mov)$/i;
 
     const mount = document.querySelector('[data-case-study]');
@@ -168,7 +186,7 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
     function hero(r) {
         /* data-height drives the CSS. The sheet has no height column, so
            its heroes fall through to the standard banner. */
-        return '<section class="case-study-hero fade-in" data-height="' +
+        return '<section class="case-study-hero" data-height="' +
             (r.height || 'default') + '">' + media(r) + '</section>';
     }
 
@@ -177,11 +195,11 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
             '<div class="work-container">' +
             '<div class="case-study-intro-grid">' +
             '<div class="title-section">' +
-            '<h1 class="heading-lg fade-in">' + project.title + '</h1>' +
-            (project.role ? '<p class="meta fade-in fade-in-delay-1">' + project.role + '</p>' : '') +
+            '<h1 class="heading-lg">' + project.title + '</h1>' +
+            (project.role ? '<p class="meta">' + project.role + '</p>' : '') +
             '</div>' +
             '<div class="case-study-body">' +
-            '<div class="description fade-in fade-in-delay-2">' + paras(r.text) + '</div>' +
+            '<div class="description">' + paras(r.text) + '</div>' +
             scopeList(r.scope) +
             '</div>' +
             '</div></div></section>';
@@ -192,7 +210,7 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
     function scopeList(cell) {
         const items = paraList(cell);
         if (!items.length) return '';
-        return '<aside class="case-study-scope fade-in fade-in-delay-2">' +
+        return '<aside class="case-study-scope">' +
             '<h2 class="case-study-scope__title">Scope</h2><ul>' +
             items.map(function (t) { return '<li>' + t + '</li>'; }).join('') +
             '</ul></aside>';
@@ -202,16 +220,16 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
         if (r.file) {
             return '<section class="sm-section cs-band">' +
                 '<div class="case-study-solution">' +
-                '<div class="content-img animate-on-scroll">' +
+                '<div class="content-img">' +
                 '<h2 class="heading-lg">' + r.heading + '</h2>' + paras(r.text) +
                 '</div>' +
-                '<div class="image-box animate-on-scroll">' + media(r) + '</div>' +
+                '<div class="image-box">' + media(r) + '</div>' +
                 '</div></section>';
         }
         return '<section class="section cs-band"><div class="container">' +
             '<div class="case-study-solution">' +
-            '<div class="content animate-on-scroll"><h2 class="heading-lg">' + r.heading + '</h2></div>' +
-            '<div class="content animate-on-scroll">' + paras(r.text) + '</div>' +
+            '<div class="content"><h2 class="heading-lg">' + r.heading + '</h2></div>' +
+            '<div class="content">' + paras(r.text) + '</div>' +
             '</div></div></section>';
     }
 
@@ -221,7 +239,7 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
                 group.length + ' items; only the first 4 are shown.');
         }
         const items = group.slice(0, 4);
-        return '<section class="cs-row animate-on-scroll" data-n="' + items.length + '"' +
+        return '<section class="cs-row" data-n="' + items.length + '"' +
             (items[0].bg ? ' style="background-color: ' + items[0].bg + ';"' : '') + '>' +
             items.map(function (r) {
                 /* data-height="natural" releases the item from the row's
@@ -273,16 +291,56 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
             clips.forEach(function (v) { v.removeAttribute('loop'); });
             return;
         }
+        /* Data saver on, or a connection that will not cope. Autoplaying
+           several megabytes over a slow link makes the whole page crawl,
+           so the poster stays put and a tap starts it instead. Safari
+           does not implement navigator.connection, so iphones fall
+           through to the normal path below. */
+        const net = navigator.connection || {};
+        const slow = net.saveData === true ||
+            /^(slow-2g|2g|3g)$/.test(net.effectiveType || '');
+
+        if (slow) {
+            clips.forEach(function (v) { v.setAttribute('controls', ''); });
+            return;
+        }
+
+        /* On a phone the lookahead is the problem: a 200px margin starts
+           the next clip downloading while the current one is still
+           buffering, and the two split one connection. So no lookahead
+           there, and only the clip most in view plays, which means a
+           scroll never has more than one video competing for bandwidth.
+           Desktop keeps the old behaviour, where a row of clips playing
+           together is the whole point. */
+        const phone = window.matchMedia('(max-width: 640px)').matches;
+        const ratios = new Map();
+
         const io = new IntersectionObserver(function (entries) {
             entries.forEach(function (e) {
-                if (e.isIntersecting) {
-                    const p = e.target.play();
+                ratios.set(e.target, e.isIntersecting ? e.intersectionRatio : 0);
+            });
+
+            let best = null;
+            let bestRatio = 0;
+            if (phone) {
+                ratios.forEach(function (ratio, el) {
+                    if (ratio > bestRatio) { bestRatio = ratio; best = el; }
+                });
+            }
+
+            ratios.forEach(function (ratio, el) {
+                const wanted = phone ? (el === best && bestRatio > 0) : ratio > 0;
+                if (wanted) {
+                    const p = el.play();
                     if (p) p.catch(function () { /* autoplay refused */ });
-                } else {
-                    e.target.pause();
+                } else if (!el.paused) {
+                    el.pause();
                 }
             });
-        }, { rootMargin: '200px 0px' });
+        }, {
+            rootMargin: phone ? '0px' : '200px 0px',
+            threshold: phone ? [0, 0.25, 0.5, 0.75] : 0,
+        });
 
         clips.forEach(function (v) { io.observe(v); });
     }
@@ -427,7 +485,13 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
     }
 
     /* ---- go ---- */
-    const slug = (new URLSearchParams(location.search).get('p') || '').toLowerCase();
+    /* /work/<slug> is the real url now. ?p=<slug> is still read as a
+       fallback, so an old link keeps working anywhere the .htaccess
+       redirect is not in play - a local file:// preview, say. */
+    const fromPath = (location.pathname.match(/\/work\/([^\/.]+)/) || [])[1] || '';
+    const slug = (fromPath ||
+        new URLSearchParams(location.search).get('p') || '').toLowerCase();
+
 
     function grab(url) {
         return fetch(url, { cache: 'no-cache' }).then(function (res) {
@@ -458,6 +522,13 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
             })
         : Promise.resolve([]);
 
+    /* og: tags key off property=, twitter: off name=, so which attribute to
+       match on has to be passed in rather than guessed. Missing tag = no-op. */
+    function setMeta(attr, key, value) {
+        const el = document.querySelector('meta[' + attr + '="' + key + '"]');
+        if (el) el.setAttribute('content', value);
+    }
+
     Promise.all([loadSheet, loadSanity]).then(function (both) {
         const projects = toProjects(toRecords(parseCSV(both[0])));
 
@@ -474,32 +545,44 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
                 slug ? 'No write-up for &ldquo;' + slug + '&rdquo;' : 'Pick a project',
                 '<p>In the sheet so far:</p><ul class="cs-missing__list">' +
                 Object.keys(projects).map(function (key) {
-                    return '<li><a href="case-study.html?p=' + key + '">' +
+                    return '<li><a href="' + caseUrl(key) + '">' +
                         projects[key].title + '</a></li>';
                 }).join('') +
-                '</ul><p><a href="projects.html">Back to the projects</a></p>'
+                '</ul><p><a href="/">Back to the projects</a></p>'
             );
             return;
         }
 
-        document.title = project.title + ' | Case Study | Double Dash Creative';
+        const pageTitle = project.title + ' | Case Study | Double Dash Creative';
+        document.title = pageTitle;
 
         /* search snippet: the opening line of the intro, no extra column */
         const desc = document.querySelector('meta[name="description"]');
         const opener = project.rows.filter(function (r) {
             return r.type.toLowerCase() === 'intro';
         })[0];
-        if (desc && opener) {
-            const first = paraList(opener.text)[0] || '';
-            desc.setAttribute('content', first.slice(0, 160));
+        const snippet = opener ? (paraList(opener.text)[0] || '').slice(0, 160) : '';
+        if (desc && snippet) desc.setAttribute('content', snippet);
+
+        /* Point the share card and the canonical url at THIS project rather
+           than the bare template. Most scrapers never see any of it, because
+           they do not run JavaScript, but anything that does render gets the
+           real values instead of the generic ones sitting in the markup. */
+        setMeta('property', 'og:title', pageTitle);
+        setMeta('property', 'og:url', location.href);
+        setMeta('name', 'twitter:title', pageTitle);
+        if (snippet) {
+            setMeta('property', 'og:description', snippet);
+            setMeta('name', 'twitter:description', snippet);
         }
+        const canon = document.querySelector('link[rel="canonical"]');
+        if (canon) canon.setAttribute('href', location.href);
 
         mount.innerHTML = build(project);
         wireVideo();
 
         /* main.js finished its pass on DOMContentLoaded, before any of
            this existed, so the new sections need observing now */
-        if (typeof initScrollAnimations === 'function') initScrollAnimations();
 
         heroPainted().then(ready);
     }).catch(function (err) {
@@ -515,6 +598,6 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
         }
         message('Content did not load',
             '<p>Neither the sheet nor <code>' + LOCAL + '</code> could be read.</p>' +
-            '<p><a href="projects.html">Back to the projects</a></p>');
+            '<p><a href="/">Back to the projects</a></p>');
     });
 }());

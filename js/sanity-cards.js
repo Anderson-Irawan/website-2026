@@ -27,6 +27,16 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
     ? 'api.sanity.io'
     : 'apicdn.sanity.io';
 
+/* Clean case study urls are produced by .htaccess plus case.php, and a
+   local dev server has neither. Anything that is not the live host gets
+   the template with a query string instead, which the case study
+   renderer still understands. That keeps Live Server, a phone on the
+   LAN and a bare file:// preview all working. */
+function caseUrl(slug) {
+    const live = /(^|\.)doubledashcreative\.com$/.test(location.hostname);
+    return live ? '/work/' + slug : 'case-study.html?p=' + slug;
+}
+
 (function () {
     const SANITY = {
         projectId: '7z9npbl2',
@@ -42,6 +52,11 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
        shows: [data-featured-only] limits it to the ones ticked "Show on
        the homepage" in the Studio. */
     const FEATURED_ONLY = scatter.hasAttribute('data-featured-only');
+
+    /* A phone cannot hover, so a hover video there can never play: it is
+       megabytes fetched to sit behind a poster nobody will ever trigger.
+       Touch devices get the still image and nothing else. */
+    const CAN_HOVER = window.matchMedia('(hover: hover)').matches;
 
     /* asset._ref is image-<hash>-<w>x<h>-<ext>, which maps straight onto a
        CDN url with no second request */
@@ -80,13 +95,13 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
             '<img class="work-card__img" loading="lazy" decoding="async" src="' +
             cardImg(still._ref) + '" alt="' + esc(p.cardStill.alt || '') + '">';
 
-        if (hoverVid) {
+        if (hoverVid && CAN_HOVER) {
             /* the poster falls back to the resting image, so the card never
                flashes a different picture before the video starts */
             frame = '<video class="work-card__img portfolio-video" muted playsinline' +
                 ' preload="metadata" poster="' +
                 cardImg(poster ? poster._ref : still._ref) + '">' +
-                '<source src="assets/videos/' + esc(hoverVid) + '" type="video/mp4">' +
+                '<source src="/assets/videos/' + esc(hoverVid) + '" type="video/mp4">' +
                 '</video>';
         } else if (hoverImg) {
             frame += '<img class="work-card__img work-card__img--hover" loading="lazy"' +
@@ -95,7 +110,7 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
         }
 
         const a = document.createElement('a');
-        a.href = 'case-study.html?p=' + p.slug;
+        a.href = caseUrl(p.slug);
         a.className = 'work-card' + (hoverVid ? ' portfolio-item-video' : '');
         a.setAttribute('data-cats', (p.categories || []).join(' '));
 
@@ -156,7 +171,7 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
                have to be built too. Both grid styles lay out through
                .work-row, so three to a row suits either. */
             if (!scatter.querySelector('.work-card')) {
-                const PER_ROW = 3;
+                const PER_ROW = 2;
                 let row = null;
 
                 /* Count only the cards that actually build. Keying the row
@@ -181,7 +196,7 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
                 });
             } else projects.forEach(function (p) {
                 const existing = scatter.querySelector(
-                    'a.work-card[href="case-study.html?p=' + p.slug + '"]'
+                    'a.work-card[href="' + caseUrl(p.slug) + '"]'
                 );
 
                 const card = buildCard(p);
@@ -209,7 +224,6 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
             try {
                 if (typeof initWorkTags === 'function') initWorkTags();
                 if (typeof initWorkFilters === 'function') initWorkFilters();
-                if (typeof initScrollAnimations === 'function') initScrollAnimations();
             } catch (e) {
                 console.error('a main.js init threw on the Sanity cards', e);
             }

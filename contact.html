@@ -7,9 +7,31 @@
     <title>Contact | Double Dash Creative</title>
     <meta name="description"
         content="Work with me - let's bring your brand vision to life. Get in touch for logo design, branding, and bespoke art projects.">
+    <!-- Link previews. Scrapers do not run JavaScript, so every value here
+         is static: whatever a page builds at runtime is invisible to them.
+         The image is a 1200x630 crop served by Sanity; swap the URL for a
+         purpose-made brand card when there is one. -->
+    <link rel="canonical" href="https://doubledashcreative.com/contact">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Double Dash Creative">
+    <meta property="og:url" content="https://doubledashcreative.com/contact">
+    <meta property="og:title" content="Contact | Double Dash Creative">
+    <meta property="og:description" content="Work with me - let's bring your brand vision to life. Get in touch for logo design, branding, and bespoke art projects.">
+    <meta property="og:image" content="https://cdn.sanity.io/images/7z9npbl2/production/a82256590d39facff049bfbde2e82515e2888559-1920x1080.jpg?w=1200&amp;h=630&amp;fit=crop&amp;fm=jpg&amp;q=80">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Double Dash Creative brand and identity work">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Contact | Double Dash Creative">
+    <meta name="twitter:description" content="Work with me - let's bring your brand vision to life. Get in touch for logo design, branding, and bespoke art projects.">
+    <meta name="twitter:image" content="https://cdn.sanity.io/images/7z9npbl2/production/a82256590d39facff049bfbde2e82515e2888559-1920x1080.jpg?w=1200&amp;h=630&amp;fit=crop&amp;fm=jpg&amp;q=80">
+
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="css/liquid-hero.css">
+    <link rel="icon" href="assets/favicon.ico" sizes="any">
     <script>document.documentElement.classList.add("is-loading");</script>
+    <!-- Apply the saved motion setting before anything paints. -->
+    <script>try{if(localStorage.getItem('liquid-hero:reduced')==='1')document.documentElement.classList.add('liquid-hero-reduced');}catch(e){}</script>
 </head>
 
 <body>
@@ -18,11 +40,14 @@
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
     </div>
 
+    <!-- Liquid gradient, fixed behind the whole page. is-ambient from the
+         start here: no hero to be sharp for, so it is blurred and frozen. -->
+    <canvas class="liquid-hero__bg is-ambient" data-liquid-hero></canvas>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="assets/logos/logotype.svg" alt="Double Dash Creative" class="logo-mark">
+                <img src="assets/logotype.svg" alt="Double Dash Creative" class="logo-mark">
             </a>
 
             <button class="mobile-menu-toggle" aria-label="Toggle menu">
@@ -32,7 +57,7 @@
             </button>
 
             <ul class="nav-links">
-                <li><a href="projects.html" class="nav-link-cycle"><span data-text="Projects">Projects</span></a></li>
+                <li><a href="index.html" class="nav-link-cycle"><span data-text="Projects">Projects</span></a></li>
                 <li><a href="about.html" class="nav-link-cycle"><span data-text="About">About</span></a></li>
                 <li><a href="contact.html" class="nav-link-cycle"><span data-text="Contact">Contact</span></a></li>
             </ul>
@@ -42,61 +67,133 @@
     <!-- Contact Section -->
     <section class="section contact-section">
         <div class="container">
+            <div class="contact-head">
+                <h1 class="page-header__title">Let's Work Together.</h1>
+            </div>
+
             <div class="contact-layout">
                 <div class="contact-form">
-                    <h1 class="page-header__title fade-in">Work With Me.</h1>
 
                     <form id="contact-form">
-                        <div class="form-group fade-in fade-in-delay-1">
+                        <div class="form-group">
                             <label for="name">Name*</label>
                             <input type="text" id="name" name="name" required placeholder="">
                         </div>
 
-                        <div class="form-group fade-in fade-in-delay-1">
+                        <div class="form-group">
                             <label for="company">Brand/Company Name*</label>
                             <input type="text" id="company" name="company" required placeholder="">
                         </div>
 
-                        <div class="form-group fade-in fade-in-delay-2">
+                        <div class="form-group">
                             <label for="email">Email*</label>
                             <input type="email" id="email" name="email" required placeholder="">
                         </div>
 
-                        <div class="form-group fade-in fade-in-delay-2">
-                            <label for="project-type">Type of project*</label>
-                            <select id="project-type" name="project-type" required>
-                                <option value="">Select a project type</option>
-                                <option value="logo-design">Logo Design</option>
-                                <option value="branding">Branding</option>
-                                <option value="bespoke-art">Bespoke Art</option>
+                        <div class="form-group">
+                            <label for="website">Website</label>
+                            <!-- type="text", not "url": type="url" demands a scheme, so a bare
+                                 domain like kilnandco.com fails validation and blocks the
+                                 whole submit. This value is read by a human in an email. -->
+                            <input type="text" inputmode="url" id="website" name="website"
+                                placeholder="If you have one">
+                        </div>
+
+                        <!-- Checkboxes, because someone can want two of these.
+                             They carry no name attribute on purpose: the joined
+                             list is written into the hidden project_type input
+                             on submit, so EmailJS sees one clean value instead
+                             of three fields sharing a name. -->
+                        <fieldset class="form-check">
+                            <legend>What are you after?*</legend>
+                            <label class="check">
+                                <input type="checkbox" data-service value="Logo &amp; Branding">
+                                <span>Logo &amp; Branding</span>
+                            </label>
+                            <label class="check">
+                                <input type="checkbox" data-service value="Web Design">
+                                <span>Web Design</span>
+                            </label>
+                            <label class="check">
+                                <input type="checkbox" data-service value="Bespoke Illustrations">
+                                <span>Bespoke Illustrations</span>
+                            </label>
+                            <input type="hidden" name="project_type" id="project_type">
+                        </fieldset>
+
+                        <!-- PLACEHOLDER RANGES. Set these to your own numbers
+                             before this goes live: they decide who bothers
+                             writing to you and who talks themselves out of it.
+                             Radios, not checkboxes: a project has one budget. -->
+                        <fieldset class="form-check">
+                            <legend>What budget do you have in mind?</legend>
+                            <label class="check"><input type="radio" name="budget" value="Under &pound;500"><span>Under &pound;500</span></label>
+                            <label class="check"><input type="radio" name="budget" value="&pound;500 - &pound;1,000"><span>&pound;500 - &pound;1,000</span></label>
+                            <label class="check"><input type="radio" name="budget" value="&pound;1,000 - &pound;2,500"><span>&pound;1,000 - &pound;2,500</span></label>
+                            <label class="check"><input type="radio" name="budget" value="&pound;2,500 - &pound;5,000"><span>&pound;2,500 - &pound;5,000</span></label>
+                            <label class="check"><input type="radio" name="budget" value="&pound;5,000 +"><span>&pound;5,000 +</span></label>
+                            <label class="check"><input type="radio" name="budget" value="Not sure yet"><span>Not sure yet</span></label>
+                        </fieldset>
+
+                        <fieldset class="form-check">
+                            <legend>Estimated timeframe</legend>
+                            <label class="check"><input type="radio" name="timeframe" value="Under 1 month"><span>Under 1 month</span></label>
+                            <label class="check"><input type="radio" name="timeframe" value="1 - 2 months"><span>1 - 2 months</span></label>
+                            <label class="check"><input type="radio" name="timeframe" value="3 - 6 months"><span>3 - 6 months</span></label>
+                            <label class="check"><input type="radio" name="timeframe" value="6 months +"><span>6 months +</span></label>
+                            <label class="check"><input type="radio" name="timeframe" value="Flexible"><span>Flexible</span></label>
+                        </fieldset>
+
+                        <div class="form-group">
+                            <label for="referral">How did you find me?</label>
+                            <select id="referral" name="referral">
+                                <option value="">Select one</option>
+                                <option value="Instagram">Instagram</option>
+                                <option value="LinkedIn">LinkedIn</option>
+                                <option value="Behance">Behance</option>
+                                <option value="Google">Google</option>
+                                <option value="Word of mouth">Word of mouth</option>
+                                <option value="Referral or past client">Referral or past client</option>
+                                <option value="Somewhere else">Somewhere else</option>
                             </select>
                         </div>
 
-                        <div class="form-group fade-in fade-in-delay-3">
-                            <label for="description">Describe the project</label>
+                        <div class="form-group">
+                            <label for="description">Tell me about the project</label>
                             <textarea id="description" name="description" rows="5"
-                                placeholder="Tell me about your project! I want to know your vision and mission, how the brand came to be, what your hoping for, what do you want it to look like."></textarea>
+                                placeholder="Your vision and mission, how the brand came about, what you are hoping for, and what you want it to look like."></textarea>
                         </div>
 
-                        <div class="form-group fade-in fade-in-delay-3">
-                            <label for="budget">Budget</label>
-                            <input type="text" id="budget" name="budget" placeholder="e.g. £500 - £1000">
+                        <!-- Honeypot. People never see this, bots fill it in.
+                             Anything that arrives with it filled is dropped
+                             before EmailJS is ever called. Named url, not
+                             website: website is a real field now, and a trap
+                             sharing its name would bin genuine submissions. -->
+                        <div class="hp-field" aria-hidden="true">
+                            <label for="url">Url</label>
+                            <input type="text" id="url" name="url"
+                                tabindex="-1" autocomplete="off">
                         </div>
 
-                        <div class="form-group fade-in fade-in-delay-4">
-                            <label for="timeframe">Timeframe</label>
-                            <input type="text" id="timeframe" name="timeframe" placeholder="e.g. 2-4 weeks">
+                        <!-- reCAPTCHA v2. EmailJS supports v2 only, and verifies it
+                             on their servers using the SECRET key you paste into the
+                             template's Settings tab.
+
+                             data-sitekey below is the PUBLIC key and belongs here.
+                             The secret key must never appear in this file - it is the
+                             whole reason the check cannot be faked. -->
+                        <div class="form-captcha">
+                            <div class="g-recaptcha"
+                                 data-sitekey="RECAPTCHA_SITE_KEY"
+                                 data-theme="light"></div>
                         </div>
 
-                        <div class="fade-in fade-in-delay-5">
+                        <div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </form>
                 </div>
 
-                <div class="contact-shark animate-on-scroll">
-                    <img src="assets/images/stickerboard.png" alt="Double Dash shark illustration">
-                </div>
             </div>
         </div>
     </section>
@@ -109,35 +206,17 @@
       <footer class="site-footer">
 
         <div class="footer-top">
-          <div>
-            <h2 class="footer-thanks">Thanks for visiting</h2>
-            <!-- assets/images/landscape logo.svg, inlined so the wordmark takes the footer's ink colour -->
-            <svg class="footer-logotype" viewBox="0 0 429.58 141.56" role="img" aria-label="Double Dash Creative">
-              <g fill="currentColor">
-                <path d="M228.25,66.29V.78h15.68c5.79,0,9.97,1.24,12.55,3.71,2.58,2.47,3.94,6.53,4.07,12.18.08,4.04.14,7.86.16,11.47s.03,7.2,0,10.79c-.03,3.59-.08,7.39-.16,11.4-.14,5.71-1.49,9.79-4.07,12.26-2.58,2.47-6.76,3.71-12.55,3.71h-15.68ZM239.51,56.39h4.42c1.75,0,3.06-.4,3.95-1.21.89-.8,1.34-1.97,1.37-3.5.08-3.08.14-6.14.18-9.15.04-3.02.06-6.03.06-9.05s-.02-6.03-.06-9.05c-.04-3.02-.1-6.04-.18-9.07-.03-1.53-.48-2.69-1.37-3.48-.89-.79-2.2-1.19-3.95-1.19h-4.42v45.7Z"/>
-                <path d="M281.11,67.07c-5.68,0-9.79-1.2-12.33-3.6-2.54-2.4-3.86-6.4-3.97-12-.05-2.87-.1-5.8-.14-8.8-.04-3-.06-6.05-.06-9.15s.02-6.16.06-9.19c.04-3.03.09-5.96.14-8.8.11-5.57,1.43-9.55,3.97-11.94,2.54-2.39,6.65-3.58,12.33-3.58s9.79,1.19,12.24,3.58c2.46,2.39,3.78,6.37,3.97,11.94.11,2.89.19,5.86.25,8.89.05,3.03.08,6.09.08,9.17s-.03,6.12-.08,9.11c-.05,2.99-.14,5.92-.25,8.78-.19,5.6-1.51,9.6-3.97,12-2.46,2.4-6.54,3.6-12.24,3.6ZM281.11,57.9c1.64,0,2.87-.37,3.69-1.11s1.24-1.82,1.27-3.24c.14-2.97.23-6.18.29-9.6.05-3.43.08-6.92.08-10.48s-.03-7.05-.08-10.46c-.05-3.41-.15-6.61-.29-9.58-.03-1.39-.46-2.45-1.31-3.17-.85-.72-2.06-1.08-3.64-1.08s-2.85.36-3.71,1.08c-.86.72-1.32,1.78-1.37,3.17-.11,2.98-.2,6.17-.27,9.58-.07,3.41-.1,6.9-.1,10.46s.03,7.06.1,10.48c.07,3.43.16,6.63.27,9.6.05,1.42.51,2.5,1.37,3.24s2.09,1.11,3.71,1.11Z"/>
-                <path d="M317.72,67.07c-5.81,0-9.96-1.2-12.45-3.6-2.48-2.4-3.77-6.4-3.85-12-.11-8.38-.16-16.84-.16-25.37s.05-16.97.16-25.33h11.22c-.08,5.6-.13,11.4-.14,17.4-.01,6.01,0,12,.02,18,.03,5.99.07,11.79.12,17.38,0,1.42.44,2.5,1.31,3.24.87.74,2.13,1.11,3.77,1.11s2.83-.37,3.67-1.11c.83-.74,1.25-1.82,1.25-3.24.05-5.6.11-11.39.16-17.38.05-5.99.07-11.99.06-18-.01-6.01-.09-11.81-.23-17.4h11.3c.11,8.35.16,16.8.16,25.33s-.05,16.99-.16,25.37c-.08,5.6-1.37,9.6-3.87,12-2.5,2.4-6.61,3.6-12.35,3.6Z"/>
-                <path d="M338.15,66.29V.78h14.33c5.76,0,9.96,1.17,12.61,3.52,2.65,2.35,3.97,6.24,3.97,11.67.03,1.04.04,2.01.04,2.93s-.04,1.82-.12,2.72c-.19,2.84-.83,5.11-1.9,6.82-1.08,1.71-2.76,2.94-5.06,3.71v1.92c2.38.76,4.12,2.01,5.24,3.73,1.12,1.72,1.72,4.05,1.8,7,.08,1.15.12,2.2.12,3.15s-.04,2.01-.12,3.15c-.22,5.41-1.6,9.29-4.14,11.65-2.54,2.36-6.69,3.54-12.45,3.54h-14.33ZM349.41,28.05h3.03c1.75,0,3.07-.59,3.97-1.76.9-1.17,1.36-2.83,1.39-4.95v-5.98c-.03-1.53-.49-2.69-1.39-3.48-.9-.79-2.21-1.19-3.93-1.19h-3.07v17.36ZM349.41,56.39h3.07c1.72,0,3.04-.46,3.95-1.37.91-.91,1.37-2.26,1.37-4.03.03-.98.04-1.92.04-2.83s-.01-1.84-.04-2.83c0-2.68-.42-4.57-1.25-5.69-.83-1.12-2.2-1.68-4.12-1.68h-3.03v18.43Z"/>
-                <path d="M373.24,66.29V.78h11.26v55.61h15.68v9.91h-26.94Z"/>
-                <path d="M402.72,66.29V.78h26.86v9.91h-15.6v17.36h14.78v9.91h-14.78v18.43h15.6v9.91h-26.86Z"/>
-                <path d="M228.25,140.78v-65.52h15.68c5.79,0,9.97,1.24,12.55,3.71,2.58,2.47,3.94,6.53,4.07,12.18.08,4.04.14,7.86.16,11.47s.03,7.2,0,10.79c-.03,3.59-.08,7.39-.16,11.4-.14,5.71-1.49,9.79-4.07,12.26-2.58,2.47-6.76,3.71-12.55,3.71h-15.68ZM239.51,130.87h4.42c1.75,0,3.06-.4,3.95-1.21.89-.8,1.34-1.97,1.37-3.5.08-3.08.14-6.14.18-9.15.04-3.02.06-6.03.06-9.05s-.02-6.03-.06-9.05c-.04-3.02-.1-6.04-.18-9.07-.03-1.53-.48-2.69-1.37-3.48-.89-.79-2.2-1.19-3.95-1.19h-4.42v45.7Z"/>
-                <path d="M261.78,140.78l8.8-65.52h17.94l8.8,65.52h-11.59l-1.39-14.5h-9.54l-1.43,14.5h-11.59ZM275.83,116.37h7.45l-1.47-14.45-1.11-16.75h-2.29l-1.11,16.75-1.47,14.45Z"/>
-                <path d="M314.85,141.56c-5.65,0-9.68-1.21-12.1-3.62-2.42-2.42-3.75-6.41-3.99-11.98v-3.13c0-1.11.02-2.22.06-3.34.04-1.12.13-2.17.27-3.15h10.61c-.14,2.05-.22,4.07-.25,6.08-.03,2.01.05,3.87.25,5.59.11,1.42.58,2.51,1.41,3.26.83.75,2.08,1.13,3.75,1.13s2.87-.38,3.6-1.13c.74-.75,1.2-1.84,1.39-3.26.11-1.01.18-2,.2-2.97.03-.97.03-1.93,0-2.89-.03-.96-.1-1.97-.2-3.03-.14-1.26-.49-2.39-1.06-3.4-.57-1.01-1.53-1.68-2.87-2.01l-6.35-1.6c-2.76-.74-4.93-1.77-6.51-3.09-1.58-1.32-2.72-2.98-3.42-4.98-.7-1.99-1.08-4.33-1.17-7-.03-1.31-.04-2.52-.04-3.64s.01-2.25.04-3.4c.14-3.71.76-6.7,1.86-8.97,1.11-2.27,2.83-3.92,5.16-4.98,2.33-1.05,5.45-1.58,9.36-1.58,5.49,0,9.47,1.2,11.94,3.6,2.47,2.4,3.81,6.39,4.03,11.96.05,1.2.07,2.69.04,4.46-.03,1.77-.08,3.45-.16,5.04h-10.81c.08-1.94.14-3.88.16-5.81.03-1.94,0-3.86-.08-5.77-.06-1.39-.53-2.46-1.41-3.19-.89-.74-2.12-1.11-3.71-1.11-1.67,0-2.89.37-3.69,1.11-.79.74-1.26,1.8-1.39,3.19-.19,1.47-.29,2.98-.29,4.5s.1,3.06.29,4.59c.11,1.26.46,2.36,1.06,3.32.6.96,1.62,1.61,3.07,1.97l5.53,1.31c2.92.71,5.21,1.75,6.88,3.13,1.67,1.38,2.86,3.09,3.58,5.14.72,2.05,1.14,4.45,1.25,7.21.03.79.04,1.56.04,2.31s-.01,1.5-.04,2.25c-.03.75-.06,1.51-.08,2.27-.22,5.57-1.55,9.56-3.99,11.98-2.44,2.42-6.52,3.62-12.22,3.62Z"/>
-                <path d="M334.79,140.78v-65.52h11.26v27.27h8.89v-27.27h11.22v65.52h-11.22v-28.34h-8.89v28.34h-11.26Z"/>
-                <path d="M208.75,90.08v5.4c0,1.49-1.21,2.7-2.7,2.7h-13.04c-1.49,0-2.7-1.21-2.7-2.7v-23.84c0-3.41-.59-6.69-1.69-9.73-.28-.8-.6-1.58-.95-2.34-.26-.56-.54-1.11-.83-1.65-.26-.47-.52-.94-.8-1.39-.47-.75-1.37-1.22-2.22-.98-1.16.16-1.92,1.15-1.92,2.2,0,.39.1.78.33,1.15.26.43.51.87.74,1.31.48.89.9,1.8,1.26,2.75.01.05.03.09.05.14.99,2.66,1.54,5.53,1.54,8.54v24.99c0,2.98,2.41,5.39,5.39,5.39l7.26,21.31,1.56,4.57.08.47c-1.53,1.23-2.78,2.78-3.66,4.56-.87,1.78-1.36,3.79-1.36,5.9,0,.67.05,1.33.14,1.97h-20.14c.7-5.69,4.26-10.49,9.19-12.94l-.69-1.39-2.44-4.93c-8.29-1.4-15.98-3.54-22.68-6.35-.94-.39-1.85-.8-2.75-1.21-5.07-2.36-9.26-5.02-12.5-7.9-1.58-1.39-2.92-2.83-4.03-4.32,0,0-.01,0-.01-.01-.01,0-.01-.01-.02-.02h0c-2.2-2.96-3.49-6.06-3.79-9.25-.02-.22-.04-.43-.05-.65,0-.07-.01-.14,0-.22-.01-.19-.02-.39-.02-.59,0-.18.01-.36.02-.54v-.05h-.5l-33.37,16.44,3.56,21.5c-1.53,1.23-2.78,2.78-3.66,4.56-.87,1.78-1.36,3.79-1.36,5.9,0,.67.05,1.33.14,1.97h-20.14c.32-2.55,1.2-4.92,2.54-6.99,1.63-2.53,3.93-4.6,6.65-5.95l-5.93-11.97-4.83-9.74-5.77-11.66-6.84,5.57,5.77,11.66,3.56-2.9,4.39,8.91,3.79,7.69c-1.77,0-3.54-.25-5.3-.71-2.33-.61-4.64-1.58-6.9-2.81-7.12-3.87-13.65-10.26-18.41-15.68-4.75-5.42-7.72-9.88-7.72-9.88l4.77-3.89h0l8.74-7.13,4.65-3.78.05-.04c.49-.34.96-.71,1.4-1.1l.74-.64c5.78-5.23,9.42-12.78,9.42-21.19,0-2.53-.33-4.99-.95-7.33-.78,1.72-2.51,2.92-4.52,2.92v12.74l-6.1,8.51-21.02-42.42L0,29.76l39.1-2.98L26.22.77h0c53.18-.15,96.49,20.25,97.48,45.61v.02c.01.29.02.57.02.87h37.72c1.51,0,2.98.13,4.41.39-.04-.46-.06-.92-.06-1.39,0-1.07.1-2.12.3-3.13.21-1.16.55-2.28,1-3.35,2.53-6.05,8.51-10.29,15.47-10.29.76,0,1.5.05,2.24.15v7.51h5.51c2.2,0,4.29.44,6.19,1.26.4.17.78.35,1.17.56,4.98,2.64,8.38,7.88,8.38,13.91v34.5c0,1.49,1.21,2.69,2.7,2.69Z"/>
-                <path d="M156.47,119.22l-3.89,7.86h0c-.68.37-1.32.8-1.91,1.28-3.06,2.46-5.02,6.23-5.02,10.46,0,.67.05,1.33.14,1.97h-20.14c.22-1.85.76-3.61,1.55-5.23h0c2.39-4.91,7.09-8.48,12.68-9.28h0l2.49-15.1c3.2,2.5,7.03,4.79,11.45,6.85.87.4,1.75.8,2.66,1.17Z"/>
-              </g>
-              <path class="logo-plus" fill="#2E2B8A" d="M152.07,64.01c-7.44,0-13.65-4.8-15.89-11.41-.42-1.23-.69-2.52-.81-3.85-.04-.5-.07-1-.07-1.51v-11.3h-11.58v11.3c0,9.26-7.51,16.77-16.78,16.77v.03h-11.32v10.19h11.32c9.26,0,16.78,7.51,16.78,16.77v11.33h11.58v-11.33c0-.18,0-.36.02-.54,0-.09,0-.18,0-.27.01-.21.03-.43.04-.65,1.07-13.96,15.09-15.31,16.7-15.31h11.33v-10.19l-11.33-.03Z"/>
-            </svg>
-          </div>
-
-          <div class="footer-art">
-            <img src="assets/images/footer-image.svg" alt="Double Dash Creative footer illustration" loading="lazy" decoding="async">
-          </div>
+          <!-- one landscape lockup across the whole container, replacing the
+               thanks line, the inline wordmark and the illustration -->
+          <img class="footer-mark" src="assets/logos/logo-prime.svg" alt="" aria-hidden="true">
+          <img class="footer-wordmark" src="assets/logotype%20footer.svg"
+               alt="Double Dash Creative" loading="lazy" decoding="async">
         </div>
 
-        <nav class="footer-links">
-          <div class="footer-social">
+        <div class="footer-links">
+          <div class="footer-follow">
+            <span class="footer-follow__label">Follow for more:</span>
+            <nav class="footer-social" aria-label="Social links">
             <a href="https://www.instagram.com/theandy127/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg>
             </a>
@@ -147,20 +226,21 @@
             <a href="https://www.behance.net/andersonirawan1" target="_blank" rel="noopener noreferrer" aria-label="Behance">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M4.654 3c.461 0 .887.035 1.278.14.39.07.711.216.996.391.286.176.497.426.641.747.14.32.216.711.216 1.137 0 .496-.106.922-.356 1.242-.215.32-.566.606-.997.817.606.176 1.067.496 1.348.922.281.426.461.957.461 1.563 0 .496-.105.922-.285 1.278a2.317 2.317 0 0 1-.782.887c-.32.215-.711.39-1.137.496a5.329 5.329 0 0 1-1.278.176L0 12.803V3h4.654zm-.285 3.978c.39 0 .71-.105.957-.285.246-.18.355-.497.355-.887 0-.216-.035-.426-.105-.567a.981.981 0 0 0-.32-.355 1.84 1.84 0 0 0-.461-.176c-.176-.035-.356-.035-.567-.035H2.17v2.31c0-.005 2.2-.005 2.2-.005zm.105 4.193c.215 0 .426-.035.606-.07.176-.035.356-.106.496-.216s.25-.215.356-.39c.07-.176.14-.391.14-.641 0-.496-.14-.852-.426-1.102-.285-.215-.676-.32-1.137-.32H2.17v2.734h2.305v.005zm6.858-.035c.286.285.711.426 1.278.426.39 0 .746-.106 1.032-.286.285-.215.46-.426.53-.64h1.74c-.286.851-.712 1.457-1.278 1.848-.566.355-1.243.566-2.06.566a4.135 4.135 0 0 1-1.527-.285 2.827 2.827 0 0 1-1.137-.782 2.851 2.851 0 0 1-.712-1.172c-.175-.461-.25-.957-.25-1.528 0-.531.07-1.032.25-1.493.18-.46.426-.852.747-1.207.32-.32.711-.606 1.137-.782a4.018 4.018 0 0 1 1.493-.285c.606 0 1.137.105 1.598.355.46.25.817.532 1.102.958.285.39.496.851.641 1.348.07.496.105.996.07 1.563h-5.15c0 .58.21 1.11.496 1.396zm2.24-3.732c-.25-.25-.642-.391-1.103-.391-.32 0-.566.07-.781.176-.215.105-.356.25-.496.39a.957.957 0 0 0-.25.497c-.036.175-.07.32-.07.46h3.196c-.07-.526-.25-.882-.497-1.132zm-3.127-3.728h3.978v.957h-3.978v-.957z"/></svg>
             </a>
-            <a href="mailto:irawanandersonputra@gmail.com" aria-label="Email">
+            <a href="mailto:hello@doubledashcreative.com" aria-label="Email">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/></svg>
             </a>
+            </nav>
           </div>
-        </nav>
 
-        <div class="footer-base">
-          <span><b>Double Dash Creative</b> &copy; 2026 &mdash; All rights reserved</span>
-          <a href="#top">Back to top &uarr;</a>
+          <span class="footer-copyright">Double Dash Creative &copy; 2026 &mdash; All rights reserved</span>
         </div>
 
       </footer>
     </div>
     <script src="js/main.js"></script>
+    <script src="js/liquid-hero.js" defer></script>
+
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -181,12 +261,54 @@
                 const submitButton = this.querySelector('button[type="submit"]');
                 const originalButtonText = submitButton.textContent;
 
+                /* The honeypot. Report success rather than an error, so a bot
+                   never learns the field is what stopped it and comes back
+                   with it left blank. */
+                const trap = this.querySelector('[name="url"]');
+                if (trap && trap.value) {
+                    submitButton.textContent = 'Sent!';
+                    return;
+                }
+
+                /* The service boxes carry no name, so nothing reaches EmailJS
+                   unless their joined value is written into the hidden field
+                   first. Doing it here rather than on every change keeps it to
+                   one place, run once, at the only moment it matters. */
+                const picked = Array.prototype.slice
+                    .call(this.querySelectorAll('[data-service]:checked'))
+                    .map(function (b) { return b.value; });
+
+                const hidden = this.querySelector('#project_type');
+                if (hidden) hidden.value = picked.join(', ');
+
+                /* a checkbox group cannot be marked required in html */
+                if (!picked.length) {
+                    submitButton.textContent = 'Pick a service';
+                    setTimeout(function () {
+                        submitButton.textContent = originalButtonText;
+                    }, 2500);
+                    return;
+                }
+
+
+                /* An unsolved box leaves g-recaptcha-response empty. EmailJS
+                   would reject it anyway, but catching it here says why
+                   instead of showing a bare failure. */
+                const captcha = this.querySelector('[name="g-recaptcha-response"]');
+                if (captcha && !captcha.value) {
+                    submitButton.textContent = 'Tick the box first';
+                    setTimeout(function () {
+                        submitButton.textContent = originalButtonText;
+                    }, 2500);
+                    return;
+                }
+
                 // Disable button and show loading state
                 submitButton.disabled = true;
                 submitButton.textContent = 'Sending...';
 
                 // Send the form data via EmailJS
-                emailjs.sendForm('service_a&d127', 'template_a&d127', this)
+                emailjs.sendForm('service_dbldash', 'template_dbldash', this)
                     .then(function () {
                         // Success message
                         submitButton.textContent = 'Sent!';
@@ -194,6 +316,7 @@
 
                         // Reset form
                         document.getElementById('contact-form').reset();
+                        if (window.grecaptcha) grecaptcha.reset();
 
                         // Reset button after 3 seconds
                         setTimeout(function () {
@@ -204,6 +327,7 @@
                     }, function (error) {
                         // Error message
                         submitButton.textContent = 'Failed. Try again.';
+                        if (window.grecaptcha) grecaptcha.reset();
                         submitButton.style.backgroundColor = '#f44336';
 
                         // Reset button after 3 seconds

@@ -3,11 +3,34 @@
    ============================================ */
 
 /* The gradient canvas is fixed behind the whole page (see
-   .liquid-hero__bg). It fades out to this black as the page scrolls
-   toward the .hero-divider, so everything below reads as solid black. */
+   .liquid-hero__bg). It fades out to the page ground as you scroll
+   toward the .hero-divider, so everything below reads as the light
+   page. This file loads after styles.css on the homepage, so it has to
+   name the same token rather than a raw colour - otherwise it quietly
+   overrides the ground for this one page. */
 body {
-    background-color: var(--color-black);
+    background-color: var(--page-bg);
+    /* so the handover to the orange outro eases rather than snapping */
+    transition: background-color 0.7s var(--transition-smooth);
 }
+
+/* Reaching the footer, the ground under the blurred gradient turns brand
+   orange, so the wash reads orange instead of warm white. initOutro()
+   puts .outro-active on <html>. The footer itself paints nothing now -
+   it would have covered this up. */
+.outro-active body {
+    background-color: var(--color-orange);
+}
+
+
+/* Past the hero the gradient keeps animating but drops out of focus, so
+   it reads as ambient colour behind the work instead of competing with
+   it. The opacity drop is what keeps the page ink readable over it -
+   blur alone would still leave a dark ground under dark text. */
+@media (prefers-reduced-motion: reduce) {
+    .liquid-hero__bg { transition: none; }
+}
+
 
 .liquid-hero {
     position: relative;
@@ -44,16 +67,32 @@ body {
    every section. The page background shows it from the top down until
    an opaque section (the .hero-divider onward) scrolls over it. */
 .liquid-hero__bg {
+    /* 0 = sharp hero, 1 = fully out of focus. initHeroBgFade() writes this
+       inline per scroll frame on the homepage. */
+    --amb: 0;
+
     position: fixed;
     inset: 0;
     display: block;
     width: 100%;
     height: 100%;
     z-index: -1;
-    /* opacity is driven per-scroll-frame by initHeroBgFade() in main.js;
-       the transition just smooths the steps between rAF updates */
-    transition: opacity 0.15s linear;
+
+    /* All three read --amb, so they move together with the scroll. No
+       transition on purpose: the value already IS the scroll position, and
+       easing it would only make the blur lag behind the page.
+
+       The scale is there because a blur samples past the element's edges,
+       so an unscaled canvas shows a soft transparent band down all four
+       sides. Growing it with the blur keeps those edges off-screen. */
+    opacity: calc(1 - var(--amb) * 0.7);
+    filter: blur(calc(var(--amb) * 90px)) saturate(calc(1 + var(--amb) * 0.5));
+    transform: scale(calc(1 + var(--amb) * 0.5));
 }
+
+/* Pages with no hero start fully out of focus. The homepage writes an
+   inline --amb over the top of this. */
+.liquid-hero__bg.is-ambient { --amb: 1; }
 
 /* Centered brand mark.
    The mark is a touch heavier on its right side, so a small left shift
@@ -85,43 +124,42 @@ body {
     margin: 0 auto;
     z-index: 1; /* above the gradient (0), below the logo (2) */
     /* vw-based so the block keeps the same proportions / wrap across
-       desktop sizes; phones get a bump below. */
-    width: 42vw;
+       desktop sizes; phones get a bump below.
+
+       The width is derived from the font size rather than set on its own,
+       so the measure stays a fixed number of ems however wide the screen
+       is - which is what decides where the lines break. --tag-measure is
+       that number: raise it if "Forging a Path Forward" wraps, lower it
+       to pull the lines closer together. */
+    --tag-font: 3.6vw;
+    --tag-measure: 10.8;
+    width: calc(var(--tag-font) * var(--tag-measure));
     text-align: center;
+    text-wrap: balance;
     font-family: var(--font-marker);
     font-weight: 400; /* Instrument Serif ships regular only */
-    font-size: 3.8vw;
+    font-size: var(--tag-font);
     line-height: 1.08;
     letter-spacing: -0.015em;
     text-transform: none; /* override the global h1-h4 uppercase */
     color: var(--color-cream);
-    text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55);
     pointer-events: none; /* never intercept the cursor -> gradient/tilt effects */
     will-change: transform, opacity;
 }
 
-/* Highlighted phrases: italic + underlined; on hover flip to Big
-   Shoulders uppercase. Only these get pointer-events so the rest of the
-   tagline still lets the cursor through to the gradient. */
-.liquid-hero__tagline .tagline-term {
-    pointer-events: auto;
-    font-style: italic;
-    text-decoration: underline;
-    text-underline-offset: 0.1em;
-    text-decoration-thickness: 0.045em;
-}
-
-.liquid-hero__tagline .tagline-term:hover {
-    font-family: var(--font-display); /* Big Shoulders */
-    font-style: normal;
-    font-weight: 600;
-    text-transform: uppercase;
-}
+/* "Brand Systems" and "Digital Designs" are no longer picked out: no
+   italic, no underline, no hover. The spans are left in the markup as a
+   hook in case they get a treatment again, and they deliberately carry
+   no pointer-events, so the cursor passes straight through to the liquid
+   gradient behind the tagline. */
 
 /* Heavier tail phrase. Instrument Serif has no bold, so this is a
    synthetic bold - swap to a real weight if it looks rough. */
 .liquid-hero__tagline .tagline-strong {
     font-weight: 700;
+    /* its own line, and never split across two */
+    display: block;
+    white-space: nowrap;
     /* the tagline is pointer-events:none so the cursor reaches the
        gradient; this phrase opts back in so its gif pop can fire */
     pointer-events: auto;
@@ -136,23 +174,45 @@ body {
 /* Band between the hero and the work section. Transparent - it sits on
    the page-wide gradient background, which is still mostly liquid here. */
 .hero-divider {
-    padding: clamp(6rem, 24vw, 19.5rem) calc(var(--space-xl) + clamp(0px, 6vw, 7rem)) clamp(3rem, 9vh, 6rem);
-    overflow: hidden;
+    /* one full screen tall, with the phrase centred in it. 100svh stops
+       the mobile address bar from changing the height */
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: clamp(6rem, 24vw, 19.5rem);
+    /* clip only sideways: the phrase is pinned mid-screen and must not
+       be cut off by the section's bottom edge as it scrolls away */
+    overflow-x: clip;
+    text-align: center;
 }
+
+/* the forced break only applies on phones, where the phrase is two lines */
+.hero-divider__br { display: none; }
 
 .hero-divider__text {
     margin: 0;
     white-space: nowrap;
     font-family: var(--font-marker); /* Instrument Serif */
-    font-weight: 400;
+    /* Instrument Serif has no bold, so this is the browser's synthetic
+       bold, the same as the tagline's tail phrase */
+    font-weight: 700;
     font-style: italic;
     /* tier 1 floor (~47px mobile / 120px desktop) but keeps growing
        on ultra-wide screens so it still spans the band */
-    font-size: max(var(--fs-1), 7vw);
+    font-size: max(var(--fs-3), 4vw);
     line-height: 1;
     letter-spacing: -0.01em;
     text-transform: none;
-    color: var(--color-red); /* brand orange (#FC6935) */
+    color: var(--color-cream); /* off-white #FAFAFF, the light text colour */
+    /* sits behind the spinning mark (z-index 2) */
+    position: relative;
+    z-index: 1;
+    /* --work-p (0 -> 1) is the blur, driven by the projects coming in;
+       --work-fade then fades it out. Both are written by initHeroBgFade() */
+    filter: blur(calc(var(--work-p, 0) * 24px));
+    opacity: calc(1 - var(--work-fade, 0));
 }
 
 /* Holds the three.js <canvas> (the extruded 3D logo) and the flat
@@ -160,6 +220,12 @@ body {
    no-WebGL fallback. */
 .liquid-hero__mark-tilt {
     position: relative;
+    /* moves the mark right by the same amount as PIVOT_OFFSET_X (15 of the
+       209 SVG units across the mark, about 7.2% of its width) */
+    translate: 6.4% 0;
+    /* blurs with the divider phrase as the projects come in, then fades */
+    filter: blur(calc(var(--work-p, 0) * 24px));
+    opacity: calc(1 - var(--work-fade, 0));
     width: clamp(300px, 56vw, 760px);
     aspect-ratio: 209 / 140;
 }
@@ -188,7 +254,6 @@ body {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 12px 48px rgba(0, 0, 0, 0.5));
     transition: opacity 0.6s ease;
     /* Match the 3D logo's start size (1 - SCROLL_GROW in js/logo-3d.js). */
     transform: scale(0.55);
@@ -229,31 +294,58 @@ body {
 /* Phones: let the mark run edge to edge (and past, clipped) so it
    dominates the hero. Keep in sync with logo-3d.js SMALL_SCREEN. */
 @media (max-width: 640px) {
+    /* the wider phone mark needs less of the desktop left nudge to read as
+       centred; this is the value to tune */
     .liquid-hero__content {
-        transform: translate(-3%, 3vh);
+        transform: translate(-1%, 3vh);
     }
 
+    /* on phones the opening line stays in the centred stack above the mark,
+       so the two start together in the middle of the screen */
     .liquid-hero__tagline {
-        margin-bottom: -2vh;
         width: 88vw;
         font-size: max(9vw, 2.1rem);
     }
 
+    /* the phrase is wider than the phone measure, so let it wrap again */
+    .liquid-hero__tagline .tagline-strong {
+        display: inline;
+        white-space: normal;
+    }
+
     .liquid-hero__mark-tilt {
-        width: 110vw;
+        width: 130vw;
+        /* a touch less than desktop: the phone mark is much wider */
+        translate: 4.6% 0;
     }
 
     .liquid-hero__mark {
         transform: scale(0.92);   /* matches 1 - SCROLL_GROW on phones */
     }
 
+    /* shorter band on phones so the projects come in sooner. 40svh is the
+       scroll length to tune */
     .hero-divider {
-        padding-top: clamp(2rem, 7vh, 5rem);
+        height: 40vh;
+        height: 40svh;
+        /* the side padding meant for desktop left ~200px for the phrase;
+           give it the page gutter instead */
+        padding-inline: var(--space-md);
+        /* room between the phrase and the first row of project cards */
+        margin-bottom: 25vh;
+        margin-bottom: 25svh;
     }
 
+    /* bigger on phones, set on two lines ("For Dreamers" / "& Daredevils"),
+       and behind the mark (z-index 1), so the logo ends up above it */
     .hero-divider__text {
         text-align: center;
+        font-size: var(--fs-1);
+        white-space: normal;
+        z-index: 1;
     }
+
+    .hero-divider__br { display: inline; }
 }
 
 .liquid-hero__footer {
@@ -277,3 +369,22 @@ body {
 }
 
 /* Reduce-motion toggle */
+
+/* Reduce motion: the divider phrase sits up under the mark instead of
+   mid-screen. The mark keeps its usual start position. Placed last so it
+   wins over the breakpoint rules above. */
+@media (prefers-reduced-motion: reduce) {
+    .hero-divider {
+        height: auto;
+        align-items: flex-start;
+        padding-top: 4vh;
+        padding-bottom: 12vh;
+    }
+}
+
+html.liquid-hero-reduced .hero-divider {
+    height: auto;
+    align-items: flex-start;
+    padding-top: 4vh;
+    padding-bottom: 12vh;
+}

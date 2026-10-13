@@ -216,6 +216,9 @@
     }
 
     var clock = 0, last = performance.now(), raf = null, visible = true, awake = true;
+    // Paused by scroll position (see setFrozen). Separate from isReduced(),
+    // which is the visitor's own persisted motion preference.
+    var frozen = false;
 
     // Pointer state: mx/my follow the cursor (eased), amt fades the effect in/out.
     var mx = 0, my = 0, tmx = 0, tmy = 0, amt = 0, tAmt = 0;
@@ -261,11 +264,11 @@
       amt += (tAmt - amt) * 0.05;
 
       render();
-      raf = (visible && awake && !isReduced()) ? requestAnimationFrame(frame) : null;
+      raf = (visible && awake && !frozen && !isReduced()) ? requestAnimationFrame(frame) : null;
     }
 
     function start() {
-      if (raf || !visible || !awake || isReduced()) return;
+      if (raf || !visible || !awake || frozen || isReduced()) return;
       last = performance.now();
       raf = requestAnimationFrame(frame);
     }
@@ -316,6 +319,19 @@
         gl.uniform1f(U[name], value);
         if (isReduced()) render();
       },
+      // Pause the animation, leaving the last frame on screen. Used once
+      // the gradient is blurred out of focus behind the work: at a 90px
+      // radius a still frame and a moving one are indistinguishable, so
+      // re-filtering every frame is pure waste.
+      setFrozen: function (v) {
+        frozen = !!v;
+        if (frozen) {
+          if (raf) { cancelAnimationFrame(raf); raf = null; }
+          render();
+        } else {
+          start();
+        }
+      },
       // Freeze / unfreeze all motion (persisted per visitor).
       setReduced: function (v) {
         forced = !!v;
@@ -344,7 +360,11 @@
     var nodes = document.querySelectorAll('[data-liquid-hero]');
     for (var i = 0; i < nodes.length; i++) {
       var inst = liquidHero(nodes[i]);
-      if (inst) instances.push(inst);
+      if (!inst) continue;
+      instances.push(inst);
+      // A canvas that starts .is-ambient has no sharp hero above it, so
+      // there is nothing to animate for - freeze it on its first frame.
+      if (nodes[i].classList.contains('is-ambient')) inst.setFrozen(true);
     }
     liquidHero.instances = instances;
 

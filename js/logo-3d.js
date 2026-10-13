@@ -24,7 +24,7 @@ const MAX_TILT = 0.16;      // radians of cursor-driven rotation
 const EASE = 0.08;          // rotation follow smoothing
 const IDLE_AMP = 0.025;     // radians of gentle idle sway
 const SCROLL_SPIN = Math.PI * 2; // radians of Y-spin per viewport scrolled (0 = off)
-const SPIN_RECENTER = 39;      // SVG units pushed right at the half-turn so the
+const SPIN_RECENTER = 0;       // SVG units pushed right at the half-turn so the
                                // (asymmetric) mark stays visually centred mid-spin;
                                // 0 at 0deg and 360deg. Set 0 to disable.
 const SPIN_END_SHIFT = 0;      // SVG units the mark ends up shifted right by the
@@ -47,13 +47,22 @@ function syncBreakpoint() {
   SCROLL_GROW = s ? 0.1 : 0.45;
   return true;
 }
-const LEAVE_PARALLAX = -60;    // SVG units the logo drifts as the hero scrolls
+const SHRINK_AT_DIVIDER = 0.65;// how much the mark shrinks as the divider phrase comes in
+const dividerEl = document.querySelector('.hero-divider');
+// 0 while the divider is still below the screen, 1 once it has reached the top
+function dividerArrival() {
+  if (!dividerEl) return 0;
+  const vh = window.innerHeight || 1;
+  return Math.min(1, Math.max(0, (vh - dividerEl.getBoundingClientRect().top) / vh));
+}
+const LEAVE_PARALLAX = 0;    // SVG units the logo drifts as the hero scrolls
                                // away. - = drifts down / lags behind the page,
-                               // + = lifts up ahead of it. 0 to disable.
+                               // + = lifts up ahead of it. 0 = off (the mark
+                               // is held centred instead, see updateCentre).
 const CANVAS_OVERSCAN = 2.3;   // canvas size vs logo box (keep in sync with CSS).
                                // Needs enough headroom that LEAVE_PARALLAX
                                // never drifts the model off the canvas edge.
-const PIVOT_OFFSET_X = 0;      // shift the spin axis, in SVG units (+ = right)
+const PIVOT_OFFSET_X = -15;    // shift the spin axis, in SVG units (+ = right)
 const PIVOT_OFFSET_Y = 0;      // shift the spin axis, in SVG units (+ = down)
 const MATERIAL = {
   color: 0xffffff,
@@ -88,15 +97,65 @@ if (host) {
     const p = (window.pageYOffset || 0) / (window.innerHeight || 1);
     const sp = Math.min(1, p);
     const leave = Math.min(1, Math.max(0, p - 1));
-    const scale = 1 - SCROLL_GROW + sp * SCROLL_GROW;
+    const scale = (1 - SCROLL_GROW + sp * SCROLL_GROW) *
+      (1 - SHRINK_AT_DIVIDER * dividerArrival());
     // LEAVE_PARALLAX is SVG units in world space (- = down); convert to a
     // % of the logo's height for CSS (+ = down), so the two stay in sync.
     const shiftPct = (-LEAVE_PARALLAX / VBH) * 100 * leave;
     flatImg.style.transform =
       'translateY(' + shiftPct.toFixed(2) + '%) scale(' + scale.toFixed(3) + ')';
   }
-  window.addEventListener('scroll', updateFlatScale, { passive: true });
-  window.addEventListener('resize', () => { syncBreakpoint(); updateFlatScale(); });
+  // Keep the mark centred while the pinned hero scrolls away. The hero's
+  // sticky stage ends at pinEnd; from there the mark is shifted down by the
+  // scroll so it holds the middle of the screen until the divider arrives.
+  const heroPin = document.querySelector('.hero-pin');
+  const divider = document.querySelector('.hero-divider');
+  // The mark starts DROP of a viewport low (the 12vh on .liquid-hero__content).
+  // Over the first stretch of scroll it rises to the middle, then holds there.
+  const DROP = 0.12;
+  // While held, the mark sits LIFT above the middle and the phrase sits
+  // PHRASE_DROP below it, so the logo ends up above the phrase.
+  const LIFT = 0.08;
+  const PHRASE_DROP = 0.08;
+  const phrase = divider && divider.querySelector('.hero-divider__text');
+  const workEl = document.querySelector('.portfolio-section');
+  let lastShift = 0;
+  function updateCentre() {
+    let shift = 0;
+    let textShift = 0;
+    if (heroPin && divider && workEl && !flatMode()) {
+      const vh = window.innerHeight || 1;
+      const s = window.pageYOffset || 0;
+      // The phrase reaches its hold point at s0, and both the mark and the
+      // phrase hold until sEnd, when the blur and fade have finished
+      // (projects top at 30% of the screen). Then they scroll on.
+      const logoY = vh * (0.5 - LIFT);
+      const phraseY = vh * (0.5 + PHRASE_DROP);
+      const s0 = divider.offsetTop + divider.offsetHeight / 2 - phraseY;
+      const sEnd = workEl.offsetTop - 0.3 * vh;
+      const hold = Math.min(s, sEnd);
+      if (document.documentElement.classList.contains('has-hero-pin')) {
+        // desktop: the hero is sticky, so it starts DROP low and rises
+        const pinEnd = heroPin.offsetTop + heroPin.offsetHeight - vh;
+        const end = -(DROP + LIFT) * vh;
+        if (s < pinEnd) shift = end * Math.max(0, s / pinEnd);
+        else shift = end + (hold - pinEnd);
+      } else {
+        // phones: the mark starts with the opening line, centred as a group,
+        // moves up with the page, then holds at its hold point
+        const r = host.getBoundingClientRect();
+        const natural = r.top + s + r.height / 2 - lastShift; // centre at scroll 0, unshifted
+        shift = Math.max(0, logoY - natural + hold);
+      }
+      textShift = Math.max(0, hold - s0);
+    }
+    lastShift = shift;
+    host.style.transform = shift ? 'translateY(' + shift.toFixed(1) + 'px)' : '';
+    if (phrase) phrase.style.transform = textShift ? 'translateY(' + textShift.toFixed(1) + 'px)' : '';
+  }
+  window.addEventListener('scroll', () => { updateFlatScale(); updateCentre(); },
+    { passive: true });
+  window.addEventListener('resize', () => { syncBreakpoint(); updateFlatScale(); updateCentre(); });
 
   function update() {
     if (flatMode()) {
@@ -107,6 +166,7 @@ if (host) {
       if (scene3d) scene3d.setActive(true);
     }
     updateFlatScale();
+    updateCentre();
   }
 
   relevantMedia.forEach((mq) => mq && mq.addEventListener('change', update));
@@ -221,16 +281,21 @@ function build(host) {
     rot.y += (target.y - rot.y) * EASE;
 
     // Scroll progress over one viewport height.
-    var sp = Math.min(1, (window.pageYOffset || 0) / (window.innerHeight || 1));
-    var spinAngle = sp * SCROLL_SPIN;
+    var raw = (window.pageYOffset || 0) / (window.innerHeight || 1);
+    var sp = Math.min(1, raw);
+    // the mark keeps spinning with the scroll, the whole way through the hold
+    var spinAngle = raw * SCROLL_SPIN;
     pivot.rotation.x = rot.x;
     pivot.rotation.y = rot.y + spinAngle +
       Math.sin(clock.getElapsedTime() * 0.5) * IDLE_AMP;
-    pivot.scale.setScalar(1 - SCROLL_GROW + sp * SCROLL_GROW);
+    pivot.scale.setScalar((1 - SCROLL_GROW + sp * SCROLL_GROW) *
+      (1 - SHRINK_AT_DIVIDER * dividerArrival()));
     // Push right across the half-turn (0 at 0deg/360deg) so the asymmetric
     // mark reads centred while it spins, plus a small linear shift so it
     // settles a touch further right than it started.
-    pivot.position.x = SPIN_RECENTER * (1 - Math.cos(spinAngle)) * 0.5 +
+    // on phones the spin's sideways push is halved, so the mark reads centred
+    pivot.position.x = (SMALL_SCREEN ? SPIN_RECENTER * 0.5 : SPIN_RECENTER) *
+      (1 - Math.cos(spinAngle)) * 0.5 +
       SPIN_END_SHIFT * sp;
     // Parallax as the hero scrolls away: once past one viewport, drift the
     // logo (down, lagging the page) over the next viewport.

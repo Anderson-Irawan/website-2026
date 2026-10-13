@@ -4,10 +4,18 @@
 
 /* Font Face Declarations */
 @font-face {
-    font-family: 'Big Shoulders';
-    src: url('../assets/fonts/BigShoulders-VariableFont_opsz,wght.woff2') format('woff2');
+    font-family: 'Noto Serif';
+    src: url('../assets/fonts/NotoSerif-VariableFont_wdth,wght.woff2') format('woff2');
     font-weight: 100 900;
     font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Serif';
+    src: url('../assets/fonts/NotoSerif-Italic-VariableFont_wdth,wght.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: italic;
     font-display: swap;
 }
 
@@ -50,20 +58,32 @@
    ============================================ */
 :root {
     /* Primary Colors */
-    --color-red: #FC6935;    /* orange (primary accent) */
+    --color-orange: #FC6935;    /* orange (primary accent) */
     --color-cream: #FAFAFF;  /* off-white (text on dark) */
-    --color-pink: #2E2B8A;   /* indigo (secondary accent) */
+    --color-blue: #2E2B8A;   /* indigo (secondary accent) */
     --color-black: #000000;
     --color-mint: #FAFAFF;
 
     /* Neutrals */
-    --color-gray-placeholder: #1c1c1c;
+    /* the box behind a card image while it loads - light now, so it does
+       not flash near-black against the page ground */
+    --color-gray-placeholder: #E9E9F0;
     --color-gray-dark: #111111;
 
     /* Typography */
-    --font-display: 'Big Shoulders', 'Archivo', sans-serif;
     --font-marker: 'Instrument Serif', Georgia, serif;
+    --font-serif: 'Noto Serif', Georgia, serif;
     --font-body: 'Archivo', sans-serif;
+
+    /* The page ground and its ink. Named separately from the raw palette
+       so the sections that carry their own ground - the hero, the navbar
+       bar, .cs-band, the orange outro - are unaffected by this pair. */
+    /* white carrying about 6% of the brand orange. The old ground was
+       --color-cream (#FAFAFF), a blue-tinted white that fought #FC6935;
+       this one sits under it instead. */
+    --page-bg: #FFF6F3;
+    --page-ink: var(--color-black);
+
 
     /* Fluid type scale - tier 1 (display) to tier 6 (caption).
        Each clamp keeps a legible floor on small screens and a cap on
@@ -99,17 +119,15 @@
     /* The left/right edge everything lines up on: the nav container's
        padding plus the logo's indent. Shrinks to a plain gutter on
        phones, where the nav drops the indent too. */
-    --page-inset: calc(var(--space-xl) + clamp(0px, 6vw, 7rem));
+    /* was 3rem + up to another 7rem, which left up to 160px of air down
+       each side. The grid and the bar both key off this one value, so
+       they stay aligned with each other. */
+    --page-inset: clamp(1.25rem, 3vw, 2.75rem);
 
     /* Transitions */
     --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
     --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Border Radius */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 16px;
-    --radius-full: 50px;
 }
 
 /* ============================================
@@ -156,8 +174,8 @@ html {
 body {
     font-family: var(--font-body);
     font-size: var(--fs-5);
-    background-color: var(--color-black);
-    color: var(--color-cream);
+    background-color: var(--page-bg);
+    color: var(--page-ink);
     line-height: 1.2;
     overflow-x: hidden;
 }
@@ -200,28 +218,6 @@ button {
 /* ============================================
    Animation Keyframes
    ============================================ */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
 @keyframes bounceIn {
     0% {
         opacity: 0;
@@ -266,49 +262,6 @@ button {
     }
 }
 
-/* Fade-in animation classes with bouncy finish */
-.fade-in {
-    opacity: 0;
-    animation: fadeInUp 0.8s var(--transition-bounce) forwards;
-}
-
-.fade-in-delay-1 {
-    animation-delay: 0.1s;
-}
-
-.fade-in-delay-2 {
-    animation-delay: 0.2s;
-}
-
-.fade-in-delay-3 {
-    animation-delay: 0.3s;
-}
-
-.fade-in-delay-4 {
-    animation-delay: 0.4s;
-}
-
-.fade-in-delay-5 {
-    animation-delay: 0.5s;
-}
-
-.fade-in-delay-6 {
-    animation-delay: 0.6s;
-}
-
-/* Intersection Observer animation triggers */
-.animate-on-scroll {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s var(--transition-bounce),
-        transform 0.8s var(--transition-bounce);
-}
-
-.animate-on-scroll.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
 /* ============================================
    Typography
    ============================================ */
@@ -316,7 +269,7 @@ h1,
 h2,
 h3,
 h4 {
-    font-family: var(--font-display);
+    font-family: var(--font-marker);
     font-weight: normal;
     line-height: 1.1;
     text-transform: uppercase;
@@ -357,6 +310,14 @@ h4 {
     z-index: 1000;
     padding: 0.9rem 0;
     background-color: transparent;
+
+    /* Painted pure white and blended with difference, so the bar is the
+       inverse of whatever runs under it - near-black on the warm ground,
+       and it reads against project images as they scroll past.
+
+       Three places it gets switched off below, because difference inverts
+       COLOUR rather than lightness and gives a cyan over orange. */
+    mix-blend-mode: difference;
     transition: transform 0.55s var(--transition-smooth),
         opacity 0.4s var(--transition-smooth);
 }
@@ -366,28 +327,14 @@ h4 {
    backdrop in when the "For Dreamers" divider passes the middle of the
    viewport (initHeroBgFade toggles .is-solid; initNavbar does it
    everywhere else). */
-.navbar::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: var(--color-black);
-    opacity: 1;
-    /* background-color is in the list because [data-nav-tint] recolours it */
-    transition: opacity 0.4s var(--transition-smooth),
-        background-color 0.4s var(--transition-smooth);
-    z-index: -1;
-}
+/* The backdrop is gone: a slab behind the bar would be all the blend
+   could ever see. .is-solid and .is-tinted still get toggled by main.js
+   and now simply have nothing to act on. */
 
-.page-home .navbar::before { opacity: 0; }
-.page-home .navbar.is-solid::before { opacity: 1; }
-
-.navbar.is-solid::before {
-    opacity: 1;
-}
 
 .navbar .container {
     max-width: none;
-    padding: 0 var(--space-xl);
+    padding: 0 var(--page-inset);
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -400,7 +347,7 @@ h4 {
 /* grid-row: 1 on every one of these. Without it, an item asking for a
    later column before one asking for an earlier column makes grid wrap
    the second onto a new row, because auto-placement never backtracks. */
-.navbar .logo { grid-column: 1; grid-row: 1; justify-self: start; margin-left: clamp(0px, 6vw, 7rem); }
+.navbar .logo { grid-column: 1; grid-row: 1; justify-self: start; }
 .navbar .nav-links { grid-column: 2; grid-row: 1; justify-self: center; }
 .navbar .mobile-menu-toggle { grid-column: 3; grid-row: 1; justify-self: end; }
 
@@ -408,17 +355,19 @@ h4 {
     display: flex;
     align-items: center;
     gap: 0.1rem;
-    text-decoration: none;
-    color: var(--color-cream);
-    transform: scale(1);
-    transition: transform 0.1s ease-in-out,
-        opacity 0.3s var(--transition-smooth);
+    color: #fff;
+    /* links back to the home page */
+    cursor: pointer;
+    transition: opacity 0.3s var(--transition-smooth);
 }
 
 .logo-mark {
     display: block;
     height: 66px;
     width: auto;
+    /* a fixed-colour svg in an <img> cannot inherit currentColor, so it
+       is forced to pure white before the blend inverts it */
+    filter: brightness(0) invert(1);
     /* filter, for the nav tint over a coloured band */
     transition: filter 0.4s var(--transition-smooth);
 }
@@ -428,27 +377,14 @@ h4 {
 }
 
 .logo-and {
-    color: var(--color-red);
+    color: var(--color-orange);
 }
 
-.logo:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease-in-out, color 0.5s ease;
-
-    svg,
-    .logo-and {
-        color: var(--color-pink);
-    }
-
-    .logo-and {
-        color: var(--color-pink);
-    }
-}
 
 .logo svg {
     width: 40px;
     height: auto;
-    color: var(--color-red);
+    color: var(--color-orange);
 }
 
 /* Lottie Logo Styling */
@@ -467,18 +403,14 @@ h4 {
 
 /* Apply red color to Lottie animation paths */
 #lottie-logo svg path {
-    stroke: var(--color-red) !important;
-    fill: var(--color-red) !important;
+    stroke: var(--color-orange) !important;
+    fill: var(--color-orange) !important;
 }
 
-.logo:hover #lottie-logo svg path {
-    stroke: var(--color-pink) !important;
-    fill: var(--color-pink) !important;
-}
 
 .nav-links {
     display: flex;
-    gap: var(--space-lg);
+    gap: var(--space-4xl);
     list-style: none;
 }
 
@@ -486,8 +418,7 @@ h4 {
 .nav-link-cycle {
     font-family: var(--font-body);
     font-size: 0.8rem;
-    text-transform: uppercase;
-    color: var(--color-cream);
+    color: #fff;
     text-decoration: none;
     position: relative;
     display: inline-block;
@@ -517,14 +448,13 @@ h4 {
 }
 
 .page-cream .nav-link-cycle span::before {
-    color: var(--color-red);
+    color: var(--color-orange);
 }*/
 
 .nav-links a {
     font-family: var(--font-body);
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    color: var(--color-cream);
+    font-size: 1.1rem;
+    color: #fff;
     text-decoration: none;
     position: relative;
 }
@@ -536,7 +466,7 @@ h4 {
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--color-red);
+    background-color: var(--color-orange);
     transition: width 0.3s var(--transition-bounce);
 }
 
@@ -558,7 +488,7 @@ h4 {
 .mobile-menu-toggle span {
     width: 25px;
     height: 2px;
-    background-color: var(--color-cream);
+    background-color: #fff;
     transition: all 0.3s var(--transition-smooth);
 }
 
@@ -667,80 +597,6 @@ h4 {
    built by initSocial in main.js. Both take up the
    exact same vertical footprint.
    ============================================ */
-.side-rail {
-    position: fixed;
-    top: 50%;
-    /* --slide is what carries the rails off-screen during the outro */
-    transform: translateY(-50%) translateX(var(--slide, 0));
-    transition: transform 0.65s var(--transition-smooth),
-        opacity 0.45s var(--transition-smooth);
-    z-index: 900;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    color: var(--color-cream);
-    pointer-events: none;
-}
-
-.side-rail--left  { left: var(--space-lg); }
-.side-rail--right { right: var(--space-lg); }
-
-/* equal-length lines above and below the content */
-.side-rail__line {
-    width: 1px;
-    height: 64px;
-    background: currentColor;
-}
-
-/* fixed height so the two rails match exactly */
-.side-rail__body {
-    height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-sm);
-}
-
-.side-rail__social a {
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    color: var(--color-cream);
-    opacity: 1;
-    transition: color 0.25s var(--transition-smooth),
-        transform 0.25s var(--transition-smooth);
-}
-
-.side-rail__social a svg {
-    filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.55));
-}
-
-.side-rail__social a:hover {
-    color: var(--color-red);
-    transform: scale(1.18);
-}
-
-.side-rail__label {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    font-family: var(--font-body);
-    /* sentence case, so a touch larger than the old all-caps setting */
-    font-size: 0.7rem;
-    white-space: nowrap;
-    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.55);
-}
-
-/* copyright rail is desktop/tablet only */
-@media (max-width: 640px) {
-    .side-rail { display: none; }
-}
-
-/* Social icons inside the burger menu (mobile) */
 .nav-social {
     display: none;
 }
@@ -790,14 +646,14 @@ h4 {
 }
 
 .btn-primary {
-    background-color: var(--color-cream);
-    color: var(--color-black);
+    background-color: var(--page-ink);
+    color: var(--page-bg);
 }
 
 .btn-primary:hover {
     background-color: transparent;
-    color: var(--color-cream);
-    border-color: var(--color-cream);
+    color: var(--page-ink);
+    border-color: var(--page-ink);
 }
 
 /* ============================================
@@ -817,7 +673,7 @@ h4 {
 
 .page-header .heading-accent {
     font-family: var(--font-marker);
-    color: var(--color-pink);
+    color: var(--color-blue);
 }
 
 /* ============================================
@@ -840,11 +696,204 @@ h4 {
     padding-top: 150px;
 }
 
+/* One column, centred. The shark used to sit in a second column; with
+   it gone, a 1fr 1fr grid would just leave half the row empty. */
 .contact-layout {
+    display: flex;
+    justify-content: center;
+}
+
+.contact-form {
+    width: 100%;
+    max-width: 46rem;
+}
+
+/* Honeypot wrapper on the contact form. Pushed off-screen rather than
+   display:none or visibility:hidden, both of which the better bots test
+   for and then skip. aria-hidden + tabindex="-1" on the markup keep it
+   away from screen readers and the tab order. */
+.hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Checkbox and radio spec lifted from the reference site's own stylesheet:
+     size 15px, border 1px, corner radius 10px,
+     11px between the box and its text, 10px between rows.
+   Both shapes get the same rounded square - they do not use a circle for
+   radios. The real input is kept and restyled with appearance:none, so
+   focus, keyboard and labelling need no re-implementing. */
+.form-check {
+    border: 0;
+    margin: 0 0 var(--space-md);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-check legend {
+    padding: 0;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    font-size: var(--fs-5);
+    color: var(--page-ink);
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    color: var(--page-ink);
+    cursor: pointer;
+    line-height: 1.3;
+}
+
+.check input {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: none;
+    width: 15px;
+    height: 15px;
+    margin: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3xl);
-    align-items: start;
+    place-content: center;
+    border: 1px solid var(--page-ink);
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.18s var(--transition-smooth),
+        border-color 0.18s var(--transition-smooth);
+}
+
+.check input::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 10px;
+    background: var(--color-black);
+    transform: scale(0);
+    transition: transform 0.15s var(--transition-smooth);
+}
+
+.check input:checked {
+    background-color: var(--color-orange);
+    border-color: var(--color-orange);
+}
+
+.check input:checked::before { transform: scale(1); }
+
+.check:hover input { border-color: var(--color-orange); }
+
+.check input:focus-visible {
+    outline: 2px solid var(--color-orange);
+    outline-offset: 2px;
+}
+
+.check span {
+    font-size: var(--fs-6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .check input,
+    .check input::before { transition: none; }
+}
+
+/* Contact page, laid out the way the reference does it: the standfirst
+   sets expectations BEFORE the heading, the form sits under it, and a
+   softer route in plus the socials close the page off. */
+.contact-head {
+    margin: 0 auto var(--space-xl);
+    text-align: center;
+}
+
+.contact-head .page-header__title { margin-top: var(--space-sm); }
+
+.contact-after {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.contact-after__line {
+    max-width: 46ch;
+    margin: 0;
+    font-weight: 300;
+    color: var(--page-ink);
+}
+
+/* The reCAPTCHA iframe is a fixed 304px wide and will not shrink, so
+   on a narrow phone it overflows the form. Scaled down from its left
+   edge rather than clipped. */
+.form-captcha {
+    margin-bottom: var(--space-md);
+}
+
+@media (max-width: 400px) {
+    .form-captcha {
+        transform: scale(0.88);
+        transform-origin: left top;
+    }
+}
+
+.contact-socials {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: var(--space-sm);
+}
+
+/* its own styles, not the footer ones: those are scoped to .site-footer
+   and coloured for black ink on the orange outro, not cream on black */
+.contact-socials__links {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.85rem, 2vw, 1.4rem);
+}
+
+.contact-socials__links a {
+    display: inline-flex;
+    align-items: center;
+    color: var(--page-ink);
+    transition: color 0.3s var(--transition-smooth),
+        transform 0.3s var(--transition-bounce);
+}
+
+.contact-socials__links a:hover {
+    color: var(--color-orange);
+    transform: scale(1.15);
+}
+
+.contact-socials__links a svg {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    color: inherit;
+}
+
+.contact-socials__label {
+    font-family: var(--font-body);
+    font-size: var(--fs-6);
+    text-transform: uppercase;
+    color: var(--page-ink);
+}
+
+/* Standfirst above the form: sets expectations before anyone starts
+   typing, which is most of what stops a half-filled enquiry. */
+.contact-intro {
+    max-width: 46ch;
+    margin: 0 0 var(--space-lg);
+    font-weight: 300;
+    color: var(--page-ink);
 }
 
 .contact-form h1 {
@@ -857,9 +906,11 @@ h4 {
 
 .form-group label {
     display: block;
-    font-size: 0.875rem;
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: var(--fs-5);
     margin-bottom: var(--space-xs);
-    color: var(--color-cream);
+    color: var(--page-ink);
 }
 
 .form-group input,
@@ -868,16 +919,17 @@ h4 {
     width: 100%;
     padding: 0.875rem 1rem;
     font-family: var(--font-body);
-    font-size: 1rem;
-    border: 2px solid var(--color-cream);
+    font-size: var(--fs-6);
+    border: 2px solid var(--page-ink);
     background-color: transparent;
-    color: var(--color-cream);
+    color: var(--page-ink);
     transition: border-color 0.3s var(--transition-smooth);
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: var(--color-red);
+    /* cream, knocked back so a hint never reads as a filled value */
+    color: rgba(0, 0, 0, 0.45);
 }
 
 /* only the textarea is tall, and only it can be dragged taller */
@@ -887,15 +939,15 @@ h4 {
 }
 
 .form-group select option {
-    background-color: var(--color-black);
-    color: var(--color-cream);
+    background-color: var(--page-bg);
+    color: var(--page-ink);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--color-red);
+    border-color: var(--color-orange);
 }
 
 .form-group select {
@@ -969,10 +1021,9 @@ h4 {
    Page: Case Study
    ============================================ */
 .case-study-hero {
-    /* the inset lines it up with the nav, clear of the side rails */
+    /* the inset lines it up with the nav */
     margin: 80px var(--page-inset) 0;
     overflow: hidden;
-    border-radius: var(--radius-lg);
 }
 
 /* The Height field on the hero decides the shape, and SANITY does the
@@ -1004,15 +1055,15 @@ h4 {
 }
 
 /* The project title is a page title, so it is set like every other one
-   on the site - Instrument Serif, --fs-1, no uppercase - rather than
-   inheriting the Big Shoulders caps from the global h1 rule. */
+   on the site - --fs-1, no uppercase - rather than inheriting the caps
+   from the global h1 rule. */
 .case-study-intro .title-section h1 {
     font-family: var(--font-marker);
     font-size: var(--fs-1);
     font-weight: 400;
     line-height: 1;
     text-transform: none;
-    color: var(--color-cream);
+    color: var(--page-ink);
     margin-bottom: var(--space-sm);
 }
 
@@ -1021,7 +1072,7 @@ h4 {
     font-family: var(--font-body);
     font-size: var(--fs-6);
     text-transform: uppercase;
-    color: var(--color-red);
+    color: var(--color-blue);
 }
 
 .case-study-intro .description {
@@ -1108,7 +1159,7 @@ h4 {
 }
 
 .case-study-solution h2 {
-    color: var(--color-pink);
+    color: var(--color-blue);
     margin-bottom: var(--space-md);
 }
 
@@ -1247,19 +1298,13 @@ h4 {
 .sm-section.cs-band { padding-inline: var(--page-inset); }
 .cs-band .case-study-solution { margin-inline: 0; }
 
-/* the dark write-up band, previously inline styles on each section */
-.cs-band {
-    background-color: var(--color-black);
-    color: var(--color-cream);
-}
-
 .cs-band .case-study-solution h2 {
     font-family: var(--font-marker);
     font-size: var(--fs-2);
     font-weight: 400;
     line-height: 1;
     text-transform: none;
-    color: var(--color-cream);
+    color: var(--color-black);
 }
 
 /* the hero and the beside-the-copy slot both take video too */
@@ -1282,16 +1327,15 @@ h4 {
     margin-bottom: var(--space-3xl);
     padding: 0 var(--space-xl);
     text-align: center;
-    color: var(--color-cream);
+    color: var(--page-ink);
 }
 
-.cs-missing a { color: var(--color-red); }
+.cs-missing a { color: var(--color-orange); }
 
 .cs-missing code {
     font-family: var(--font-body);
     background: rgba(255, 255, 255, 0.1);
     padding: 0.15em 0.4em;
-    border-radius: 4px;
 }
 
 .cs-missing__list {
@@ -1411,6 +1455,7 @@ h4 {
 .portfolio-section {
     /* no background - the page-wide gradient behind it fades to black
        across this section (initHeroBgFade in main.js) */
+    position: relative;
     padding: 0 0 clamp(5rem, 12vw, 11rem);
 }
 
@@ -1420,6 +1465,10 @@ h4 {
      row 3 (3 cards): 40 / 30 / 30
      row 4 (2 cards): 30 / 50   - inset 10% from each side          */
 .work-scatter {
+    /* above the hero's logo (z 2) and the divider phrase (z 1), so the
+       cards cover them as the projects come in */
+    position: relative;
+    z-index: 3;
     --col-gap: clamp(1rem, 3vw, 3rem);
     /* left/right edge lines up with the "DOUBLE DASH" nav logo:
        .navbar .container padding (--space-xl) + .navbar .logo margin */
@@ -1437,7 +1486,7 @@ h4 {
     flex-direction: column;
     width: calc(30% - var(--col-gap) * 2 / 3 - 0.5px);
     text-decoration: none;
-    color: var(--color-cream);
+    color: var(--page-ink);
     /* --py set per-card by initCardParallax in main.js */
     transform: translateY(var(--py, 0px));
     will-change: transform;
@@ -1541,11 +1590,15 @@ h4 {
 /* ==================================================================
    Work page - SQUISH ROWS
    ==================================================================
-   3 equal cards per <div class="work-row">. Hovering one card grows
-   it to 40% of the row and squishes the other two to 30% each
-   (flex-grow 4 : 3 : 3). Same frame / image-swap / hover-video / meta
-   as everywhere else. projects.html: <div class="work-scatter work-scatter--squish">
-   Below 760px it stacks to one full-width column like the index rows.
+   2 equal cards per <div class="work-row">, fixed width. Cards no
+   longer grow or squish on hover - the frame, image-swap, hover-video
+   and meta are the whole interaction. Used by both grids:
+   <div class="work-scatter work-scatter--squish">.
+   Below 760px it stacks to one full-width column.
+
+   The count lives in two places and they have to agree: PER_ROW in
+   sanity-cards.js (building the rows) and in main.js (repacking them
+   after a filter change).
    ================================================================== */
 .work-scatter--squish {
     flex-direction: column;
@@ -1556,16 +1609,27 @@ h4 {
     padding-inline: var(--page-inset);
 }
 
-/* The projects grid runs 15% taller than the shared default frame
-   (20/26/30 -> 23/29.9/34.5). Scoped here so the homepage cards, which
-   set their own --h inline, are untouched. An inline --h still wins. */
+/* Taller than the shared default frame. The grid went from three up to
+   two, so each card is roughly half again as wide as it was - at the old
+   height they read as letterboxes. An inline --h on a card still wins.
+
+   The vh term is what actually applies on most desktops; the rem floor
+   and ceiling only catch very short and very tall viewports. */
 .work-scatter--squish .work-card__frame {
-    height: var(--h, clamp(23rem, 29.9vh, 34.5rem));
+    height: var(--h, clamp(26rem, 52vh, 44rem));
+}
+
+@media (max-width: 760px) {
+    /* stacked and full width, so it is back to one card per row and the
+       desktop height would run off the screen */
+    .work-scatter--squish .work-card__frame {
+        height: var(--h, clamp(20rem, 46vh, 30rem));
+    }
 }
 
 .work-scatter--squish .work-row {
-    /* the usable width once the two gutters are taken out */
-    --span: calc(100% - 2 * var(--col-gap));
+    /* the usable width once the gutter between the pair is taken out */
+    --span: calc(100% - var(--col-gap));
 
     display: flex;
     column-gap: var(--col-gap);
@@ -1573,31 +1637,14 @@ h4 {
     width: 100%;
 }
 
-/* Sized off a fixed one-third track rather than flex-grow, so a row
-   holding one or two cards (after filtering) keeps the same column
-   widths as a full row instead of stretching to fill. */
+/* A fixed half track rather than flex-grow, so a row holding a single
+   card (after filtering) keeps the same column width as a full row
+   instead of stretching to fill it. */
 .work-scatter--squish .work-row > .work-card {
-    flex: 0 0 calc(var(--span) / 3);
+    flex: 0 0 calc(var(--span) / 2);
     width: auto;
-    min-width: 0;             /* let the squished cards collapse */
+    min-width: 0;             /* never let a card push the row wider */
     margin: 0;
-    transition: flex-basis 0.5s var(--transition-smooth);
-}
-
-@media (hover: hover) {
-    .work-scatter--squish .work-row:hover > .work-card {
-        flex-basis: calc(var(--span) * 0.3);
-    }
-    .work-scatter--squish .work-row:hover > .work-card:hover {
-        flex-basis: calc(var(--span) * 0.4);
-    }
-}
-
-.work-scatter--squish .work-row:focus-within > .work-card {
-    flex-basis: calc(var(--span) * 0.3);
-}
-.work-scatter--squish .work-row:focus-within > .work-card:focus-visible {
-    flex-basis: calc(var(--span) * 0.4);
 }
 
 /* "In the works" filler tile */
@@ -1637,9 +1684,8 @@ h4 {
     position: relative;
     width: 100%;
     /* default height; --h (set inline, or by the presets below) wins */
-    height: var(--h, clamp(20rem, 26vh, 30rem));
+    height: var(--h, clamp(20rem, 40vh, 30rem));
     overflow: hidden;
-    border-radius: var(--radius-lg);
     background-color: var(--color-gray-placeholder);
 }
 
@@ -1689,9 +1735,11 @@ h4 {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.35rem;
+    /* margin + padding together are just the gap to the image now that the
+       rule between them is gone. Kept as two values so the title sits
+       exactly where it did before the line was removed. */
     margin-top: var(--space-md);
     padding-top: var(--space-sm);
-    border-top: 1px solid var(--color-cream);
 }
 
 .work-card__title {
@@ -1700,6 +1748,7 @@ h4 {
     font-size: var(--fs-3);
     line-height: 1.05;
     transition: color 0.3s var(--transition-smooth);
+    letter-spacing: -0.02em;
 }
 
 /* reserve the italic footprint so the hover swap never reflows */
@@ -1714,7 +1763,6 @@ h4 {
 
 .work-card:hover .work-card__title {
     font-style: italic;
-    color: var(--color-red);
 }
 
 /* See more button under the grid */
@@ -1748,6 +1796,16 @@ h4 {
 .about-section {
     /* no background - inherits the page-wide gradient, fully black by
        the time it scrolls into view */
+}
+
+/* Parked sections. [hidden] on its own is a UA rule, which any author
+   display declaration outranks, so it is restated here with weight. */
+.about-section[hidden] {
+    display: none !important;
+}
+
+.work-filters[hidden] {
+    display: none !important;
 }
 
 /* Match the portfolio's gutters so the about block lines up with the
@@ -1788,13 +1846,13 @@ h4 {
     font-weight: 700;
     font-style: italic;
     font-size: var(--fs-2);
-    color: var(--color-red);
+    color: var(--color-orange);
     line-height: 1;
 }
 
 .greeting-name {
     display: block;
-    font-family: var(--font-display);
+    font-family: var(--font-marker);
     font-size: var(--fs-4);
     text-transform: uppercase;
     margin-top: var(--space-xs);
@@ -1808,7 +1866,7 @@ h4 {
 
 .about-description p {
     font-size: var(--fs-5);
-    font-weight: 100;
+    font-weight: 300;
     line-height: 1.1;
     margin-bottom: var(--space-md);
     break-inside: avoid;   /* keep each paragraph whole in one column */
@@ -1834,7 +1892,6 @@ h4 {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: var(--radius-lg);   /* matches the work card frames */
 }
 
 @media (max-width: 640px) {
@@ -1924,7 +1981,7 @@ h4 {
 
 .cta-section .btn {
     background-color: var(--color-black);
-    color: var(--color-red);
+    color: var(--color-orange);
     font-size: 1rem;
 }
 
@@ -1955,26 +2012,19 @@ h4 {
 /* ==================================================================
    OUTRO - CTA band + full-screen footer
    ==================================================================
-   Sits at the bottom of every page. When it scrolls into view the
-   PAGE background itself turns brand orange, and the navbar + both
-   side rails clear out of frame. initOutro() in main.js toggles
-   .outro-active on <html>; everything below reacts to that.
+   Sits at the bottom of every page. The footer carries the brand orange
+   itself rather than the page fading into it. initOutro() still toggles
+   .outro-active on <html>, which the navbar ink keys off.
    ================================================================== */
 
-/* the page background is what changes - the outro block is see-through */
-body {
-    transition: background-color 0.8s var(--transition-smooth);
-}
-
-.outro-active body {
-    background-color: var(--color-red);
-}
-
 .outro {
-    --outro-gutter: clamp(1.5rem, 6vw, 7rem);
+    /* the same gutter as every other section, so the footer lines up with
+       the grid and the navbar instead of sitting further in */
+    --outro-gutter: var(--page-inset);
     --outro-ink: var(--color-black);
-    --outro-accent: var(--color-pink);      /* indigo #2E2B8A */
-    --outro-muted: var(--color-pink);   /* indigo, not a grey */
+    --outro-accent: var(--color-blue);      /* indigo #2E2B8A */
+    /* black, same as the ink: the footer carries no second text colour */
+    --outro-muted: var(--color-black);
     --outro-line: rgba(0, 0, 0, 0.2);
 
     background-color: transparent;
@@ -2003,8 +2053,7 @@ body {
     margin: clamp(2.5rem, 7vw, 5rem) var(--outro-gutter) clamp(3rem, 8vw, 6rem);
     padding-block: var(--cta-pad-y);
     padding-inline: clamp(1.9rem, 4.5vw, 3.5rem);
-    border-radius: clamp(1rem, 2.5vw, 2rem);
-    background-color: var(--color-pink);   /* indigo #2E2B8A on the orange */
+    background-color: var(--color-blue);   /* indigo #2E2B8A on the orange */
     transition: padding-block 0.7s var(--transition-smooth);
 }
 
@@ -2055,8 +2104,6 @@ body {
        width of its trigger - tiny on the navbar logo */
     max-width: none;
     height: auto;
-    border-radius: 12px;
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
     transform: translate(calc(-50% + var(--gx, 0px)), 10px) rotate(var(--tilt, -5deg)) scale(0.9);
     opacity: 0;
     pointer-events: none;
@@ -2100,7 +2147,7 @@ body {
     transition: color 0.3s var(--transition-smooth);
 }
 
-.cta-spark:hover { color: var(--color-red); }
+.cta-spark:hover { color: var(--color-orange); }
 
 .cta-spark__gif {
     position: absolute;
@@ -2109,8 +2156,6 @@ body {
     width: clamp(150px, 19vw, 280px);
     max-width: none;
     height: auto;
-    border-radius: 12px;
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
     /* --gx is nudged by the cursor (initCtaSpark in main.js) */
     transform: translate(calc(-50% + var(--gx, 0px)), 10px) rotate(var(--tilt, -5deg)) scale(0.9);
     opacity: 0;
@@ -2131,11 +2176,16 @@ body {
 
 /* ── full-screen footer ───────────────────────────────────── */
 .site-footer {
-    min-height: 100svh;
+    /* no background of its own: the page ground behind the blurred
+       gradient carries the orange here (see .outro-active body). */
+    /* was 100svh, when this held the thanks line, the wordmark and a
+       tall portrait illustration. It is a lockup and two short rows now,
+       so it sizes to its content with a floor rather than a screenful. */
+    min-height: 45svh;
     display: flex;
     flex-direction: column;
     gap: clamp(1rem, 2vw, 1.75rem);
-    padding: clamp(2rem, 5vw, 4rem) var(--outro-gutter) 1.75rem;
+    padding: clamp(1.5rem, 3.5vw, 2.75rem) var(--outro-gutter) 1.5rem;
     /* no top rule - the orange band is the divider */
 }
 
@@ -2143,55 +2193,36 @@ body {
    row and copyright sit tight together at the bottom */
 .footer-top {
     flex: 1;
-    display: grid;
-    /* the art is sized by height now, so let its column shrink to the
-       image and hand every spare pixel to the thanks + wordmark. */
-    grid-template-columns: 1fr auto;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: clamp(2rem, 6vw, 5rem);
+    justify-content: center;
+    gap: clamp(0.9rem, 2.2vw, 1.8rem);
 }
 
-.footer-thanks {
-    margin: 0;
-    font-family: var(--font-marker);
-    font-weight: 400;
-    font-size: clamp(2.1rem, 5.6vw, 4.6rem);
-    line-height: 1.02;
-    text-transform: none;
-    color: var(--outro-ink);
-}
-
-/* Landscape lockup, 429.58 x 141.56. Fills the widened text column;
-   min() keeps it inside that column on narrower screens. */
-.footer-logotype {
+/* the unicorn mark, centred above the lockup, back at the size it was
+   before the ring experiment */
+.footer-mark {
     display: block;
-    width: min(100%, clamp(420px, 64vw, 900px));
-    height: auto;
-    margin-top: clamp(0.9rem, 2.4vw, 1.6rem);
-    color: var(--outro-ink);        /* the wordmark inherits this */
-}
-
-/* The cross in the lockup spins on its own axis. transform-box: fill-box
-   makes transform-origin resolve against the path's own bounding box
-   rather than the whole svg's viewBox, so it turns in place. */
-.footer-logotype .logo-plus {
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: logoPlusSpin 6s linear infinite;
-}
-
-@keyframes logoPlusSpin {
-    to { transform: rotate(360deg); }
-}
-
-/* portrait illustration (599x1003), so drive it off HEIGHT and let the
-   width follow - sizing by width would overflow the 100svh footer. */
-.footer-art img {
     width: auto;
-    max-width: 100%;
-    height: clamp(420px, 72vh, 840px);
-    margin-inline: auto 0;      /* pushed to the right edge of its column */
+    height: clamp(58px, 8vw, 104px);
+    /* the artwork ships cream; same trick the navbar tint uses to put it
+       on a light ground without a second copy of the file */
+    filter: brightness(0);
+    /* its weight sits to the right, so dead-centre reads as off-centre */
+    transform: translateX(-5%);
+}
+
+
+/* Landscape lockup, 2035.33 x 411.44, spanning the whole container. The
+   footer sizes to its content now, so the cap is only there to stop a
+   wide, short viewport blowing the lockup up past the rows beneath. */
+.footer-wordmark {
     display: block;
+    width: 100%;
+    height: auto;
+    max-height: 34vh;
+    object-fit: contain;
 }
 
 /* One short row: Portfolio | About | Contact | socials.
@@ -2199,12 +2230,43 @@ body {
 /* just the socials now, pulled to the left edge */
 .footer-links {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: flex-start;
+    /* icons left, copyright right */
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+
+    /* the rule dividing this row from the lockup, with room on both sides:
+       margin above it, padding below it */
+    margin-top: clamp(1.5rem, 4vw, 3rem);
+    border-top: 3px solid var(--outro-ink);
+    padding-top: clamp(1.5rem, 4vw, 3rem);
+    padding-bottom: clamp(0.25rem, 1vw, 0.75rem);
 }
 
-/* social icons: initSocial() clones this into the right side rail
-   and the burger menu */
+/* label + icons as one group, so they wrap together rather than the
+   label orphaning onto its own line */
+.footer-follow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.footer-follow__label {
+    font-family: var(--font-body);
+    font-size: var(--fs-6);
+    color: var(--outro-ink);
+    white-space: nowrap;
+}
+
+
+.footer-copyright {
+    font-size: var(--fs-6);
+    color: var(--outro-muted);
+}
+
+/* social icons: initSocial() clones this into the burger menu */
 .site-footer .footer-social {
     display: flex;
     align-items: center;
@@ -2236,45 +2298,17 @@ body {
     color: inherit;
 }
 
-.footer-base {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 2rem;
-    padding-top: 0.9rem;
-    font-size: var(--fs-6);
-    color: var(--outro-muted);
-}
-
-.footer-base b { color: var(--outro-ink); font-weight: 600; }
-
-.footer-base a {
-    color: var(--outro-muted);
-    text-decoration: none;
-    transition: color 0.3s var(--transition-smooth);
-}
-
-.footer-base a:hover { color: var(--outro-accent); }
-
-/* ── side rails rearrange while the outro is on screen ── */
 /* the navbar stays put over the outro; both rails clear out */
-.outro-active .side-rail--left { --slide: -180%; opacity: 0; }
 
-.outro-active .side-rail--right { --slide: 180%; opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
-    .navbar, .side-rail { transition: none; animation: none; }
+    .navbar { transition: none; animation: none; }
     .logo-mark { transition: none; }
-    .footer-logotype .logo-plus { animation: none; }
 }
 
 @media (max-width: 900px) {
-    .footer-top { grid-template-columns: 1fr; }
-    .footer-art { order: -1; }
     /* stacked: it shares the fold with the thanks + links, so less height -
        and it spans the full width now, so re-centre it. */
-    .footer-art img { height: clamp(300px, 46vh, 520px); margin-inline: auto; }
 }
 
 /* smaller screens: stack the line above the button, both centred */
@@ -2292,7 +2326,6 @@ body {
 }
 
 @media (max-width: 640px) {
-    .footer-base { flex-direction: column; align-items: flex-start; }
 }
 
 /* ==================================================================
@@ -2309,7 +2342,7 @@ body {
     z-index: 9999;
     display: grid;
     place-items: center;
-    background-color: var(--color-black);
+    background-color: var(--page-bg);
     perspective: 800px;              /* the mark turns in depth, not flat */
     opacity: 0;
     visibility: hidden;
@@ -2328,10 +2361,9 @@ body {
 .page-loader__mark {
     width: clamp(84px, 12vw, 150px);
     height: auto;
+    /* the artwork ships cream; knocked to ink for the light ground */
+    filter: brightness(0);
     transform-style: preserve-3d;
-
-    /* same soft shadow the hero mark uses */
-    filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.5));
 
     /* 12 discrete frames per turn, one turn per 1.2s */
     animation: ddLoaderSpin 1.2s steps(12, end) infinite;
@@ -2371,13 +2403,16 @@ body {
 .tag {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.3rem 0.5rem 0.3rem 0.65rem;
-    border: 1px solid var(--color-red);
-    border-radius: 999px;
-    color: var(--color-red);
-    font-family: var(--font-body);
-    font-size: 0.68rem;
+    /* tight to the word: line-height 1 already trims the box vertically,
+       so this is mostly the side padding coming in */
+    padding: 0.18rem 0.42rem;
+    border: 1px solid var(--color-blue);
+    color: var(--color-blue);
+    font-family: var(--font-serif);
+    font-size: var(--fs-6);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
     line-height: 1;
     white-space: nowrap;
 }
@@ -2408,10 +2443,10 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.55rem 0.8rem 0.55rem 1rem;
-    border: 1px solid var(--color-cream);
     border-radius: 999px;
+    border: 1px solid var(--page-ink);
     background: none;
-    color: var(--color-cream);
+    color: var(--page-ink);
     font-family: var(--font-body);
     font-size: 0.78rem;
     line-height: 1;
@@ -2435,18 +2470,18 @@ body {
 }
 
 .work-filter:hover {
-    border-color: var(--color-red);
-    color: var(--color-red);
+    border-color: var(--color-orange);
+    color: var(--color-orange);
 }
 
 .work-filter[aria-pressed="true"] {
-    background-color: var(--color-red);
-    border-color: var(--color-red);
+    background-color: var(--color-orange);
+    border-color: var(--color-orange);
     color: var(--color-black);
 }
 
 .work-filter:focus-visible {
-    outline: 2px solid var(--color-red);
+    outline: 2px solid var(--color-orange);
     outline-offset: 3px;
 }
 
@@ -2476,7 +2511,7 @@ body {
     padding: clamp(2rem, 6vw, 4rem) var(--page-inset);
     font-family: var(--font-marker);
     font-size: var(--fs-3);
-    color: var(--color-red);
+    color: var(--color-orange);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2494,10 +2529,9 @@ body {
         gap: 0.6rem;
         width: 100%;
         padding: 0.85rem 1rem;
-        border: 1px solid var(--color-cream);
-        border-radius: var(--radius-md);
+        border: 1px solid var(--page-ink);
         background: none;
-        color: var(--color-cream);
+        color: var(--page-ink);
         font-family: var(--font-body);
         font-size: 0.85rem;
         line-height: 1;
@@ -2506,7 +2540,7 @@ body {
 
     .work-filters__state {
         margin-left: auto;
-        color: var(--color-red);
+        color: var(--color-orange);
     }
 
     .work-filters__chev {
@@ -2529,9 +2563,8 @@ body {
         flex-direction: column;
         align-items: stretch;
         gap: 0;
-        border: 1px solid var(--color-cream);
+        border: 1px solid var(--page-ink);
         border-top: 0;
-        border-radius: 0 0 var(--radius-md) var(--radius-md);
         overflow: hidden;
     }
 
@@ -2546,7 +2579,7 @@ body {
     }
 
     .work-filters__list .work-filter + .work-filter {
-        border-top: 1px solid rgba(250, 250, 255, 0.18);
+        border-top: 1px solid rgba(0, 0, 0, 0.18);
     }
 }
 
@@ -2561,8 +2594,9 @@ body {
     font-weight: 400;
     font-size: var(--fs-1);
     line-height: 1;
+    letter-spacing: -0.04em;
     text-transform: none;              /* beat the global h1-h4 rule */
-    color: var(--color-cream);
+    color: var(--page-ink);
 }
 
 /* the title lines up with the filter bar and the card grid below it */
@@ -2600,8 +2634,29 @@ body {
      - big display lines are Instrument Serif (--font-marker) with
        text-transform: none, to beat the global uppercase on h1-h4.
      - small labels are Archivo (--font-body) uppercase at --fs-6.
-     - accent is --color-red, same as every other page.
+     - accent is --color-orange, same as every other page.
    ============================================ */
+/* The about page's running text is Noto Serif; its headings stayed
+   Instrument Serif. Scoped to the page's own sections, so the shared nav
+   and footer keep the site's usual faces. */
+.page-about .ab-open,
+.page-about .ab-me,
+.page-about .ab-block {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+}
+
+/* Archivo Thin reads fine at 100; a serif does not. The about page's
+   running text takes a normal weight instead of the site-wide thin. */
+.page-about .ab-open__body p,
+.page-about .ab-me__body p,
+.page-about .ab-field li,
+.page-about .forge__col p {
+    font-weight: 400;
+    letter-spacing: -0.04em;
+}
+
+
 .ab-inset { padding-inline: var(--page-inset); }
 
 .ab-block { padding-block: var(--space-4xl); }
@@ -2611,7 +2666,7 @@ body {
    end of the site: black ink, indigo for the accent. Everything below
    it returns to the black page. */
 .ab-open {
-    background-color: var(--color-red);
+    background-color: var(--color-orange);
     color: var(--color-black);
     /* Half the first screen. svh not vh, so a phone's collapsing URL bar
        cannot make it taller than intended. min-height, not height, so it
@@ -2628,7 +2683,7 @@ body {
    the middle spoils that. Since it cannot wrap, the type steps down a
    tier on narrow screens instead of running off the edge. */
 .ab-statement {
-    font-family: var(--font-marker);   /* Instrument Serif, real italic cut */
+    font-family: var(--font-marker);
     font-style: italic;
     font-weight: 400;
     font-size: var(--fs-2);
@@ -2697,7 +2752,7 @@ body {
 
 .ab-me__title em {
     font-style: italic;
-    color: var(--color-red);
+    color: var(--color-orange);
 }
 
 .ab-me__body p {
@@ -2721,7 +2776,6 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: var(--radius-lg);
 }
 
 /* ── 3. services ──
@@ -2745,7 +2799,7 @@ body {
     text-transform: none;
     line-height: 1;
     margin: 0;
-    color: var(--color-cream);
+    color: var(--page-ink);
 }
 
 .ab-fields {
@@ -2755,7 +2809,7 @@ body {
 }
 
 .ab-field h3 {
-    font-family: var(--font-body);
+    font-family: var(--font-serif);
     font-size: var(--fs-6);
     font-weight: 600;
     text-transform: uppercase;
@@ -2885,17 +2939,80 @@ body {
    <img>, so it cannot inherit currentColor - brightness(0) gives it
    the same solid-black treatment the footer logotype gets on orange.
    ============================================ */
-.navbar.is-tinted::before { background-color: var(--color-red); }
+/* ============================================
+   NAV INK
 
-.navbar.is-tinted .nav-link-cycle { color: var(--color-black); }
+   The bar blends by default (see .navbar). Difference inverts COLOUR,
+   not lightness, so |#FC6935 - white| comes out cyan. That is wrong over
+   the orange intro band on About, so the blend is switched off there and
+   behind the takeover menu. Everywhere else it blends, the orange footer
+   included - the cyan there is deliberate.
+   ============================================ */
+
+/* 1. The homepage hero, which is dark and saturated. initHeroBgFade
+      adds .is-solid once the gradient has dropped out of focus, so
+      :not(.is-solid) IS "still over the sharp hero". */
+.page-home .navbar:not(.is-solid),
+/* 2. The orange intro band on About. initNavTint watches [data-nav-tint]. */
+.navbar.is-tinted,
+/* 3. The takeover menu paints its sheet above the page but below the bar,
+      so the bar would invert against a page it can no longer see. */
+.menu-open .navbar {
+    mix-blend-mode: normal;
+}
+
+/* cream over the dark hero and the dark takeover sheet */
+.page-home .navbar:not(.is-solid) .logo,
+.page-home .navbar:not(.is-solid) .nav-link-cycle,
+.page-home .navbar:not(.is-solid) .nav-links a,
+.page-home .navbar:not(.is-solid) .motion-toggle,
+.menu-open .navbar .logo,
+.menu-open .navbar .nav-link-cycle,
+.menu-open .navbar .nav-links a {
+    color: var(--color-cream);
+}
+
+.page-home .navbar:not(.is-solid) .logo-mark,
+.menu-open .navbar .logo-mark { filter: none; }
+
+.page-home .navbar:not(.is-solid) .mobile-menu-toggle span,
+.page-home .navbar:not(.is-solid) .motion-toggle__icon,
+.menu-open .navbar .mobile-menu-toggle span {
+    background-color: var(--color-cream);
+}
+
+.page-home .navbar:not(.is-solid) .motion-toggle { border-color: var(--color-cream); }
+
+/* black over the two orange bands */
+.navbar.is-tinted .logo,
+.navbar.is-tinted .nav-link-cycle,
+.navbar.is-tinted .nav-links a,
+.navbar.is-tinted .motion-toggle {
+    color: var(--color-black);
+}
+
 .navbar.is-tinted .logo-mark { filter: brightness(0); }
-.navbar.is-tinted .mobile-menu-toggle span { background-color: var(--color-black); }
 
-/* the takeover menu puts a dark sheet behind the bar, so the black ink
-   would vanish into it */
-.menu-open .navbar.is-tinted .nav-link-cycle { color: var(--color-cream); }
-.menu-open .navbar.is-tinted .logo-mark { filter: none; }
-.menu-open .navbar.is-tinted .mobile-menu-toggle span { background-color: var(--color-cream); }
+.navbar.is-tinted .mobile-menu-toggle span,
+.navbar.is-tinted .motion-toggle__icon {
+    background-color: var(--color-black);
+}
+
+.navbar.is-tinted .motion-toggle { border-color: var(--color-black); }
+
+/* The hand-rolled version of this is gone: initNavTint used to watch for
+   a coloured band and flip the ink by hand. The difference blend does the
+   same job continuously and for every colour, not just the orange one.
+   .is-tinted is still toggled by main.js and now styles nothing.
+
+   The one case the blend cannot read is the takeover menu, which paints
+   its sheet ABOVE the page but BELOW the bar - so the bar would invert
+   against the page it can no longer see. Blending is switched off while
+   the menu is open and the ink set explicitly. */
+.menu-open .navbar .nav-link-cycle,
+.menu-open .navbar .nav-links a { color: var(--color-cream); }
+.menu-open .navbar .logo-mark { filter: none; }
+.menu-open .navbar .mobile-menu-toggle span { background-color: var(--color-cream); }
 
 /* ============================================
    BODY COPY WEIGHT
@@ -2904,8 +3021,8 @@ body {
    applied to prose everywhere so the site reads consistently.
 
    Set per-selector rather than on body: nav links, form labels and
-   inputs, the filter chips, the category tags, the side rail and the
-   footer base all declare no weight of their own, so a global rule
+   inputs, the filter chips, the category tags and the footer base all
+   declare no weight of their own, so a global rule
    would thin those out too, which is not what is wanted.
    ============================================ */
 .about-description p,
@@ -2916,7 +3033,7 @@ body {
 .case-study-intro .description,
 .case-study-solution p,
 .cs-missing p {
-    font-weight: 100;
+    font-weight: 300;
 }
 
 /* ============================================
@@ -2945,8 +3062,6 @@ body {
     line-height: 1.2;
     margin: 0 0 var(--space-sm);
     padding-bottom: 0.7rem;
-    border-bottom: thin solid currentColor;
-    color: var(--color-red);
 }
 
 .case-study-scope ul {
@@ -2957,7 +3072,7 @@ body {
 
 .case-study-scope li {
     font-size: var(--fs-5);
-    font-weight: 100;
+    font-weight: 300;
     line-height: 1.5;
     padding-block: 0.3rem;
 }
@@ -3004,16 +3119,14 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.4rem 0.85rem;
-    border: thin solid rgba(255, 253, 210, 0.4);
     border-radius: 999px;
-    background: rgba(32, 29, 30, 0.35);
-    color: var(--color-cream);
+    border: thin solid #fff;
+    background: transparent;
+    color: #fff;
     font-family: var(--font-body);
     font-size: 0.7rem;
     text-transform: uppercase;
     cursor: pointer;
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
     transition: background 0.3s var(--transition-smooth),
         border-color 0.3s var(--transition-smooth);
 }
@@ -3027,7 +3140,7 @@ body {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--color-cream);
+    background: #fff;
     animation: motionTogglePulse 1.6s ease-in-out infinite;
 }
 
@@ -3039,7 +3152,7 @@ body {
 .motion-toggle[aria-pressed="true"] .motion-toggle__icon {
     animation: none;
     opacity: 1;
-    background: var(--color-red);
+    background: var(--color-orange);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3085,25 +3198,15 @@ body {
         font-size: 0.55rem;
         gap: 0.35rem;
     }
-
-    /* Nothing on the projects page moves on a phone: the squish needs a
-       cursor and the card parallax is already off below 760px. A control
-       that changes nothing is worse than no control. */
-    .page-projects .navbar .motion-toggle { display: none; }
 }
 
 /* ============================================
    REDUCED MOTION: the work grids
 
    .liquid-hero-reduced is set by the toggle and persists across pages.
-   This is the distracting part: cards growing and shrinking under the
-   cursor as you read down the grid.
+   The grow-and-squish this used to cancel is gone for everyone now, so
+   what is left is the hover transitions themselves.
    ============================================ */
-.liquid-hero-reduced .work-scatter--squish .work-row:hover > .work-card,
-.liquid-hero-reduced .work-scatter--squish .work-row:hover > .work-card:hover {
-    flex-basis: calc(var(--span) / 3);
-}
-
 .liquid-hero-reduced .work-card,
 .liquid-hero-reduced .work-card__frame,
 .liquid-hero-reduced .work-card__img {
@@ -3136,6 +3239,8 @@ body {
    transition already declared on .navbar, so the backdrop, the tint,
    the compact outro state and everything else behave as before.
    ============================================ */
+/* Nothing adds .is-hidden while initNavHide is disabled in main.js;
+   both are kept so the behaviour is one line away. */
 .navbar.is-hidden {
     transform: translateY(-100%);
 }
@@ -3144,4 +3249,41 @@ body {
    in it, so sliding away mid-menu would strand the visitor. */
 .menu-open .navbar.is-hidden {
     transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   404
+   Borrows the page-header type and the standard button. Only the muted
+   code above the heading and the stacking are new here.
+   -------------------------------------------------------------------------- */
+.notfound {
+    min-height: 70svh;
+    display: flex;
+    align-items: center;
+}
+
+.notfound__code {
+    margin: 0 0 var(--space-sm);
+    font-family: var(--font-marker);
+    font-size: var(--fs-2);
+    line-height: 1;
+    opacity: 0.45;
+}
+
+.notfound__body {
+    max-width: 46ch;
+    margin: var(--space-md) 0 var(--space-lg);
+    font-weight: 300;
+}
+
+.notfound__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.notfound__home {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
 }

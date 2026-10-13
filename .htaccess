@@ -6,9 +6,25 @@ Options -Indexes +FollowSymLinks
 DirectoryIndex index.html
 
 # --------------------------------------------------------------------------
+#  Error pages
+#
+#  Without this Apache serves its own bare 404, and cPanel's default
+#  ErrorDocument points at a file that is not there, which is why the
+#  old one reported a second 404 while trying to render the first.
+#  The path is absolute on purpose: an ErrorDocument is served under
+#  whatever url was requested, so relative asset paths inside it would
+#  resolve against that url and break on anything below the root.
+# --------------------------------------------------------------------------
+ErrorDocument 404 /404.html
+
+# --------------------------------------------------------------------------
 #  Clean URLs
 # --------------------------------------------------------------------------
 RewriteEngine On
+
+# Server internals. These are read by php on the server and are never
+# pages, so nothing outside gets to fetch them.
+RewriteRule ^(lib|cache|tools)(/|$) - [F,L]
 
 # --------------------------------------------------------------------------
 #  One canonical origin: https, no www
@@ -25,6 +41,45 @@ RewriteRule ^ https://doubledashcreative.com%{REQUEST_URI} [R=301,L]
 RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
 RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
 
+# Pastel Mumu had a standalone page before the case studies were unified.
+# Old links and anything Google still holds land on the real write-up
+# instead of dying. This has to sit ABOVE the .html stripper below, which
+# would otherwise rewrite it to /mumu and dead-end there.
+RewriteRule ^mumu(\.html)?/?$ /work/mumu [R=301,L]
+
+# Case studies used to live at case-study.html?p=<slug> and now have real
+# urls of their own. Old links, old bookmarks and anything Google already
+# holds land on the right page in a single hop. The trailing ? on the
+# substitution drops the original query string, which Apache would
+# otherwise carry across and leave dangling on the new url.
+RewriteCond %{QUERY_STRING} ^p=([A-Za-z0-9_-]+)$
+RewriteRule ^case-study(\.html)?/?$ /work/%1? [R=301,L]
+
+# the template with no project named has nothing to show
+RewriteRule ^case-study(\.html)?/?$ /? [R=301,L]
+
+# /work is a folder of case studies, not a page; the grid lives on /
+RewriteRule ^work/?$ / [R=301,L]
+
+# /work/<slug> is rendered by case.php, which asks Sanity for that project
+# as the page is requested. Publishing a project in the Studio puts its
+# page live straight away: nothing to generate, nothing to upload.
+#
+# The -f guard means that if case.php is ever missing, this rule simply
+# does not fire and the request falls through to the plain-file rules
+# below. So a half-finished upload degrades instead of breaking.
+RewriteCond %{DOCUMENT_ROOT}/case.php -f
+RewriteRule ^work/([a-z0-9-]+)/?$ /case.php?slug=$1 [L]
+
+# Same idea for the sitemap: built from Sanity on request, so it cannot
+# go stale, and it falls back to any static sitemap.xml if php is absent.
+RewriteCond %{DOCUMENT_ROOT}/sitemap.php -f
+RewriteRule ^sitemap\.xml$ /sitemap.php [L]
+
+# The projects page was folded into the home page, which now carries the
+# whole grid. Anything still asking for the old url lands on it rather
+# than seeing a second copy of the same thing.
+RewriteRule ^projects(\.html)?/?$ /? [R=301,L]
 # /index.html  and  /index   ->   /
 RewriteCond %{THE_REQUEST} \s/+index(?:\.html)?[\s?] [NC]
 RewriteRule ^ / [R=301,L]
