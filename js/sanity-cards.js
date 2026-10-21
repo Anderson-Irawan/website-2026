@@ -174,11 +174,128 @@ function caseUrl(slug) {
         }
     }
 
-    if (scatter.hasAttribute('data-fit-titles')) {
+    /* [data-contrast-titles]: each title takes a colour that reads against
+       the part of its own image it overlaps. The brand orange is kept
+       whenever it clears 3:1 (WCAG AA for large text); otherwise the title
+       switches to whichever of cream or black contrasts more. */
+    function hexRgb(hex) {
+        const n = parseInt(hex.trim().replace('#', ''), 16);
+        return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+
+    function luminance(rgb) {
+        const c = rgb.map(function (v) {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    }
+
+    function contrast(a, b) {
+        const la = luminance(a), lb = luminance(b);
+        return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+    }
+
+    /* A separate small, CORS-enabled copy of the card image: reading pixels
+       from the displayed one would taint the canvas, and refetching it with
+       crossOrigin set would download the full-size image twice. */
+    const samples = new WeakMap();
+
+    function sampleFor(card) {
+        if (samples.has(card)) return samples.get(card);
+
+        const img = card.querySelector('img.work-card__img:not(.work-card__img--hover)');
+        const vid = card.querySelector('video.work-card__img');
+        let url = img ? (img.currentSrc || img.src) : vid && vid.getAttribute('poster');
+
+        const p = new Promise(function (resolve) {
+            if (!url) return resolve(null);
+            if (url.indexOf('cdn.sanity.io') !== -1) url = url.replace(/([?&])w=\d+/, '$1w=160');
+            const s = new Image();
+            s.crossOrigin = 'anonymous';
+            s.onload = function () { resolve(s); };
+            s.onerror = function () { resolve(null); };
+            s.src = url;
+        });
+        samples.set(card, p);
+        return p;
+    }
+
+    /* Average colour of the image under the title. The overlap is the
+       intersection of the title and frame boxes, mapped back through
+       object-fit: cover (scale to fill, centred) into image pixels. */
+    function overlapColour(im, frame, title) {
+        const fr = frame.getBoundingClientRect();
+        const tr = title.getBoundingClientRect();
+        const x0 = Math.max(fr.left, tr.left), x1 = Math.min(fr.right, tr.right);
+        const y0 = Math.max(fr.top, tr.top), y1 = Math.min(fr.bottom, tr.bottom);
+        if (x1 <= x0 || y1 <= y0) return null;
+
+        const w = im.naturalWidth, h = im.naturalHeight;
+        const s = Math.max(fr.width / w, fr.height / h);
+        const ox = (fr.width - w * s) / 2, oy = (fr.height - h * s) / 2;
+        const sw = (x1 - x0) / s, sh = (y1 - y0) / s;
+
+        const cv = document.createElement('canvas');
+        cv.width = Math.max(1, Math.round(sw));
+        cv.height = Math.max(1, Math.round(sh));
+        const ctx = cv.getContext('2d');
+        ctx.drawImage(im, (x0 - fr.left - ox) / s, (y0 - fr.top - oy) / s, sw, sh,
+            0, 0, cv.width, cv.height);
+
+        let d;
+        try { d = ctx.getImageData(0, 0, cv.width, cv.height).data; }
+        catch (e) { return null; } // no CORS on this image: keep the default
+
+        let r = 0, g = 0, b = 0;
+        const n = d.length / 4;
+        for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; }
+        return [r / n, g / n, b / n];
+    }
+
+    function contrastTitles() {
+        const root = getComputedStyle(document.documentElement);
+        const orange = root.getPropertyValue('--color-orange');
+        const fallbacks = ['--color-cream', '--color-black'].map(function (v) {
+            return root.getPropertyValue(v);
+        });
+
+        scatter.querySelectorAll('.work-card').forEach(function (card) {
+            const title = card.querySelector('.work-card__title');
+            const frame = card.querySelector('.work-card__frame');
+            if (!title || !frame) return;
+
+            sampleFor(card).then(function (im) {
+                if (!im) return;
+                const bg = overlapColour(im, frame, title);
+                if (!bg) return;
+
+                let pick = orange;
+                if (contrast(hexRgb(orange), bg) < 3) {
+                    pick = fallbacks.reduce(function (best, c) {
+                        return contrast(hexRgb(c), bg) > contrast(hexRgb(best), bg) ? c : best;
+                    });
+                }
+                title.style.color = pick.trim();
+            });
+        });
+    }
+
+    const FIT_TITLES = scatter.hasAttribute('data-fit-titles');
+    const CONTRAST_TITLES = scatter.hasAttribute('data-contrast-titles');
+
+    /* contrast runs after fitting: the overlap it samples depends on the
+       title's final size */
+    function layoutTitles() {
+        if (FIT_TITLES) fitTitles();
+        if (CONTRAST_TITLES) contrastTitles();
+    }
+
+    if (FIT_TITLES || CONTRAST_TITLES) {
         let pending = 0;
         window.addEventListener('resize', function () {
             cancelAnimationFrame(pending);
-            pending = requestAnimationFrame(fitTitles);
+            pending = requestAnimationFrame(layoutTitles);
         });
     }
 
@@ -260,8 +377,8 @@ function caseUrl(slug) {
 
             /* measuring before the webfont lands would size off the
                fallback serif's widths */
-            if (scatter.hasAttribute('data-fit-titles')) {
-                document.fonts.ready.then(fitTitles);
+            if (FIT_TITLES || CONTRAST_TITLES) {
+                document.fonts.ready.then(layoutTitles);
             }
 
             /* main.js finished its pass on DOMContentLoaded, before any of
