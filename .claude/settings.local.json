@@ -2,8 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(git add *)",
-      "Bash(git commit -m 'Split homepage and projects page *)",
-      "Bash(git commit -m 'Limit homepage to show only 4 projects *)"
+      "Bash(git commit *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)"
     ]
   }
 }

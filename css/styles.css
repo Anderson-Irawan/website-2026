@@ -1668,8 +1668,9 @@ h4 {
 
 .page-home .work-scatter--squish .work-row > .work-card {
     flex: none;
-    width: 100%;
-    margin: 0;
+    width: 80%;
+    /* auto margins beat the row's align-items: flex-start */
+    margin-inline: auto;
 }
 
 /* The frame height was tuned for half-width cards, so a full-width card
