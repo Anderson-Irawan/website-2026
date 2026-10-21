@@ -1669,8 +1669,7 @@ h4 {
 .page-home .work-scatter--squish .work-row > .work-card {
     flex: none;
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
+    margin: 0;
 }
 
 /* The frame height was tuned for half-width cards, so a full-width card
@@ -1681,6 +1680,9 @@ h4 {
     .page-home .work-scatter--squish .work-card__frame {
         height: auto;
         aspect-ratio: 3 / 2;
+        /* At full row width 3:2 works out taller than the viewport, so the
+           card could not be seen in one piece without this. */
+        max-height: 80vh;
     }
 }
 
@@ -1698,10 +1700,6 @@ h4 {
     .work-scatter--squish .work-row > .work-card {
         flex: none;          /* stop the flex sizing - just stack full width */
         width: 100%;
-    }
-
-    .page-home .work-scatter--squish .work-row > .work-card {
-        max-width: none;
     }
 }
 
