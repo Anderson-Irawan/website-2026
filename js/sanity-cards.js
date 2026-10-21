@@ -52,6 +52,7 @@ function caseUrl(slug) {
        shows: [data-featured-only] limits it to the ones ticked "Show on
        the homepage" in the Studio. */
     const FEATURED_ONLY = scatter.hasAttribute('data-featured-only');
+    const LIMIT = scatter.getAttribute('data-limit') ? parseInt(scatter.getAttribute('data-limit'), 10) : null;
 
     /* A phone cannot hover, so a hover video there can never play: it is
        megabytes fetched to sit behind a poster nobody will ever trigger.
@@ -162,6 +163,10 @@ function caseUrl(slug) {
                the attribute, so the projects page always shows everything. */
             if (FEATURED_ONLY) {
                 projects = projects.filter(function (p) { return p.featured; });
+            }
+            /* Limit number of projects if data-limit is set */
+            if (LIMIT && projects.length > LIMIT) {
+                projects = projects.slice(0, LIMIT);
             }
             if (!projects.length) return;
 
