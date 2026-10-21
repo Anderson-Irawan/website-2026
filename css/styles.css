@@ -1794,6 +1794,20 @@ h4 {
     font-style: italic;
 }
 
+/* Homepage: the title is a display line sized off the viewport, so it
+   fills the card the way the image does. Long names wrap rather than
+   overflow; line-height is tight so a wrapped name still reads as one. */
+.page-home .work-card__meta {
+    margin-top: var(--space-sm);
+    padding-top: 0;
+}
+
+.page-home .work-card__title {
+    font-size: clamp(2.75rem, 8vw, 8.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+}
+
 /* See more button under the grid */
 .work-more {
     display: flex;
