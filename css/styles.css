@@ -3287,10 +3287,14 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
    Borrows the page-header type and the standard button. Only the muted
    code above the heading and the stacking are new here.
    -------------------------------------------------------------------------- */
+/* a full screen; the content sits in the middle of it, clear of the
+   fixed navbar at the top */
 .notfound {
-    min-height: 70svh;
+    box-sizing: border-box;
+    min-height: 100svh;
     display: flex;
     align-items: center;
+    padding-block: 6rem;
 }
 
 .notfound__code {
@@ -3298,7 +3302,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     font-family: var(--font-marker);
     font-size: var(--fs-2);
     line-height: 1;
-    opacity: 0.45;
 }
 
 .notfound__body {
