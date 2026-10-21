@@ -717,8 +717,12 @@ function initNavbar() {
     if (!navbar) return;
 
     // Homepage: the backdrop is driven by initHeroBgFade so it tracks
-    // the background fade to black exactly.
-    if (document.querySelector('.liquid-hero__bg')) return;
+    // the background fade to black exactly. Keyed off the same elements
+    // that function needs - other pages carry the hero canvas too, and
+    // keying off that alone left their bar with nothing to switch it on.
+    if (document.querySelector('.liquid-hero__bg') &&
+        document.querySelector('.portfolio-section') &&
+        document.querySelector('.hero-divider')) return;
 
     // Most pages: black fades in after ~0.4 of a viewport.
     const heroPin = document.querySelector('.hero-pin');
