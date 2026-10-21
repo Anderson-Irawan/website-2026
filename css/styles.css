@@ -1798,8 +1798,18 @@ h4 {
    fills the card the way the image does. Long names wrap rather than
    overflow; line-height is tight so a wrapped name still reads as one. */
 .page-home .work-card__meta {
-    margin-top: var(--space-sm);
+    margin-top: 0.5rem;
     padding-top: 0;
+}
+
+/* No italic swap here, so no reserved italic copy either - leaving it in
+   would make fitTitles() size off the wider italic and shrink every title. */
+.page-home .work-card:hover .work-card__title {
+    font-style: normal;
+}
+
+.page-home .work-card__title::after {
+    content: none;
 }
 
 /* --title-size is set by fitTitles() in js/sanity-cards.js; the clamp is
@@ -1808,6 +1818,10 @@ h4 {
     font-size: var(--title-size, clamp(2.75rem, 8vw, 8.5rem));
     line-height: 0.92;
     letter-spacing: -0.035em;
+    /* at this size the leading above the capitals is a visible gap; trim
+       it so the letters themselves sit under the image (ignored by
+       browsers without text-box support, which keep the small gap) */
+    text-box: trim-start cap alphabetic;
 }
 
 /* See more button under the grid */
