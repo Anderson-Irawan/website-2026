@@ -310,26 +310,27 @@ h4 {
     z-index: 1000;
     padding: 0.9rem 0;
     background-color: transparent;
-
-    /* Painted pure white and blended with difference, so the bar is the
-       inverse of whatever runs under it - near-black on the warm ground,
-       and it reads against project images as they scroll past.
-
-       Three places it gets switched off below, because difference inverts
-       COLOUR rather than lightness and gives a cyan over orange. */
-    mix-blend-mode: difference;
     transition: transform 0.55s var(--transition-smooth),
         opacity 0.4s var(--transition-smooth);
 }
 
-/* Every page carries the black bar from the top. The homepage is the
-   exception: it rides transparent over the liquid hero and pops the
-   backdrop in when the "For Dreamers" divider passes the middle of the
-   viewport (initHeroBgFade toggles .is-solid; initNavbar does it
-   everywhere else). */
-/* The backdrop is gone: a slab behind the bar would be all the blend
-   could ever see. .is-solid and .is-tinted still get toggled by main.js
-   and now simply have nothing to act on. */
+/* Transparent at the top of every page; the black backdrop fades in once
+   main.js adds .is-solid - on the homepage when the "For Dreamers"
+   divider passes mid-viewport (initHeroBgFade), elsewhere after 0.4 of a
+   viewport (initNavbar). */
+.navbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-black);
+    opacity: 0;
+    /* background-color is in the list because [data-nav-tint] recolours it */
+    transition: opacity 0.4s var(--transition-smooth),
+        background-color 0.4s var(--transition-smooth);
+    z-index: -1;
+}
+
+.navbar.is-solid::before { opacity: 1; }
 
 
 .navbar .container {
@@ -3013,27 +3014,7 @@ h4 {
    <img>, so it cannot inherit currentColor - brightness(0) gives it
    the same solid-black treatment the footer logotype gets on orange.
    ============================================ */
-/* ============================================
-   NAV INK
-
-   The bar blends by default (see .navbar). Difference inverts COLOUR,
-   not lightness, so |#FC6935 - white| comes out cyan. That is wrong over
-   the orange intro band on About, so the blend is switched off there and
-   behind the takeover menu. Everywhere else it blends, the orange footer
-   included - the cyan there is deliberate.
-   ============================================ */
-
-/* 1. The homepage hero, which is dark and saturated. initHeroBgFade
-      adds .is-solid once the gradient has dropped out of focus, so
-      :not(.is-solid) IS "still over the sharp hero". */
-.page-home .navbar:not(.is-solid),
-/* 2. The orange intro band on About. initNavTint watches [data-nav-tint]. */
-.navbar.is-tinted,
-/* 3. The takeover menu paints its sheet above the page but below the bar,
-      so the bar would invert against a page it can no longer see. */
-.menu-open .navbar {
-    mix-blend-mode: normal;
-}
+.navbar.is-tinted::before { background-color: var(--color-orange); }
 
 /* cream over the dark hero and the dark takeover sheet */
 .page-home .navbar:not(.is-solid) .logo,
