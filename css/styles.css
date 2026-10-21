@@ -697,16 +697,33 @@ h4 {
     padding-top: 150px;
 }
 
-/* One column, centred. The shark used to sit in a second column; with
-   it gone, a 1fr 1fr grid would just leave half the row empty. */
+/* Two columns: the heading on the left, held in view while the long
+   form scrolls past on the right. Stacks below 900px. */
 .contact-layout {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: start;
 }
 
 .contact-form {
     width: 100%;
-    max-width: 46rem;
+    min-width: 0;
+}
+
+/* short fields side by side */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 clamp(1rem, 2.5vw, 2rem);
+}
+
+@media (max-width: 900px) {
+    .contact-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+    .form-row { grid-template-columns: 1fr; }
 }
 
 /* Honeypot wrapper on the contact form. Pushed off-screen rather than
@@ -808,11 +825,17 @@ h4 {
    sets expectations BEFORE the heading, the form sits under it, and a
    softer route in plus the socials close the page off. */
 .contact-head {
-    margin: 0 auto var(--space-xl);
-    text-align: center;
+    margin: 0;
+    text-align: left;
+    position: sticky;
+    top: 7rem;      /* clear of the fixed navbar */
 }
 
 .contact-head .page-header__title { margin-top: var(--space-sm); }
+
+@media (max-width: 900px) {
+    .contact-head { position: static; }
+}
 
 .contact-after {
     display: flex;

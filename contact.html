@@ -57,7 +57,7 @@
             </button>
 
             <ul class="nav-links">
-                <li><a href="index.html" class="nav-link-cycle"><span data-text="Projects">Projects</span></a></li>
+                <li><a href="projects.html" class="nav-link-cycle"><span data-text="Projects">Projects</span></a></li>
                 <li><a href="about.html" class="nav-link-cycle"><span data-text="About">About</span></a></li>
                 <li><a href="contact.html" class="nav-link-cycle"><span data-text="Contact">Contact</span></a></li>
             </ul>
@@ -67,36 +67,40 @@
     <!-- Contact Section -->
     <section class="section contact-section">
         <div class="container">
-            <div class="contact-head">
-                <h1 class="page-header__title">Let's Work Together.</h1>
-            </div>
-
             <div class="contact-layout">
+                <div class="contact-head">
+                    <h1 class="page-header__title">Let's Work Together.</h1>
+                </div>
+
                 <div class="contact-form">
 
                     <form id="contact-form">
-                        <div class="form-group">
-                            <label for="name">Name*</label>
-                            <input type="text" id="name" name="name" required placeholder="">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Name*</label>
+                                <input type="text" id="name" name="name" required placeholder="">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="company">Brand/Company Name*</label>
+                                <input type="text" id="company" name="company" required placeholder="">
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="company">Brand/Company Name*</label>
-                            <input type="text" id="company" name="company" required placeholder="">
-                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email*</label>
+                                <input type="email" id="email" name="email" required placeholder="">
+                            </div>
 
-                        <div class="form-group">
-                            <label for="email">Email*</label>
-                            <input type="email" id="email" name="email" required placeholder="">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="website">Website</label>
-                            <!-- type="text", not "url": type="url" demands a scheme, so a bare
-                                 domain like kilnandco.com fails validation and blocks the
-                                 whole submit. This value is read by a human in an email. -->
-                            <input type="text" inputmode="url" id="website" name="website"
-                                placeholder="If you have one">
+                            <div class="form-group">
+                                <label for="website">Website</label>
+                                <!-- type="text", not "url": type="url" demands a scheme, so a bare
+                                     domain like kilnandco.com fails validation and blocks the
+                                     whole submit. This value is read by a human in an email. -->
+                                <input type="text" inputmode="url" id="website" name="website"
+                                    placeholder="If you have one">
+                            </div>
                         </div>
 
                         <!-- Checkboxes, because someone can want two of these.
