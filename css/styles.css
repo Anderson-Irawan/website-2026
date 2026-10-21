@@ -2127,7 +2127,7 @@ h4 {
     width: 100%;
     max-width: 960px;
     margin-inline: auto;
-    padding: clamp(4rem, 10vw, 8rem) var(--container-padding) clamp(3rem, 7vw, 5.5rem);
+    padding: clamp(4rem, 10vw, 8rem) var(--container-padding) clamp(6rem, 14vw, 11rem);
     /* lets the link's slide measure the band's width in cqi */
     container-type: inline-size;
 }
