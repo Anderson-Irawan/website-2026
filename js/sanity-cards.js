@@ -74,7 +74,7 @@ function caseUrl(slug) {
        only, done by the CSS, exactly as the hand-written cards do it. */
     function cardImg(ref) {
         const u = assetUrl(ref);
-        return u ? u + '?w=900&auto=format&q=80' : '';
+        return u ? u + '?w=1600&auto=format&q=80' : '';
     }
 
     function esc(s) {

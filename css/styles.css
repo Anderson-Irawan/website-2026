@@ -1658,6 +1658,32 @@ h4 {
 /* "In the works" tiles keep the normal title/category colours - the
    striped frame already reads as a placeholder */
 
+/* Single column layout for homepage projects. The cards still arrive two
+   to a .work-row, so this gap has to match the gap between rows or the
+   stack reads as pairs. */
+.page-home .work-scatter--squish .work-row {
+    flex-direction: column;
+    row-gap: clamp(3rem, 7vw, 6rem);
+}
+
+.page-home .work-scatter--squish .work-row > .work-card {
+    flex: none;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* The frame height was tuned for half-width cards, so a full-width card
+   needs the shape to scale with it instead of staying short and wide.
+   Above 760px only: the mobile heights below are already tuned for a
+   single full-width card. */
+@media (min-width: 761px) {
+    .page-home .work-scatter--squish .work-card__frame {
+        height: auto;
+        aspect-ratio: 3 / 2;
+    }
+}
+
 @media (max-width: 760px) {
     .work-scatter--squish {
         max-width: none;
@@ -1672,6 +1698,10 @@ h4 {
     .work-scatter--squish .work-row > .work-card {
         flex: none;          /* stop the flex sizing - just stack full width */
         width: 100%;
+    }
+
+    .page-home .work-scatter--squish .work-row > .work-card {
+        max-width: none;
     }
 }
 
