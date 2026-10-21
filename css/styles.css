@@ -2116,50 +2116,53 @@ h4 {
 }
 
 /* ── CTA band ─────────────────────────────────────────────── */
-/* the black rounded slab wraps the line AND the button */
+/* No box: a centred two-line heading straight on the orange outro, with
+   a quiet text link under it. The gif rides on the link (.cta-spark). */
 .cta-band {
-    --cta-pad-y: clamp(1.6rem, 4vw, 3rem);
-
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: clamp(1.5rem, 5vw, 4rem);
-    margin: clamp(2.5rem, 7vw, 5rem) var(--outro-gutter) clamp(3rem, 8vw, 6rem);
-    padding-block: var(--cta-pad-y);
-    padding-inline: clamp(1.9rem, 4.5vw, 3.5rem);
-    background-color: var(--color-blue);   /* indigo #2E2B8A on the orange */
-    transition: padding-block 0.7s var(--transition-smooth);
+    text-align: center;
+    gap: clamp(1.5rem, 3.5vw, 2.75rem);
+    margin: 0 var(--outro-gutter);
+    padding-block: clamp(4rem, 10vw, 8rem) clamp(3rem, 7vw, 5.5rem);
 }
 
-/* Scrolled into view: the slab grows 30% of its resting height at the
-   top and bottom, then settles back once it leaves. --cta-grow is that
-   30% in px, measured by initCtaExpand() in main.js (percentage padding
-   would resolve against width, not height). */
-.cta-band.is-open {
-    padding-block: calc(var(--cta-pad-y) + var(--cta-grow, 0px));
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .cta-band { transition: none; }
-    .cta-band.is-open { padding-block: var(--cta-pad-y); }
-}
-
-.cta-band .btn {
-    text-transform: none;       /* "Get in Touch!" reads as written */
-}
-
-.cta-band__box {
+.cta-band__heading {
     margin: 0;
-    color: var(--color-cream);
+    color: var(--outro-ink);
     font-family: var(--font-marker);        /* Instrument Serif */
-    font-style: normal;                     /* "Ready to" stays upright */
     font-weight: 400;
-    font-size: clamp(2.1rem, 6vw, 4.75rem);
-    line-height: 1;
+    font-size: clamp(3rem, 10vw, 9rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
     text-transform: none;                   /* beat the global h1-h4 rule */
-    text-wrap: balance;
 }
+
+.cta-band__hot { font-style: italic; }
+
+.cta-band__link {
+    font-family: var(--font-body);
+    font-size: var(--fs-4);
+    font-weight: 500;
+    color: var(--outro-ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+    transition: text-decoration-thickness 0.2s var(--transition-smooth);
+}
+
+.cta-band__link:hover,
+.cta-band__link:focus-visible {
+    text-decoration-thickness: 2px;
+}
+
+.cta-band__arrow {
+    display: inline-block;
+    transition: transform 0.3s var(--transition-smooth);
+}
+
+.cta-band__link:hover .cta-band__arrow { transform: translateX(0.25em); }
 
 /* ── hover gif pop ────────────────────────────────────────────
    Put .gif-pop on any element and drop an
@@ -2212,17 +2215,13 @@ h4 {
     .gif-pop__img { display: none; }
 }
 
-/* "Rock & Roll" - hovering it pops a gif up above the words.
+/* "Start a project" - hovering it pops a gif up above the link.
    Drop your clip in at assets/images/rock-and-roll.gif; if the file
    isn't there initCtaSpark() removes the <img> so nothing breaks. */
 .cta-spark {
     position: relative;
     display: inline-block;
-    font-style: italic;                     /* the italic marks it as the hot phrase */
-    transition: color 0.3s var(--transition-smooth);
 }
-
-.cta-spark:hover { color: var(--color-orange); }
 
 .cta-spark__gif {
     position: absolute;
@@ -2386,19 +2385,6 @@ h4 {
        and it spans the full width now, so re-centre it. */
 }
 
-/* smaller screens: stack the line above the button, both centred */
-@media (max-width: 760px) {
-    .cta-band {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        gap: clamp(1.25rem, 5vw, 2rem);
-    }
-
-    .cta-band .btn { width: 100%; }
-
-}
 
 @media (max-width: 640px) {
 }

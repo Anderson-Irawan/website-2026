@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initOutro();
     initWorkTags();
     initWorkFilters();
-    initCtaExpand();
     initParallax();
     initCtaSpark();
     initMobileMenu();
@@ -437,41 +436,6 @@ function initWorkFilters() {
 
     allBtn.setAttribute('aria-pressed', 'true');
     render();
-}
-
-/* ============================================
-   CTA band grows on approach
-   The black slab gains 10% of its resting height
-   as padding top and bottom while it's on screen,
-   and settles back once it leaves.
-   ============================================ */
-function initCtaExpand() {
-    const band = document.querySelector('.cta-band');
-    if (!band || !window.IntersectionObserver) return;
-    if (window.matchMedia &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    // Percentage padding resolves against width, so measure the height
-    // ourselves. Measure with the class off so we always read the rest size.
-    function measure() {
-        const wasOpen = band.classList.contains('is-open');
-        band.classList.remove('is-open');
-        band.style.setProperty('--cta-grow', '0px');
-        const rest = band.offsetHeight;
-        band.style.setProperty('--cta-grow', (rest * 0.3).toFixed(1) + 'px');
-        if (wasOpen) band.classList.add('is-open');
-    }
-
-    measure();
-    window.addEventListener('resize', measure);
-
-    // Bottom margin is positive so it starts opening before the band
-    // actually reaches the viewport; top margin is negative so it starts
-    // closing while it's still partly on screen, rather than at the
-    // moment it clears the edge.
-    new IntersectionObserver(function (entries) {
-        band.classList.toggle('is-open', entries[0].isIntersecting);
-    }, { rootMargin: '-20% 0px 30% 0px' }).observe(band);
 }
 
 /* ============================================
