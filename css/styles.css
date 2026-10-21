@@ -2125,7 +2125,7 @@ h4 {
     align-items: flex-start;
     gap: clamp(1.5rem, 3.5vw, 2.75rem);
     width: 100%;
-    max-width: var(--container-max);
+    max-width: 960px;
     margin-inline: auto;
     padding: clamp(4rem, 10vw, 8rem) var(--container-padding) clamp(3rem, 7vw, 5.5rem);
     /* lets the link's slide measure the band's width in cqi */
@@ -2164,9 +2164,9 @@ h4 {
 .cta-band__hot { font-style: italic; }
 
 .cta-band__link {
-    font-family: var(--font-body);
+    font-family: var(--font-marker);        /* Instrument Serif, as the heading */
     font-size: var(--fs-4);
-    font-weight: 500;
+    font-weight: 400;
     color: var(--outro-ink);
     text-decoration: underline;
     text-decoration-thickness: 1px;
