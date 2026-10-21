@@ -1816,18 +1816,24 @@ h4 {
     content: none;
 }
 
+.page-home .work-card .tag {
+    border-color: var(--color-black);
+    color: var(--color-black);
+}
+
 /* --title-size is set by fitTitles() in js/sanity-cards.js; the clamp is
    only the first paint before the cards are measured */
 .page-home .work-card__title {
     font-size: var(--title-size, clamp(2.75rem, 8vw, 8.5rem));
+    color: var(--color-orange);
     line-height: 0.92;
     letter-spacing: -0.035em;
-    /* Trim the box to exactly cap height to baseline, so -0.3cap overlaps
-       the image by 30% of the letters rather than 30% of blank leading.
+    /* Trim the box to exactly cap height to baseline, so -0.4cap overlaps
+       the image by 40% of the letters rather than 40% of blank leading.
        Firefox has no text-box yet and keeps the leading, so it overlaps
        a little less there. */
     text-box: trim-both cap alphabetic;
-    margin-top: -0.3cap;
+    margin-top: -0.4cap;
     /* trimming the bottom lets descenders hang free; keep them off the tags */
     margin-bottom: 0.25em;
 }
