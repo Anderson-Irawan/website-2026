@@ -87,66 +87,61 @@
                             </div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="email">Email*</label>
-                                <input type="email" id="email" name="email" required placeholder="">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="website">Website</label>
-                                <!-- type="text", not "url": type="url" demands a scheme, so a bare
-                                     domain like kilnandco.com fails validation and blocks the
-                                     whole submit. This value is read by a human in an email. -->
-                                <input type="text" inputmode="url" id="website" name="website"
-                                    placeholder="If you have one">
-                            </div>
+                        <div class="form-group">
+                            <label for="email">Email*</label>
+                            <input type="email" id="email" name="email" required placeholder="">
                         </div>
 
-                        <!-- Checkboxes, because someone can want two of these.
-                             They carry no name attribute on purpose: the joined
-                             list is written into the hidden project_type input
-                             on submit, so EmailJS sees one clean value instead
-                             of three fields sharing a name. -->
-                        <fieldset class="form-check">
-                            <legend>What are you after?*</legend>
-                            <label class="check">
-                                <input type="checkbox" data-service value="Logo &amp; Branding">
-                                <span>Logo &amp; Branding</span>
-                            </label>
-                            <label class="check">
-                                <input type="checkbox" data-service value="Web Design">
-                                <span>Web Design</span>
-                            </label>
-                            <label class="check">
-                                <input type="checkbox" data-service value="Bespoke Illustrations">
-                                <span>Bespoke Illustrations</span>
-                            </label>
-                            <input type="hidden" name="project_type" id="project_type">
-                        </fieldset>
+                        <div class="form-group">
+                            <label for="website">Website</label>
+                            <!-- type="text", not "url": type="url" demands a scheme, so a bare
+                                 domain like kilnandco.com fails validation and blocks the
+                                 whole submit. This value is read by a human in an email. -->
+                            <input type="text" inputmode="url" id="website" name="website"
+                                placeholder="If you have one">
+                        </div>
+
+                        <!-- One pick only. Named project_type so EmailJS
+                             receives it under the same key as before. -->
+                        <div class="form-group">
+                            <label for="project_type">What are you after?*</label>
+                            <select id="project_type" name="project_type" required>
+                                <option value="">Select one</option>
+                                <option value="Logo &amp; Branding">Logo &amp; Branding</option>
+                                <option value="Web Design">Web Design</option>
+                                <option value="Bespoke Illustrations">Bespoke Illustrations</option>
+                            </select>
+                        </div>
 
                         <!-- PLACEHOLDER RANGES. Set these to your own numbers
                              before this goes live: they decide who bothers
-                             writing to you and who talks themselves out of it.
-                             Radios, not checkboxes: a project has one budget. -->
-                        <fieldset class="form-check">
-                            <legend>What budget do you have in mind?</legend>
-                            <label class="check"><input type="radio" name="budget" value="Under &pound;500"><span>Under &pound;500</span></label>
-                            <label class="check"><input type="radio" name="budget" value="&pound;500 - &pound;1,000"><span>&pound;500 - &pound;1,000</span></label>
-                            <label class="check"><input type="radio" name="budget" value="&pound;1,000 - &pound;2,500"><span>&pound;1,000 - &pound;2,500</span></label>
-                            <label class="check"><input type="radio" name="budget" value="&pound;2,500 - &pound;5,000"><span>&pound;2,500 - &pound;5,000</span></label>
-                            <label class="check"><input type="radio" name="budget" value="&pound;5,000 +"><span>&pound;5,000 +</span></label>
-                            <label class="check"><input type="radio" name="budget" value="Not sure yet"><span>Not sure yet</span></label>
-                        </fieldset>
+                             writing to you and who talks themselves out of it. -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="budget">What budget do you have in mind?</label>
+                                <select id="budget" name="budget">
+                                    <option value="">Select one</option>
+                                    <option value="Under &pound;500">Under &pound;500</option>
+                                    <option value="&pound;500 - &pound;1,000">&pound;500 - &pound;1,000</option>
+                                    <option value="&pound;1,000 - &pound;2,500">&pound;1,000 - &pound;2,500</option>
+                                    <option value="&pound;2,500 - &pound;5,000">&pound;2,500 - &pound;5,000</option>
+                                    <option value="&pound;5,000 +">&pound;5,000 +</option>
+                                    <option value="Not sure yet">Not sure yet</option>
+                                </select>
+                            </div>
 
-                        <fieldset class="form-check">
-                            <legend>Estimated timeframe</legend>
-                            <label class="check"><input type="radio" name="timeframe" value="Under 1 month"><span>Under 1 month</span></label>
-                            <label class="check"><input type="radio" name="timeframe" value="1 - 2 months"><span>1 - 2 months</span></label>
-                            <label class="check"><input type="radio" name="timeframe" value="3 - 6 months"><span>3 - 6 months</span></label>
-                            <label class="check"><input type="radio" name="timeframe" value="6 months +"><span>6 months +</span></label>
-                            <label class="check"><input type="radio" name="timeframe" value="Flexible"><span>Flexible</span></label>
-                        </fieldset>
+                            <div class="form-group">
+                                <label for="timeframe">Estimated timeframe</label>
+                                <select id="timeframe" name="timeframe">
+                                    <option value="">Select one</option>
+                                    <option value="Under 1 month">Under 1 month</option>
+                                    <option value="1 - 2 months">1 - 2 months</option>
+                                    <option value="3 - 6 months">3 - 6 months</option>
+                                    <option value="6 months +">6 months +</option>
+                                    <option value="Flexible">Flexible</option>
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label for="referral">How did you find me?</label>
@@ -273,27 +268,6 @@
                     submitButton.textContent = 'Sent!';
                     return;
                 }
-
-                /* The service boxes carry no name, so nothing reaches EmailJS
-                   unless their joined value is written into the hidden field
-                   first. Doing it here rather than on every change keeps it to
-                   one place, run once, at the only moment it matters. */
-                const picked = Array.prototype.slice
-                    .call(this.querySelectorAll('[data-service]:checked'))
-                    .map(function (b) { return b.value; });
-
-                const hidden = this.querySelector('#project_type');
-                if (hidden) hidden.value = picked.join(', ');
-
-                /* a checkbox group cannot be marked required in html */
-                if (!picked.length) {
-                    submitButton.textContent = 'Pick a service';
-                    setTimeout(function () {
-                        submitButton.textContent = originalButtonText;
-                    }, 2500);
-                    return;
-                }
-
 
                 /* An unsolved box leaves g-recaptcha-response empty. EmailJS
                    would reject it anyway, but catching it here says why
