@@ -1802,8 +1802,10 @@ h4 {
     padding-top: 0;
 }
 
+/* --title-size is set by fitTitles() in js/sanity-cards.js; the clamp is
+   only the first paint before the cards are measured */
 .page-home .work-card__title {
-    font-size: clamp(2.75rem, 8vw, 8.5rem);
+    font-size: var(--title-size, clamp(2.75rem, 8vw, 8.5rem));
     line-height: 0.92;
     letter-spacing: -0.035em;
 }

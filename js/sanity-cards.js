@@ -147,6 +147,41 @@ function caseUrl(slug) {
         });
     }
 
+    /* [data-fit-titles]: one shared title size, the largest at which the
+       widest title still fits its card on one line. Measured at 100px and
+       scaled, since width is linear in font size. The clone keeps the
+       title's ::after (the reserved italic copy), so a nowrap max-content
+       box is already the wider of the upright and hover-italic forms. */
+    function fitTitles() {
+        const titles = scatter.querySelectorAll('.work-card__title');
+        if (!titles.length) return;
+
+        const avail = titles[0].parentElement.clientWidth;
+        let widest = 0;
+
+        titles.forEach(function (t) {
+            const m = t.cloneNode(true);
+            m.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;' +
+                'white-space:nowrap;width:max-content;font-size:100px';
+            scatter.appendChild(m);
+            widest = Math.max(widest, m.getBoundingClientRect().width);
+            m.remove();
+        });
+
+        if (widest && avail) {
+            scatter.style.setProperty('--title-size',
+                Math.floor(100 * avail / widest * 0.98) + 'px');
+        }
+    }
+
+    if (scatter.hasAttribute('data-fit-titles')) {
+        let pending = 0;
+        window.addEventListener('resize', function () {
+            cancelAnimationFrame(pending);
+            pending = requestAnimationFrame(fitTitles);
+        });
+    }
+
     const QUERY = '*[_type == "project" && defined(slug.current)] | order(order asc) {' +
         'title, "slug": slug.current, categories, order, featured, cardStill, cardHover}';
 
@@ -222,6 +257,12 @@ function caseUrl(slug) {
             });
 
             if (!changed) return;
+
+            /* measuring before the webfont lands would size off the
+               fallback serif's widths */
+            if (scatter.hasAttribute('data-fit-titles')) {
+                document.fonts.ready.then(fitTitles);
+            }
 
             /* main.js finished its pass on DOMContentLoaded, before any of
                this existed, so the tags and the filter bar are rebuilt. Both
