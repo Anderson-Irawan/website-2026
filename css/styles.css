@@ -1798,8 +1798,12 @@ h4 {
    fills the card the way the image does. Long names wrap rather than
    overflow; line-height is tight so a wrapped name still reads as one. */
 .page-home .work-card__meta {
-    margin-top: 0.5rem;
+    margin-top: 0;
     padding-top: 0;
+    /* the frame is position: relative, so it paints over any unpositioned
+       sibling; the title has to sit in its own layer to show on top */
+    position: relative;
+    z-index: 1;
 }
 
 /* No italic swap here, so no reserved italic copy either - leaving it in
@@ -1818,10 +1822,14 @@ h4 {
     font-size: var(--title-size, clamp(2.75rem, 8vw, 8.5rem));
     line-height: 0.92;
     letter-spacing: -0.035em;
-    /* at this size the leading above the capitals is a visible gap; trim
-       it so the letters themselves sit under the image (ignored by
-       browsers without text-box support, which keep the small gap) */
-    text-box: trim-start cap alphabetic;
+    /* Trim the box to exactly cap height to baseline, so -0.3cap overlaps
+       the image by 30% of the letters rather than 30% of blank leading.
+       Firefox has no text-box yet and keeps the leading, so it overlaps
+       a little less there. */
+    text-box: trim-both cap alphabetic;
+    margin-top: -0.3cap;
+    /* trimming the bottom lets descenders hang free; keep them off the tags */
+    margin-bottom: 0.25em;
 }
 
 /* See more button under the grid */
