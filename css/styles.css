@@ -67,7 +67,7 @@
     /* Neutrals */
     /* the box behind a card image while it loads - light now, so it does
        not flash near-black against the page ground */
-    --color-gray-placeholder: #E9E9F0;
+    --color-gray-placeholder: #1c1c1c;
     --color-gray-dark: #111111;
 
     /* Typography */
@@ -78,11 +78,11 @@
     /* The page ground and its ink. Named separately from the raw palette
        so the sections that carry their own ground - the hero, the navbar
        bar, .cs-band, the orange outro - are unaffected by this pair. */
-    /* white carrying about 6% of the brand orange. The old ground was
-       --color-cream (#FAFAFF), a blue-tinted white that fought #FC6935;
-       this one sits under it instead. */
-    --page-bg: #FFF6F3;
-    --page-ink: var(--color-black);
+    /* Dark theme. The light ground (#FFF6F3 with black ink) lasted from
+       the Oct 2026 overhaul until the homepage rework, and is one swap
+       away if it is ever wanted back. */
+    --page-bg: var(--color-black);
+    --page-ink: var(--color-cream);
 
 
     /* Fluid type scale - tier 1 (display) to tier 6 (caption).
@@ -1304,7 +1304,7 @@ h4 {
     font-weight: 400;
     line-height: 1;
     text-transform: none;
-    color: var(--color-black);
+    color: var(--page-ink);
 }
 
 /* the hero and the beside-the-copy slot both take video too */
@@ -1820,11 +1820,6 @@ h4 {
 
 .page-home .work-card__tags {
     justify-content: center;
-}
-
-.page-home .work-card .tag {
-    border-color: var(--color-black);
-    color: var(--color-black);
 }
 
 /* --title-size is set by fitTitles() in js/sanity-cards.js; the clamp is
@@ -2440,8 +2435,6 @@ h4 {
 .page-loader__mark {
     width: clamp(84px, 12vw, 150px);
     height: auto;
-    /* the artwork ships cream; knocked to ink for the light ground */
-    filter: brightness(0);
     transform-style: preserve-3d;
 
     /* 12 discrete frames per turn, one turn per 1.2s */
@@ -2485,8 +2478,10 @@ h4 {
     /* tight to the word: line-height 1 already trims the box vertically,
        so this is mostly the side padding coming in */
     padding: 0.18rem 0.42rem;
-    border: 1px solid var(--color-blue);
-    color: var(--color-blue);
+    /* page ink, not the indigo accent: indigo on the black ground is
+       about 1.6:1 and all but disappears */
+    border: 1px solid var(--page-ink);
+    color: var(--page-ink);
     font-family: var(--font-serif);
     font-size: var(--fs-6);
     font-weight: 600;
