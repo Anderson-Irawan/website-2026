@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initWorkFilters();
     initParallax();
     initCtaSpark();
+    initCtaSlide();
     initMobileMenu();
     initSlidingPortfolio();
     initCardParallax();
@@ -436,6 +437,28 @@ function initWorkFilters() {
 
     allBtn.setAttribute('aria-pressed', 'true');
     render();
+}
+
+/* ============================================
+   CTA "Start a project" slides across from the
+   left edge of the band to its right-aligned
+   spot, once, as the band comes into view.
+   The CSS only offsets the link once .is-armed is
+   on, so with no JS it just sits in place.
+   ============================================ */
+function initCtaSlide() {
+    const band = document.querySelector('.cta-band');
+    if (!band || !window.IntersectionObserver) return;
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    band.classList.add('is-armed');
+    const io = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        band.classList.add('is-in');
+        io.disconnect();
+    }, { rootMargin: '0px 0px -25% 0px' });
+    io.observe(band);
 }
 
 /* ============================================

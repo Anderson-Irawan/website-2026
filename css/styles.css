@@ -2116,16 +2116,38 @@ h4 {
 }
 
 /* ── CTA band ─────────────────────────────────────────────── */
-/* No box: a centred two-line heading straight on the orange outro, with
-   a quiet text link under it. The gif rides on the link (.cta-spark). */
+/* No box: the two-line heading sits left on the orange outro and the
+   link sits right under it, both inside the site container. The gif
+   rides on the link (.cta-spark). */
 .cta-band {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
     gap: clamp(1.5rem, 3.5vw, 2.75rem);
-    margin: 0 var(--outro-gutter);
-    padding-block: clamp(4rem, 10vw, 8rem) clamp(3rem, 7vw, 5.5rem);
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding: clamp(4rem, 10vw, 8rem) var(--container-padding) clamp(3rem, 7vw, 5.5rem);
+    /* lets the link's slide measure the band's width in cqi */
+    container-type: inline-size;
+}
+
+.cta-band__link { align-self: flex-end; }
+
+/* Armed by initCtaSlide(): park the link at the band's left edge
+   (100cqi is the content width, less the link's own width), then let
+   .is-in carry it across to the right. */
+.cta-band.is-armed .cta-band__link {
+    opacity: 0;
+    transform: translateX(calc(-100cqi + 100%));
+    transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+        opacity 0.5s var(--transition-smooth),
+        text-decoration-thickness 0.2s var(--transition-smooth);
+}
+
+.cta-band.is-armed.is-in .cta-band__link {
+    opacity: 1;
+    transform: none;
 }
 
 .cta-band__heading {
