@@ -34,15 +34,12 @@
     <script>try{if(localStorage.getItem('liquid-hero:reduced')==='1')document.documentElement.classList.add('liquid-hero-reduced');}catch(e){}</script>
 </head>
 
-<body>
+<body class="theme-light">
     <!-- Loading screen: spinning mark, hidden again by initPageLoader() -->
     <div class="page-loader" role="status" aria-label="Loading">
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
     </div>
 
-    <!-- Liquid gradient, fixed behind the whole page. is-ambient from the
-         start here: no hero to be sharp for, so it is blurred and frozen. -->
-    <canvas class="liquid-hero__bg is-ambient" data-liquid-hero></canvas>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
@@ -237,7 +234,6 @@
       </footer>
     </div>
     <script src="js/main.js"></script>
-    <script src="js/liquid-hero.js" defer></script>
 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 

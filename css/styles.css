@@ -332,6 +332,34 @@ h4 {
 
 .navbar.is-solid::before { opacity: 1; }
 
+/* ── Light pages ──────────────────────────────────────────────
+   Projects, About and Contact carry .theme-light on <body>; the
+   homepage stays dark. Only the ground/ink pair (and the empty-frame
+   grey) change, so everything built on those tokens follows.
+
+   The navbar ink is white for the black bar, so while the bar is
+   still transparent over the white ground it goes black instead. The
+   open takeover menu keeps its dark sheet and cream ink. */
+.theme-light {
+    --page-bg: #FFFFFF;
+    --page-ink: var(--color-black);
+    --color-gray-placeholder: #E9E9F0;
+}
+
+html:not(.menu-open) .theme-light .navbar:not(.is-solid) .logo,
+html:not(.menu-open) .theme-light .navbar:not(.is-solid) .nav-link-cycle,
+html:not(.menu-open) .theme-light .navbar:not(.is-solid) .nav-links a {
+    color: var(--page-ink);
+}
+
+html:not(.menu-open) .theme-light .navbar:not(.is-solid) .logo-mark {
+    filter: brightness(0);
+}
+
+html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle span {
+    background-color: var(--page-ink);
+}
+
 
 .navbar .container {
     max-width: none;
