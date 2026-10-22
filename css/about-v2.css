@@ -199,6 +199,33 @@
     padding-bottom: var(--abm-space);
 }
 
+/* ── Latest on Instagram ───────────────────── */
+.ab-v2 .abm-insta {
+    padding-bottom: var(--abm-space);
+    text-align: center;
+}
+
+/* the hosted widget drops in here. Empty until then, so it collapses
+   and the section is just its title and the link. */
+.ab-v2 .abm-insta__embed {
+    padding-inline: var(--page-inset);
+}
+
+.ab-v2 .abm-insta__link {
+    display: inline-block;
+    margin-top: var(--space-xl);
+    font-family: var(--font-body);
+    font-size: var(--fs-5);
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: color 0.2s ease;
+}
+
+.ab-v2 .abm-insta__link:hover { color: var(--color-orange); }
+
+.ab-v2 .abm-insta__title,
 .ab-v2 .abm-more__title {
     margin: 0 0 var(--space-2xl);
     text-align: center;
