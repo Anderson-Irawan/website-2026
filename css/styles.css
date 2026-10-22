@@ -1151,12 +1151,16 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 }
 
 /* ── Other works, under every case study ─────
-   Pictures, so this runs wide at --page-inset like the image rows
-   rather than sitting in the narrower text column. The cards arrive
-   from sanity-cards.js two to a row; the rows dissolve into one grid. */
+   A footer-ish set of three, so it takes the centred column rather than
+   running full width like the showcase rows: at --page-inset the three
+   cards came out around 600px each, which read as a second portfolio
+   page rather than a postscript. The cards arrive from sanity-cards.js
+   two to a row; the rows dissolve into one grid. */
 .cs-more {
     padding-block: clamp(5rem, 10vw, 9rem) 0;
     padding-inline: var(--page-inset);
+    max-width: var(--container-max);
+    margin-inline: auto;
 }
 
 .cs-more__title {
@@ -1171,7 +1175,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 .cs-more__grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: clamp(1rem, 2.5vw, 2rem);
     row-gap: var(--space-xl);
 }

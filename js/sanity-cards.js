@@ -67,6 +67,10 @@
        visitor is already reading, so "Other works" never links to itself.
        Same slug the case study renderer reads, in both url shapes. */
     const EXCLUDE_CURRENT = scatter.hasAttribute('data-exclude-current');
+    /* [data-random]: shuffle before the limit, so a grid showing fewer
+       projects than exist draws a different set on each load. Opt-in -
+       the homepage's featured set is curated and keeps its order. */
+    const RANDOM = scatter.hasAttribute('data-random');
     const CURRENT_SLUG = EXCLUDE_CURRENT
         ? (((location.pathname.match(/\/work\/([^\/.]+)/) || [])[1] ||
             new URLSearchParams(location.search).get('p') || '').toLowerCase())
@@ -243,6 +247,18 @@
                     return (p.slug || '').toLowerCase() !== CURRENT_SLUG;
                 });
             }
+            /* Shuffle first: slicing an ordered list would hand back the
+               same few every time. Fisher-Yates, on our own copy. */
+            if (RANDOM) {
+                projects = projects.slice();
+                for (let i = projects.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    const t = projects[i];
+                    projects[i] = projects[j];
+                    projects[j] = t;
+                }
+            }
+
             /* Limit number of projects if data-limit is set */
             if (LIMIT && projects.length > LIMIT) {
                 projects = projects.slice(0, LIMIT);
