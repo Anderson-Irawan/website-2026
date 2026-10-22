@@ -50,9 +50,10 @@
     var LINK_FROM = 0.65;     // the link glides in between these
     var LINK_TO = 1;
     var LINK_SLIDE = 80;      // px it slides in from the left
-    var AFTER_FROM = 0.4;     // [data-grow-after] stretches in as the growth
-    var AFTER_TO = 0.05;      //   falls between these, i.e. once the text has
-                              //   gone and the box is closing to its square
+    var AFTER_FROM = 0.3;     // [data-grow-after] stretches in as the growth
+    var AFTER_TO = 0;         //   falls between these. Ending at 0 lands it
+                              //   exactly as the box finishes closing, so it
+                              //   is not left sitting there mid-scroll
     var AFTER_SQUEEZE = 0.2;  // the horizontal scale it stretches out from
     var AFTER_SPAN = 0.92;    // the width it is fitted to, share of the stage
 
@@ -100,6 +101,10 @@
         }
         var leadAttr = parseFloat(pin.getAttribute('data-grow-lead'));
         var lead = isNaN(leadAttr) ? LEAD : leadAttr;
+        // data-grow-portion: how much of the hold the growth uses. The rest
+        // is a rest on the finished box - raise it to cut that tail short.
+        var portionAttr = parseFloat(pin.getAttribute('data-grow-portion'));
+        var portion = isNaN(portionAttr) ? GROW_PORTION : portionAttr;
         // data-grow-reverse: start expanded (text showing) and shrink to the
         // square as you scroll, like the homepage hero
         var reverse = pin.hasAttribute('data-grow-reverse');
@@ -114,7 +119,7 @@
             if (!reduced) {
                 var hold = Math.max(1, pin.offsetHeight - h);
                 var s = -pin.getBoundingClientRect().top + lead * h;
-                g = ease(clamp01(s / (hold * GROW_PORTION + lead * h)));
+                g = ease(clamp01(s / (hold * portion + lead * h)));
                 if (reverse) g = 1 - g;
             }
 

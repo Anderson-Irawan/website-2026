@@ -84,7 +84,8 @@
          held while the box shrinks to a small square and the text drifts
          out of focus. css/cta-grow.css + js/cta-grow.js; the text styling
          is .ab-hero in css/styles.css. -->
-    <div class="cta-pin ab-hero" data-cta-pin data-grow-lead="0" data-grow-reverse>
+    <div class="cta-pin ab-hero" data-cta-pin data-grow-lead="0" data-grow-reverse
+         data-grow-portion="0.9">
         <div class="cta-stage">
             <div class="cta-frame" data-cta-frame data-liquid-watch>
                 <canvas class="cta-liquid" data-liquid-hero aria-hidden="true"></canvas>
@@ -203,19 +204,19 @@
         </div>
     </section>
 
-    <!-- ══ LATEST ON INSTAGRAM ════════════════════════════════════════
-         The feed comes from a hosted widget (Behold, LightWidget,
-         SnapWidget or similar): the service holds the Instagram token
-         and keeps it fresh, which Meta's API needs and a static page
-         cannot do. TO FINISH THIS: sign up, point the widget at
-         @doubledash.creative, set it to show 1 post, and paste the
-         embed snippet where marked below. Until then the section is
-         its title and the profile link, which work on their own. -->
+
     <section class="abm-section abm-insta">
         <h2 class="abm-insta__title">Latest on Instagram</h2>
 
         <div class="abm-insta__embed">
-            <!-- PASTE THE WIDGET EMBED SNIPPET HERE -->
+               <div data-behold-id="vusYqn92uHQudWCbzl2Y"></div>
+<script>
+  (function() {
+    if(window.__bhldScript)return;window.__bhldScript=true;
+    const d=document,s=d.createElement("script");s.type="module";
+    s.src="https://w.behold.so/widget.js";setTimeout(()=>{d.head.append(s);},0);
+  })();
+</script>
         </div>
 
         <a class="abm-insta__link" href="https://www.instagram.com/doubledash.creative/"

@@ -70,8 +70,19 @@
 
 /* Reduced motion: no hold and no grow - the box is simply full size */
 @media (prefers-reduced-motion: reduce) {
-    .cta-pin { height: auto; }
+    /* .ab-hero named too: its own height rule below is the more specific
+       of the two, so .cta-pin alone would not beat it here */
+    .cta-pin,
+    .cta-pin.ab-hero { height: auto; }
     .cta-stage { position: relative; }
+}
+
+/* The About opener runs this in reverse and ends on "That's the promise.",
+   so it wants less hold than the CTA at the foot of a page: the line had
+   half a screen of dead scroll after it landed. */
+.cta-pin.ab-hero {
+    height: 190vh;
+    height: 190svh;
 }
 
 html.liquid-hero-reduced .cta-pin { height: auto; }
