@@ -1399,6 +1399,12 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     padding: 0 0 clamp(5rem, 12vw, 11rem);
 }
 
+/* nothing follows the grid here but the CTA, which brings its own top
+   padding - the full gap read as the page having ended */
+.page-projects .portfolio-section {
+    padding-bottom: clamp(1.5rem, 4vw, 3rem);
+}
+
 /* All cards the SAME height. Widths follow a 10-card repeating pattern:
      row 1 (3 cards): 30 / 30 / 40
      row 2 (2 cards): 50 / 30   - inset 10% from each side
