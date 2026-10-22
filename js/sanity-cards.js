@@ -53,6 +53,16 @@ function caseUrl(slug) {
        the homepage" in the Studio. */
     const FEATURED_ONLY = scatter.hasAttribute('data-featured-only');
     const LIMIT = scatter.getAttribute('data-limit') ? parseInt(scatter.getAttribute('data-limit'), 10) : null;
+    /* [data-descriptions] (the projects page) puts a short line under each
+       title: the "Short description" field in the Studio, or the first
+       sentence of the intro when that is blank. */
+    const DESCRIPTIONS = scatter.hasAttribute('data-descriptions');
+
+    function firstSentence(text) {
+        const t = (text || '').trim().replace(/\s+/g, ' ');
+        const m = t.match(/^.*?[.!?](?=\s|$)/);
+        return m ? m[0] : t;
+    }
 
     /* A phone cannot hover, so a hover video there can never play: it is
        megabytes fetched to sit behind a poster nobody will ever trigger.
@@ -115,11 +125,15 @@ function caseUrl(slug) {
         a.className = 'work-card' + (hoverVid ? ' portfolio-item-video' : '');
         a.setAttribute('data-cats', (p.categories || []).join(' '));
 
+        const desc = DESCRIPTIONS ? (p.summary || firstSentence(p.intro)) : '';
+
         a.innerHTML =
             '<span class="work-card__frame">' + frame + '</span>' +
             '<span class="work-card__meta">' +
             '<span class="work-card__title" data-title="' + esc(p.title) + '">' +
-            esc(p.title) + '</span></span>';
+            esc(p.title) + '</span>' +
+            (desc ? '<span class="work-card__desc">' + esc(desc) + '</span>' : '') +
+            '</span>';
         return a;
     }
 
@@ -176,14 +190,21 @@ function caseUrl(slug) {
 
     if (scatter.hasAttribute('data-fit-titles')) {
         let pending = 0;
-        window.addEventListener('resize', function () {
+        const refit = function () {
             cancelAnimationFrame(pending);
             pending = requestAnimationFrame(fitTitles);
-        });
+        };
+        window.addEventListener('resize', refit);
+        // any webfont finishing later changes the widths - measure again
+        if (document.fonts && document.fonts.addEventListener) {
+            document.fonts.addEventListener('loadingdone', refit);
+        }
     }
 
     const QUERY = '*[_type == "project" && defined(slug.current)] | order(order asc) {' +
-        'title, "slug": slug.current, categories, order, featured, cardStill, cardHover}';
+        'title, "slug": slug.current, categories, order, featured, cardStill, cardHover' +
+        // the intro is only fetched where it may be needed as the fallback
+        (DESCRIPTIONS ? ', summary, intro' : '') + '}';
 
     fetch('https://' + SANITY.projectId + '.' + SANITY_HOST + '/v' + SANITY.apiVersion +
         '/data/query/' + SANITY.dataset + '?query=' + encodeURIComponent(QUERY))
@@ -259,9 +280,20 @@ function caseUrl(slug) {
             if (!changed) return;
 
             /* measuring before the webfont lands would size off the
-               fallback serif's widths */
+               fallback serif's widths. fonts.ready alone is not enough for
+               Adobe Fonts: a face only starts downloading once something
+               uses it, so ready can resolve before Plantin has begun. Ask
+               for the title's own face explicitly, then measure. */
             if (scatter.hasAttribute('data-fit-titles')) {
-                document.fonts.ready.then(fitTitles);
+                fitTitles();   // first pass, whatever font is showing
+                const first = scatter.querySelector('.work-card__title');
+                const cs = first && getComputedStyle(first);
+                const face = cs ? cs.fontWeight + ' 100px ' + cs.fontFamily : '';
+                (face && document.fonts && document.fonts.load
+                    ? document.fonts.load(face).catch(function () {})
+                    : Promise.resolve()
+                ).then(function () { return document.fonts.ready; })
+                 .then(fitTitles);
             }
 
             /* main.js finished its pass on DOMContentLoaded, before any of

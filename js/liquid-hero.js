@@ -290,7 +290,9 @@
     // hidden. The canvas itself is now position:fixed (always on
     // screen), so watch the hero wrapper instead.
     if (global.IntersectionObserver) {
-      var watch = canvas.closest('.hero-pin')
+      // a canvas inside [data-liquid-watch] (e.g. the CTA box) is paused
+      // by its own section, not the hero's
+      var watch = canvas.closest('.hero-pin, [data-liquid-watch]')
         || document.querySelector('.hero-pin, .liquid-hero')
         || canvas;
       new IntersectionObserver(function (entries) {
@@ -311,8 +313,14 @@
     global.addEventListener('resize', onResize);
 
     return {
-      // Live-tweak a numeric param, e.g. hero.set('order', 0.9)
+      // the canvas this instance draws, so other scripts can find it
+      canvas: canvas,
+      // read a param's current value, e.g. hero.get('warp')
+      get: function (name) { return cfg[name]; },
+      // Live-tweak a numeric param, e.g. hero.set('order', 0.9).
+      // speed and pointer are read every frame, so they need no uniform.
       set: function (name, value) {
+        if (name === 'speed' || name === 'pointer') { cfg[name] = value; return; }
         if (KEYS.indexOf(name) === -1) return;
         cfg[name] = value;
         gl.useProgram(prog);

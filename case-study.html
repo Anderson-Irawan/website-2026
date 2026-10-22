@@ -29,6 +29,8 @@
     <meta name="twitter:description" content="A Double Dash Creative case study.">
     <meta name="twitter:image" content="https://cdn.sanity.io/images/7z9npbl2/production/a82256590d39facff049bfbde2e82515e2888559-1920x1080.jpg?w=1200&amp;h=630&amp;fit=crop&amp;fm=jpg&amp;q=80">
 
+    <!-- Plantin (Adobe Fonts): the display serif, used as font-marker in styles.css -->
+    <link rel="stylesheet" href="https://use.typekit.net/bzi8cqp.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/liquid-hero.css">
     <link rel="icon" href="assets/favicon.ico" sizes="any">
@@ -42,6 +44,9 @@
     <div class="page-loader" role="status" aria-label="Loading">
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
     </div>
+
+    <!-- Topographic lines on the black ground. See js/topo-bg.js -->
+    <canvas class="topo-bg" data-topo-bg aria-hidden="true"></canvas>
 
     <!-- Liquid gradient, fixed behind the whole page. is-ambient from the
          start here: no hero to be sharp for, so it is blurred and frozen. -->
@@ -123,6 +128,7 @@
     <script src="js/main.js"></script>
     <script src="js/liquid-hero.js" defer></script>
     <script src="js/portfolio-video.js"></script>
+    <script src="js/topo-bg.js"></script>
 </body>
 
 </html>

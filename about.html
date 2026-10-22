@@ -26,19 +26,28 @@
     <meta name="twitter:description" content="Hello! I'm Anderson - a logo and graphic designer based in the UK. Bold and splendiferous.">
     <meta name="twitter:image" content="https://cdn.sanity.io/images/7z9npbl2/production/a82256590d39facff049bfbde2e82515e2888559-1920x1080.jpg?w=1200&amp;h=630&amp;fit=crop&amp;fm=jpg&amp;q=80">
 
+    <!-- Plantin (Adobe Fonts): the display serif, used as font-marker in styles.css -->
+    <link rel="stylesheet" href="https://use.typekit.net/bzi8cqp.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/liquid-hero.css">
+    <!-- CTA gradient box grows from a square to near full screen -->
+    <link rel="stylesheet" href="css/cta-grow.css">
+    <!-- About page layout (after mondaynights.co/about) -->
+    <link rel="stylesheet" href="css/about-v2.css">
     <link rel="icon" href="assets/favicon.ico" sizes="any">
     <script>document.documentElement.classList.add("is-loading");</script>
     <!-- Apply the saved motion setting before anything paints. -->
     <script>try{if(localStorage.getItem('liquid-hero:reduced')==='1')document.documentElement.classList.add('liquid-hero-reduced');}catch(e){}</script>
 </head>
 
-<body class="page-about theme-light">
+<body class="page-about ab-v2">
     <!-- Loading screen: spinning mark, hidden again by initPageLoader() -->
     <div class="page-loader" role="status" aria-label="Loading">
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
     </div>
+
+    <!-- Topographic lines on the black ground. See js/topo-bg.js -->
+    <canvas class="topo-bg" data-topo-bg aria-hidden="true"></canvas>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -61,11 +70,22 @@
         </div>
     </nav>
 
-    <!-- ══ 1. INTRO TO DOUBLE DASH ═══════════════════════════════════ -->
-    <section class="ab-open" data-nav-tint>
-        <div class="ab-inset">
-            
-            <div class="ab-open__body">
+    <!-- ══ 1. INTRO TO DOUBLE DASH ═══════════════════════════════════
+         The "Ready to Rock & Roll?" effect at the top of the page, run in
+         reverse (data-grow-reverse): it opens on the full liquid box with
+         the opening text in the middle, and as you scroll the stage is
+         held while the box shrinks to a small square and the text drifts
+         out of focus. css/cta-grow.css + js/cta-grow.js; the text styling
+         is .ab-hero in css/styles.css. -->
+    <div class="cta-pin ab-hero" data-cta-pin data-grow-lead="0" data-grow-reverse>
+        <div class="cta-stage">
+            <div class="cta-frame" data-cta-frame data-liquid-watch>
+                <canvas class="cta-liquid" data-liquid-hero aria-hidden="true"></canvas>
+            </div>
+            <div class="ab-hero__body" data-grow-text>
+                <!-- the page's main heading, for screen readers and search -
+                     the opening text is what shows -->
+                <h1 class="ab-hero__title">About Double Dash Creative</h1>
                 <p>
                     Here at Double Dash, the name earns its keep. Dashing out to
                     chase down the bold idea. Dashing something out when it was
@@ -75,26 +95,94 @@
                     dash your dreams into something real.
                 </p>
             </div>
+        </div>
+    </div>
 
-            <h1 class="ab-statement">
-                For Dreamers &amp; Daredevils
-            </h1>
+    <!-- ══ ABOUT, laid out after mondaynights.co/about ═══════════════
+         Quiet four-column grid, small type, lots of air. Styles in
+         css/about-v2.css. Copy is unchanged from the old sections. -->
+
+    <!-- Services | list | Selected Clients | list -->
+    <section class="abm-band">
+        <div class="abm-grid">
+            <h2 class="abm-label">Skills</h2>
+            <ul class="abm-list">
+                <li>Logo Design</li>
+                <li>Brand Systems</li>
+                <li>Custom Logotypes &amp; Type</li>
+                <li>Brand Guidelines</li>
+                <li>Packaging Design</li>
+                <li>Icon Design</li>
+                <li>Character Illustration</li>
+                <li>Motion Graphics</li>
+                <li>Merchandise &amp; Print</li>
+                <li>Social Media Design</li>
+                <li>Web Design</li>
+                <li>Brand Voice &amp; Positioning</li>
+            </ul>
+            <h2 class="abm-label">Selected Clients</h2>
+            <ul class="abm-list">
+                <li><a href="case-study.html?p=hot" data-case-slug="hot">Just Just Productions</a></li>
+                <li><a href="case-study.html?p=pagikopi" data-case-slug="pagikopi">PagiKopi</a></li>
+                <li><a href="case-study.html?p=bci" data-case-slug="bci">Bangun Citra Irawan</a></li>
+                <li><a href="case-study.html?p=kynara" data-case-slug="kynara">Kynara</a></li>
+                <li><a href="case-study.html?p=cobc" data-case-slug="cobc">City of Bristol College</a></li>
+                <li><a href="case-study.html?p=mumu" data-case-slug="mumu">Pastel Mumu</a></li>
+                <li><a href="case-study.html?p=furari" data-case-slug="furari">Furari</a></li>
+                <li><a href="case-study.html?p=nusa-antara" data-case-slug="nusa-antara">Nusa Antara</a></li>
+            </ul>
         </div>
     </section>
 
-    <!-- ══ 2. ABOUT THE OWNER ════════════════════════════════════════
-         Same shape as the homepage about section - title level with the
-         top of the photo, body starting level with its middle - just
-         run at a smaller size. -->
-    <section class="ab-me">
-        <div class="ab-inset">
-            <div class="ab-me__grid">
-                <div class="ab-me__text">
-                    <h2 class="ab-me__title">
-                        Get to Know Me!
-                    </h2>
-                    <div class="ab-me__body">
-                        <p>
+    <!-- one centred statement -->
+    <section class="abm-statement">
+        <p>Building Creative Systems for Founders Forging a Path Forward.</p>
+    </section>
+
+    <!-- The FORGE Process | five stages in two columns -->
+    <section class="abm-section" id="process">
+        <div class="abm-grid">
+            <h2 class="abm-label abm-label--wide">The FORGE Process</h2>
+            <div class="abm-points">
+                <div class="abm-point">
+                    <h3>Frame</h3>
+                    <p>Working out the problems. Find ways to solve them. Set agreements verbally then into writing.</p>
+                </div>
+                <div class="abm-point">
+                    <h3>Onboard</h3>
+                    <p>A fully written proposal to be delivered. Complete with scope, timeline, and budget. First deposit is paid here.</p>
+                </div>
+                <div class="abm-point">
+                    <h3>Refine</h3>
+                    <p>Sketches, moodboards, and development of real concepts. Trim down these ideas and build out the strongest one.</p>
+                </div>
+                <div class="abm-point">
+                    <h3>Generate</h3>
+                    <p>The bulk of the workload. Building the ideas into visuals that work in all sorts of real-world applications.</p>
+                </div>
+                <div class="abm-point">
+                    <h3>Exhibit</h3>
+                    <p>Presenting you the finished work in a call. Handover of assets and guidelines. Final payment to be made here.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get to Know Me | photo card | bio -->
+    <section class="abm-section abm-me">
+        <div class="abm-grid">
+            <h2 class="abm-label abm-label--wide">Get to Know Me!</h2>
+            <figure class="abm-person">
+                <img src="assets/photos/couch smiling.jpg"
+                     alt="Anderson Irawan, founder of Double Dash Creative"
+                     loading="lazy" decoding="async">
+                <figcaption>
+                    <span class="abm-person__name">Anderson Irawan</span>
+                    <span class="abm-pill">Founder</span>
+                </figcaption>
+            </figure>
+            <div class="abm-bio">
+                <p>
                             Growing up in Surabaya, Indonesia, I never would have truly learned my talents in the arts and design if it weren't for the plain papers and pencils just lying around the house. The fascination of replicating what I've seen in real life to paper truly engulfed me to create and create, day after day.
                         </p>
                         <p>
@@ -106,134 +194,33 @@
                         <p>
                             In real life, I'm as chatty as this introduction perceives me to be. As an extrovert, this line of work gets me to meet people to talk about their ambitions, ideas, and potential projects - that's where I handily come in. Otherwise, you can catch me scribbling on my iPad, trying out all kinds of ball sports, or screaming at McLaren during race weekends!
                         </p>
-
-                    </div>
-                </div>
-                <div class="ab-me__image">
-                    <img src="assets/photos/couch smiling.jpg"
-                         alt="Anderson Irawan, founder of Double Dash Creative"
-                         loading="lazy" decoding="async">
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- ══ 3. SERVICES ═══════════════════════════════════════════════
-         Label on the left, four across then three: Logo / Brand /
-         Illustration / Motion, then Web / Social / Print. -->
-    <section class="ab-block">
-        <div class="ab-inset ab-services">
-            <h2 class="ab-label">Services</h2>
-
-            <div class="ab-fields">
-                <div class="ab-field">
-                    <h3>Logo &amp; Brand</h3>
-                    <ul>
-                        <li>Logomarks &amp; logotypes</li>
-                        <li>Wordmarks &amp; monograms</li>
-                        <li>Iteration &amp; refinement</li>
-                        <li>Colour &amp; type systems</li>
-                        <li>Pattern &amp; asset libraries</li>
-                        <li>Brand guidelines</li>
-                    </ul>
-                </div>
-                <div class="ab-field">
-                    <h3>Illustration</h3>
-                    <ul>
-                        <li>Mascots &amp; characters</li>
-                        <li>Editorial &amp; spot art</li>
-                        <li>Bespoke artwork</li>
-                    </ul>
-                </div>
-                <div class="ab-field">
-                    <h3>Motion</h3>
-                    <ul>
-                        <li>Title &amp; logo animation</li>
-                        <li>Show &amp; series branding</li>
-                        <li>Short-form promos</li>
-                    </ul>
-                </div>
-                <div class="ab-field">
-                    <h3>Web</h3>
-                    <ul>
-                        <li>Site design</li>
-                        <li>Hand-built front-end</li>
-                        <li>Digital brand rollout</li>
-                    </ul>
-                </div>
-                <div class="ab-field">
-                    <h3>Social</h3>
-                    <ul>
-                        <li>Templates &amp; grid systems</li>
-                        <li>Campaign artwork</li>
-                        <li>Content direction</li>
-                    </ul>
-                </div>
-                <div class="ab-field">
-                    <h3>Print</h3>
-                    <ul>
-                        <li>Packaging &amp; labels</li>
-                        <li>Stationery &amp; collateral</li>
-                        <li>Signage &amp; large format</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ══ 4. THE FORGE PROCESS ══════════════════════════════════════
-         Five columns, one per stage, rather than five stacked rows. -->
-    <section class="ab-block" id="process">
-        <div class="ab-inset ab-services">
-            <h2 class="ab-label">The FORGE Process</h2>
-
-            <ol class="forge">
-                <li class="forge__col">
-                    <h3 class="forge__name">Frame</h3>
-                    <p>
-                        Working out the problems. Find ways to solve them. Set agreements verbally then into writing.
-                    </p>
-                </li>
-                <li class="forge__col">
-                    <h3 class="forge__name">Onboard</h3>
-                    <p>
-                        A fully written proposal to be delivered. Complete with scope, timeline, and budget. First deposit is paid here.
-                    </p>
-                </li>
-                <li class="forge__col">
-                    <h3 class="forge__name">Refine</h3>
-                    <p>
-                        Sketches, moodboards, and development of real concepts. Trim down these ideas and build out the strongest one.
-                    </p>
-                </li>
-                <li class="forge__col">
-                    <h3 class="forge__name">Generate</h3>
-                    <p>
-                        The bulk of the workload. Building the ideas into visuals that work in all sorts of real-world applications.
-                    </p>
-                </li>
-                <li class="forge__col">
-                    <h3 class="forge__name">Exhibit</h3>
-                    <p>
-                        Presenting you the finished work in a call. Handover of assets and guidelines. Final payment to be made here.
-                    </p>
-                </li>
-            </ol>
-        </div>
+    <!-- Explore more work: four projects from Sanity (js/sanity-cards.js) -->
+    <section class="abm-section abm-more">
+        <h2 class="abm-more__title">Explore more work</h2>
+        <div class="work-scatter abm-cards" data-sanity-cards data-featured-only data-limit="4" data-descriptions></div>
     </section>
 
     <!-- Outro: CTA band + full-screen footer -->
     <div class="outro" data-outro>
 
-      <!-- CTA band, parked for now. Delete this line and the closing
-           marker below to bring it back: the css, the parallax hooks
-           and initCtaExpand are all still in place.
-
-      <section class="cta-band">
-        <h2 class="cta-band__heading">Ready to<br><em class="cta-band__hot">Rock &amp; Roll?</em></h2>
-        <a href="contact.html" class="cta-band__link cta-spark">Start a project <span class="cta-band__arrow" aria-hidden="true">&rarr;</span><img class="cta-spark__gif" src="assets/images/rock-and-roll.gif" alt="" aria-hidden="true" loading="lazy"></a>
-      </section>
-      -->
+      <!-- The hero's shrink in reverse: the stage is held while the liquid
+           box grows from a small square out to near full screen, and the
+           CTA comes in on it. See css/cta-grow.css + js/cta-grow.js -->
+      <div class="cta-pin" data-cta-pin>
+        <div class="cta-stage">
+          <div class="cta-frame" data-cta-frame data-liquid-watch>
+            <canvas class="cta-liquid" data-liquid-hero aria-hidden="true"></canvas>
+          </div>
+          <section class="cta-band">
+            <h2 class="cta-band__heading">Ready to<br><em class="cta-band__hot">Rock &amp; Roll?</em></h2>
+            <a href="contact.html" class="cta-band__link cta-spark">Start a project <span class="cta-band__arrow" aria-hidden="true">&rarr;</span><img class="cta-spark__gif" src="assets/images/rock-and-roll.gif" alt="" aria-hidden="true" loading="lazy"></a>
+          </section>
+        </div>
+      </div>
 
       <footer class="site-footer">
 
@@ -269,7 +256,13 @@
 
       </footer>
     </div>
+    <script src="js/liquid-hero.js" defer></script>
     <script src="js/main.js"></script>
+    <script src="js/cta-grow.js"></script>
+    <script src="js/portfolio-video.js"></script>
+    <script src="js/sanity-cards.js"></script>
+    <script src="js/about-v2.js"></script>
+    <script src="js/topo-bg.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,151 @@
+/* ============================================
+   PROJECTS v2 - brings the Projects page
+   closer to the homepage, with light motion only.
+   Everything is scoped to body.pj-v2.
+
+   A. Opener: the statement spans the screen and
+      gets most of the first screen to itself.
+   B. Grid: full width, two columns with one even
+      spacing value (--pj-gap); the right column
+      sits half a card lower.
+   C. Titles bigger, in an even stack under the
+      image (no overlap), labels orange.
+   D. One quiet fade-and-rise as each card enters
+      (js/projects-v2.js). Nothing else moves.
+   ============================================ */
+
+/* ── Page width ────────────────────────────── */
+/* Full width, like the rest of the site: the statement and the grid run
+   edge to edge inside the usual --page-inset gutter. */
+
+/* ── A. Opener ─────────────────────────────── */
+.pj-v2 .page-header {
+    /* most of the first screen, the statement sitting a little above the
+       middle, so the first row of work peeks in at the bottom */
+    min-height: 78vh;
+    min-height: 78svh;
+    display: flex;
+    align-items: center;
+    padding-top: 110px;   /* clear of the nav */
+    padding-bottom: 0;
+}
+
+.pj-v2 .page-header > .container { width: 100%; }
+
+.pj-v2 .pj-statement {
+    max-width: none;
+    margin: 0;
+    /* js/projects-v2.js sizes it so the line spans the screen; this is the
+       size before it measures, and the size on phones, where it wraps */
+    font-size: var(--fs-1);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+}
+
+@media (min-width: 761px) {
+    .pj-v2 .pj-statement { white-space: nowrap; }
+}
+
+/* ── B. Even grid ──────────────────────────── */
+/* One spacing value for the whole grid: the gap between the two columns
+   and the gap from one row's labels to the next row's images are the
+   same --pj-gap, so the spacing reads consistent in both directions. */
+.pj-v2 {
+    --pj-gap: clamp(1.5rem, 3.5vw, 3.5rem);       /* between the two columns */
+    --pj-row-gap: clamp(4rem, 8vw, 9rem);         /* between projects, top to bottom */
+}
+
+.pj-v2 .work-scatter--squish {
+    --col-gap: var(--pj-gap);   /* the rows read this for their column gap */
+    row-gap: var(--pj-row-gap);
+}
+
+.pj-v2 .work-scatter--squish .work-row {
+    row-gap: var(--pj-row-gap); /* used when a row stacks on phones */
+}
+
+/* Every card the same height, so the vertical gap never varies: the
+   description always takes exactly two lines (shorter ones keep the
+   space, longer ones end in an ellipsis). */
+.pj-v2 .work-card__desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    min-height: calc(2em * 1.35);   /* two lines at its 1.35 line height */
+}
+
+@media (min-width: 761px) {
+    /* a set shape, so every image is the same size at any width.
+       3:2 landscape (was 5:4, which read too tall) */
+    .pj-v2 .work-scatter--squish .work-card__frame {
+        height: auto;
+        aspect-ratio: 3 / 2;
+    }
+
+    /* The right column sits half a card lower. `translate` is a share of
+       the card's own height, and it moves the whole column without
+       touching the gaps, so the spacing inside each column stays even.
+       It also leaves `transform` free for the reveal. */
+    .pj-v2 .work-scatter--squish .work-row > .work-card:nth-child(2) {
+        translate: 0 50%;
+    }
+
+    /* room under the grid for the last right card's overhang: half a
+       card = half of (a column's width x 2/3 for the 3:2 image) plus
+       roughly half the title/description/labels under it */
+    .pj-v2 .work-scatter--squish {
+        padding-bottom: calc(
+            (100vw - var(--page-inset) * 2 - var(--pj-gap)) / 2 / 3 + 5rem
+        );
+    }
+}
+
+/* ── C. Titles + labels ────────────────────── */
+/* Title, description and labels sit in an even stack under the image -
+   nothing overlaps it, so every card lines up the same way. */
+.pj-v2 .work-card__meta {
+    margin-top: var(--space-md);
+    padding-top: 0;
+    gap: 0.6rem;
+}
+
+/* One shared size for every title: fitTitles() in js/sanity-cards.js
+   sets --title-size so the longest name fits its card on one line; it is
+   capped at --fs-3 (~28-44px) so short names do not balloon. */
+.pj-v2 .work-card__title {
+    font-size: min(var(--title-size, var(--fs-3)), var(--fs-3));
+    white-space: nowrap;
+    color: var(--page-ink);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    /* trimmed to cap height so the gap to the image above is exactly the
+       meta's margin, not that plus the font's built-in leading */
+    text-box: trim-both cap alphabetic;
+}
+
+.pj-v2 .tag {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+}
+
+/* ── D. Quiet reveal ───────────────────────── */
+/* Hidden start state only once the script has armed it (html.pj-reveal),
+   so the cards are never stuck invisible if the script does not run. */
+.pj-reveal .pj-v2 .work-card {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+        transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* the second card of a pair follows a beat later */
+.pj-reveal .pj-v2 .work-row > .work-card:nth-child(2) {
+    transition-delay: 0.12s;
+}
+
+.pj-reveal .pj-v2 .work-card.is-in {
+    opacity: 1;
+    transform: none;
+}

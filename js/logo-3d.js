@@ -30,30 +30,33 @@ const SPIN_RECENTER = 0;       // SVG units pushed right at the half-turn so the
 const SPIN_END_SHIFT = 0;      // SVG units the mark ends up shifted right by the
                                // end of the scroll spin (0 = finishes where it
                                // started, at the CSS -4.5%).
-// starts at (1 - SCROLL_GROW) size and grows to full over one viewport
-// of scroll. On phones the mark starts near full size and fills the
-// screen; tablet + desktop keep the smaller mark. Re-evaluated live on
-// resize (syncBreakpoint below) so it's right no matter what width the
-// page loaded at. Matches CSS: the size bump lives in max-width:640px.
+// On phones the mark is wider (fills the screen); tablet + desktop keep
+// the smaller box. Re-evaluated live on resize (syncBreakpoint below) so
+// it's right no matter what width the page loaded at. Matches CSS: the
+// size bump lives in max-width:640px.
 const smallMQ = window.matchMedia
   ? window.matchMedia('(max-width: 640px)') : null;
 let SMALL_SCREEN = !!(smallMQ && smallMQ.matches);
-let SCROLL_GROW = SMALL_SCREEN ? 0.1 : 0.45;
 function fitMargin() { return SMALL_SCREEN ? 0.9 : 1.0; }
 function syncBreakpoint() {
   const s = !!(smallMQ && smallMQ.matches);
   if (s === SMALL_SCREEN) return false;
   SMALL_SCREEN = s;
-  SCROLL_GROW = s ? 0.1 : 0.45;
   return true;
 }
-const SHRINK_AT_DIVIDER = 0.65;// how much the mark shrinks as the divider phrase comes in
-const dividerEl = document.querySelector('.hero-divider');
-// 0 while the divider is still below the screen, 1 once it has reached the top
-function dividerArrival() {
-  if (!dividerEl) return 0;
-  const vh = window.innerHeight || 1;
-  return Math.min(1, Math.max(0, (vh - dividerEl.getBoundingClientRect().top) / vh));
+
+// Size: the mark starts full size and shrinks in step with the gradient
+// square (window.heroShrink, from js/hero-shrink.js), ending this wide
+// as a share of the square's side, so it sits inside the square.
+const LOGO_IN_SQUARE = 0.8;
+function heroScale(host) {
+  const hs = window.heroShrink;
+  if (!hs) return 1;
+  const t = hs.progress();
+  if (!t) return 1;
+  const box = host.offsetWidth || 1;   // the logo's width at full size
+  const end = Math.min(1, hs.squareSide() * LOGO_IN_SQUARE / box);
+  return 1 - t * (1 - end);
 }
 const LEAVE_PARALLAX = 0;    // SVG units the logo drifts as the hero scrolls
                                // away. - = drifts down / lags behind the page,
@@ -88,70 +91,40 @@ if (host) {
   const relevantMedia = [reduceMQ];
 
   // When the flat <img> is the one on screen, mirror the 3D logo's
-  // scroll behaviour: grow from small to full over the first viewport,
-  // then drift (leave-parallax) as the hero scrolls away.
+  // scroll behaviour: size from heroScale, then drift (leave-parallax)
+  // as the hero scrolls away.
   const VBH = 140.04; // logo-prime.svg viewBox height (for parallax scaling)
   const flatImg = host.querySelector('.liquid-hero__mark');
   function updateFlatScale() {
     if (!flatImg || host.classList.contains('is-3d')) return;
     const p = (window.pageYOffset || 0) / (window.innerHeight || 1);
-    const sp = Math.min(1, p);
     const leave = Math.min(1, Math.max(0, p - 1));
-    const scale = (1 - SCROLL_GROW + sp * SCROLL_GROW) *
-      (1 - SHRINK_AT_DIVIDER * dividerArrival());
+    const scale = heroScale(host);
     // LEAVE_PARALLAX is SVG units in world space (- = down); convert to a
     // % of the logo's height for CSS (+ = down), so the two stay in sync.
     const shiftPct = (-LEAVE_PARALLAX / VBH) * 100 * leave;
     flatImg.style.transform =
       'translateY(' + shiftPct.toFixed(2) + '%) scale(' + scale.toFixed(3) + ')';
   }
-  // Keep the mark centred while the pinned hero scrolls away. The hero's
-  // sticky stage ends at pinEnd; from there the mark is shifted down by the
-  // scroll so it holds the middle of the screen until the divider arrives.
+  // The mark rides with the gradient square (js/hero-shrink.js): centred
+  // while the square shrinks, then up and out with it. The sticky hero
+  // holds it through the shrink on every device now (the pin is armed on
+  // phones too), and once the pin ends the hero scrolls away 1:1, same as
+  // the square. The shift below is only a fallback for an unpinned hero
+  // with motion on, which no longer happens in practice.
+  const SHRINK_TOUCH = 1;
+  // (The "For Dreamers" phrase used to be held mid-screen from here. It is
+  // now fixed behind the gradient by css/hero-shrink.css, so it needs no
+  // scroll handling.)
   const heroPin = document.querySelector('.hero-pin');
-  const divider = document.querySelector('.hero-divider');
-  // The mark starts DROP of a viewport low (the 12vh on .liquid-hero__content).
-  // Over the first stretch of scroll it rises to the middle, then holds there.
-  const DROP = 0.12;
-  // While held, the mark sits LIFT above the middle and the phrase sits
-  // PHRASE_DROP below it, so the logo ends up above the phrase.
-  const LIFT = 0.08;
-  const PHRASE_DROP = 0.08;
-  const phrase = divider && divider.querySelector('.hero-divider__text');
-  const workEl = document.querySelector('.portfolio-section');
-  let lastShift = 0;
   function updateCentre() {
     let shift = 0;
-    let textShift = 0;
-    if (heroPin && divider && workEl && !flatMode()) {
+    if (heroPin && !flatMode() &&
+        !document.documentElement.classList.contains('has-hero-pin')) {
       const vh = window.innerHeight || 1;
-      const s = window.pageYOffset || 0;
-      // The phrase reaches its hold point at s0, and both the mark and the
-      // phrase hold until sEnd, when the blur and fade have finished
-      // (projects top at 30% of the screen). Then they scroll on.
-      const logoY = vh * (0.5 - LIFT);
-      const phraseY = vh * (0.5 + PHRASE_DROP);
-      const s0 = divider.offsetTop + divider.offsetHeight / 2 - phraseY;
-      const sEnd = workEl.offsetTop - 0.3 * vh;
-      const hold = Math.min(s, sEnd);
-      if (document.documentElement.classList.contains('has-hero-pin')) {
-        // desktop: the hero is sticky, so it starts DROP low and rises
-        const pinEnd = heroPin.offsetTop + heroPin.offsetHeight - vh;
-        const end = -(DROP + LIFT) * vh;
-        if (s < pinEnd) shift = end * Math.max(0, s / pinEnd);
-        else shift = end + (hold - pinEnd);
-      } else {
-        // phones: the mark starts with the opening line, centred as a group,
-        // moves up with the page, then holds at its hold point
-        const r = host.getBoundingClientRect();
-        const natural = r.top + s + r.height / 2 - lastShift; // centre at scroll 0, unshifted
-        shift = Math.max(0, logoY - natural + hold);
-      }
-      textShift = Math.max(0, hold - s0);
+      shift = Math.min(window.pageYOffset || 0, vh * SHRINK_TOUCH);
     }
-    lastShift = shift;
     host.style.transform = shift ? 'translateY(' + shift.toFixed(1) + 'px)' : '';
-    if (phrase) phrase.style.transform = textShift ? 'translateY(' + textShift.toFixed(1) + 'px)' : '';
   }
   window.addEventListener('scroll', () => { updateFlatScale(); updateCentre(); },
     { passive: true });
@@ -288,8 +261,7 @@ function build(host) {
     pivot.rotation.x = rot.x;
     pivot.rotation.y = rot.y + spinAngle +
       Math.sin(clock.getElapsedTime() * 0.5) * IDLE_AMP;
-    pivot.scale.setScalar((1 - SCROLL_GROW + sp * SCROLL_GROW) *
-      (1 - SHRINK_AT_DIVIDER * dividerArrival()));
+    pivot.scale.setScalar(heroScale(host));
     // Push right across the half-turn (0 at 0deg/360deg) so the asymmetric
     // mark reads centred while it spins, plus a small linear shift so it
     // settles a touch further right than it started.

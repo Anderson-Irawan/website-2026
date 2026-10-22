@@ -23,17 +23,26 @@
     <meta name="twitter:description" content="Explore our portfolio of bold brand systems and digital designs for startups and founders.">
     <meta name="twitter:image" content="https://cdn.sanity.io/images/7z9npbl2/production/a82256590d39facff049bfbde2e82515e2888559-1920x1080.jpg?w=1200&amp;h=630&amp;fit=crop&amp;fm=jpg&amp;q=80">
 
+    <!-- Plantin (Adobe Fonts): the display serif, used as font-marker in styles.css -->
+    <link rel="stylesheet" href="https://use.typekit.net/bzi8cqp.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/liquid-hero.css">
+    <!-- CTA gradient box grows from a square to near full screen -->
+    <link rel="stylesheet" href="css/cta-grow.css">
+    <!-- Projects page: full-width opener, staggered grid, titles, quiet reveal -->
+    <link rel="stylesheet" href="css/projects-v2.css">
     <link rel="icon" href="assets/favicon.ico" sizes="any">
     <script>document.documentElement.classList.add("is-loading");</script>
 </head>
 
-<body class="page-projects theme-light">
+<body class="page-projects pj-v2">
     <!-- Loading screen: spinning mark, hidden again by initPageLoader() -->
     <div class="page-loader" role="status" aria-label="Loading">
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
     </div>
+
+    <!-- Topographic lines on the black ground. See js/topo-bg.js -->
+    <canvas class="topo-bg" data-topo-bg aria-hidden="true"></canvas>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -61,7 +70,10 @@
     <!-- Page Header -->
     <header class="page-header">
         <div class="container">
-            <h1 class="heading-xl fade-in">Projects</h1>
+            <!-- the page's title: a big centred statement in orange, the same
+                 size as the About page's headings (--fs-2); styled as
+                 .pj-statement in styles.css -->
+            <h1 class="pj-statement">Basic here is written in past tense.</h1>
         </div>
     </header>
 
@@ -74,7 +86,7 @@
 
         <!-- Empty on purpose: every card is built from Sanity by
              js/sanity-cards.js, ordered by each project's order field. -->
-        <div class="work-scatter work-scatter--squish" data-sanity-cards></div>
+        <div class="work-scatter work-scatter--squish" data-sanity-cards data-fit-titles data-descriptions></div>
 
         <p class="work-empty" data-work-empty hidden>Nothing in those categories yet.</p>
     </section>
@@ -82,10 +94,20 @@
     <!-- CTA Section -->
     <div class="outro" data-outro>
 
-      <section class="cta-band">
-        <h2 class="cta-band__heading">Ready to<br><em class="cta-band__hot">Rock &amp; Roll?</em></h2>
-        <a href="contact.html" class="cta-band__link cta-spark">Start a project <span class="cta-band__arrow" aria-hidden="true">&rarr;</span><img class="cta-spark__gif" src="assets/images/rock-and-roll.gif" alt="" aria-hidden="true" loading="lazy"></a>
-      </section>
+      <!-- The hero's shrink in reverse: the stage is held while the liquid
+           box grows from a small square out to near full screen, and the
+           CTA comes in on it. See css/cta-grow.css + js/cta-grow.js -->
+      <div class="cta-pin" data-cta-pin>
+        <div class="cta-stage">
+          <div class="cta-frame" data-cta-frame data-liquid-watch>
+            <canvas class="cta-liquid" data-liquid-hero aria-hidden="true"></canvas>
+          </div>
+          <section class="cta-band">
+            <h2 class="cta-band__heading">Ready to<br><em class="cta-band__hot">Rock &amp; Roll?</em></h2>
+            <a href="contact.html" class="cta-band__link cta-spark">Start a project <span class="cta-band__arrow" aria-hidden="true">&rarr;</span><img class="cta-spark__gif" src="assets/images/rock-and-roll.gif" alt="" aria-hidden="true" loading="lazy"></a>
+          </section>
+        </div>
+      </div>
 
       <footer class="site-footer">
 
@@ -120,10 +142,14 @@
       </footer>
     </div>
 
+    <script src="js/liquid-hero.js" defer></script>
     <script src="js/main.js"></script>
+    <script src="js/cta-grow.js"></script>
+    <script src="js/projects-v2.js"></script>
     <script src="js/portfolio-video.js"></script>
     <script src="js/sanity-cards.js"></script>
 
+    <script src="js/topo-bg.js"></script>
 </body>
 
 </html>

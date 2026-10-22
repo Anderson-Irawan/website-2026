@@ -1,0 +1,78 @@
+/* ============================================
+   CTA GROW - the hero's shrink in reverse
+   for "Ready to Rock & Roll?".
+
+   The stage is held for 1.4 screens of scroll
+   (.cta-pin is 2.4 screens tall, the stage is
+   sticky). js/cta-grow.js grows the liquid box
+   from a small centred square out to near full
+   screen, leaving a margin on every side, brings
+   the CTA in on top of it, then rests on the
+   finished CTA before the section lets go.
+
+   js writes on .cta-frame: --it / --ix / --ib,
+   the px cut from the top, sides and bottom.
+   ============================================ */
+
+.cta-pin {
+    position: relative;
+    height: 240vh;   /* 1.4 screens of hold: grow, then a rest on the finished CTA */
+    height: 240svh;
+}
+
+.cta-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+.cta-frame {
+    --it: 0;
+    --ix: 0;
+    --ib: 0;
+    position: absolute;
+    inset: 0;
+    clip-path: inset(
+        calc(var(--it) * 1px)
+        calc(var(--ix) * 1px)
+        calc(var(--ib) * 1px)
+    );
+}
+
+.cta-liquid {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* The CTA sits centred on the box, in off-white so it reads on the
+   gradient. Its opacity is set by the js as the box fills out. */
+.cta-stage .cta-band {
+    position: relative;
+    z-index: 1;
+    align-items: center;
+    text-align: center;
+    padding: 0 var(--container-padding);
+}
+
+.cta-stage .cta-band__link { align-self: center; }
+
+.cta-stage .cta-band__heading,
+.cta-stage .cta-band__link {
+    color: var(--color-cream);
+}
+
+/* Reduced motion: no hold and no grow - the box is simply full size */
+@media (prefers-reduced-motion: reduce) {
+    .cta-pin { height: auto; }
+    .cta-stage { position: relative; }
+}
+
+html.liquid-hero-reduced .cta-pin { height: auto; }
+html.liquid-hero-reduced .cta-stage { position: relative; }

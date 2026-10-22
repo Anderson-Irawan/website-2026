@@ -46,20 +46,26 @@ body {
     background: transparent;
 }
 
-/* Delayed / "pinned" scroll before the content below.
-   Only armed (desktop + motion) when <html> carries .has-hero-pin. */
+/* Delayed / "pinned" scroll before the content below: the gradient
+   shrinks to the square during this hold (js/hero-shrink.js).
+   Armed on every device with motion on (phones too, so the scroll is the
+   same length as desktop) when <html> carries .has-hero-pin.
+   svh, not vh: the phone address bar showing/hiding would otherwise
+   change these heights mid-scroll. */
 .hero-pin {
     position: relative;
 }
 
 .has-hero-pin .hero-pin {
-    height: 200vh; /* 1 extra screen of hold; raise/lower to taste */
+    height: 200vh;  /* 1 extra screen of hold; raise/lower to taste */
+    height: 200svh;
 }
 
 .has-hero-pin .hero-pin .liquid-hero {
     position: sticky;
     top: 0;
     height: 100vh;
+    height: 100svh;
     min-height: 0;
 }
 
@@ -107,9 +113,9 @@ body {
     align-items: center;
     justify-content: center;
     padding: var(--space-lg);
-    /* translateX = optical centring; translateY drops the mark lower to
-       clear the tagline above it. */
-    transform: translate(-3%, 12vh);
+    /* translateX = optical centring. No vertical drop now that the
+       tagline is gone: the mark sits in the middle of the screen. */
+    transform: translate(-3%, 0);
     /* Let the cursor drive the gradient through the mark. */
     pointer-events: none;
 }
@@ -137,7 +143,7 @@ body {
     text-align: center;
     text-wrap: balance;
     font-family: var(--font-marker);
-    font-weight: 400; /* Instrument Serif ships regular only */
+    font-weight: 400;
     font-size: var(--tag-font);
     line-height: 1.08;
     letter-spacing: -0.015em;
@@ -153,10 +159,9 @@ body {
    no pointer-events, so the cursor passes straight through to the liquid
    gradient behind the tagline. */
 
-/* Heavier tail phrase. Instrument Serif has no bold, so this is a
-   synthetic bold - swap to a real weight if it looks rough. */
+/* Heavier tail phrase. Plantin has a real bold, so this is the true
+   700 weight. */
 .liquid-hero__tagline .tagline-strong {
-    font-weight: 700;
     /* its own line, and never split across two */
     display: block;
     white-space: nowrap;
@@ -194,10 +199,9 @@ body {
 .hero-divider__text {
     margin: 0;
     white-space: nowrap;
-    font-family: var(--font-marker); /* Instrument Serif */
-    /* Instrument Serif has no bold, so this is the browser's synthetic
-       bold, the same as the tagline's tail phrase */
-    font-weight: 700;
+    font-family: var(--font-marker); /* Plantin */
+    /* Plantin has real bold and bold italic, so any weight here is the
+       true face, not a browser-made one */
     font-style: italic;
     /* tier 1 floor (~47px mobile / 120px desktop) but keeps growing
        on ultra-wide screens so it still spans the band */
@@ -205,7 +209,7 @@ body {
     line-height: 1;
     letter-spacing: -0.01em;
     text-transform: none;
-    color: var(--color-cream); /* off-white #FAFAFF, the light text colour */
+    color: var(--color-orange); /* off-white #FAFAFF, the light text colour */
     /* sits behind the spinning mark (z-index 2) */
     position: relative;
     z-index: 1;
@@ -255,8 +259,9 @@ body {
     height: 100%;
     object-fit: contain;
     transition: opacity 0.6s ease;
-    /* Match the 3D logo's start size (1 - SCROLL_GROW in js/logo-3d.js). */
-    transform: scale(0.55);
+    /* Full size at the top, like the 3D logo; js/logo-3d.js shrinks it
+       with the gradient square (heroScale). */
+    transform: scale(1);
 }
 
 .liquid-hero__mark-tilt.is-3d canvas { opacity: 1; }
@@ -286,7 +291,7 @@ body {
     }
 
     .liquid-hero__content {
-        transform: translate(-3%, 4vh);
+        transform: translate(-3%, 0);
         padding: var(--space-sm);
     }
 }
@@ -297,7 +302,7 @@ body {
     /* the wider phone mark needs less of the desktop left nudge to read as
        centred; this is the value to tune */
     .liquid-hero__content {
-        transform: translate(-1%, 3vh);
+        transform: translate(-1%, 0);
     }
 
     /* on phones the opening line stays in the centred stack above the mark,
@@ -315,25 +320,23 @@ body {
 
     .liquid-hero__mark-tilt {
         width: 130vw;
-        /* a touch less than desktop: the phone mark is much wider */
-        translate: 4.6% 0;
+        /* less than desktop: the phone mark is much wider. Tuned so the
+           mark's body sits on the screen centre (was 4.6%, which left it
+           ~2.3% of the screen right of centre) */
+        translate: 2.35% 0;
     }
 
     .liquid-hero__mark {
-        transform: scale(0.92);   /* matches 1 - SCROLL_GROW on phones */
+        transform: scale(1);   /* full size at the top, as on desktop */
     }
 
-    /* shorter band on phones so the projects come in sooner. 40svh is the
-       scroll length to tune */
+    /* Same full-screen band as desktop (was 40svh + 25svh margin, which
+       made the phone scroll much shorter). The phrase itself is fixed
+       mid-screen now, so this is just scroll space. */
     .hero-divider {
-        height: 40vh;
-        height: 40svh;
         /* the side padding meant for desktop left ~200px for the phrase;
            give it the page gutter instead */
         padding-inline: var(--space-md);
-        /* room between the phrase and the first row of project cards */
-        margin-bottom: 25vh;
-        margin-bottom: 25svh;
     }
 
     /* bigger on phones, set on two lines ("For Dreamers" / "& Daredevils"),
@@ -387,4 +390,42 @@ html.liquid-hero-reduced .hero-divider {
     align-items: flex-start;
     padding-top: 4vh;
     padding-bottom: 12vh;
+}
+
+/* ------------------------------------------------------------------
+   Intro line, bottom-left of the hero: what I do, in one sentence.
+   It is the page's h1. Sits on the same left edge as the nav logo,
+   above the gradient and the "For Dreamers" phrase, and scrolls away
+   with the hero.
+   ------------------------------------------------------------------ */
+.liquid-hero__intro {
+    position: absolute;
+    left: var(--page-inset);
+    bottom: var(--page-inset);
+    z-index: 3;
+    max-width: 17em;
+    margin: 0;
+    font-family: var(--font-marker);   /* Plantin */
+    font-weight: 400;
+    font-size: var(--fs-4);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-transform: none;   /* override the global h1 uppercase */
+    text-wrap: balance;
+    color: var(--color-cream);
+}
+
+/* the tail phrase keeps its synthetic bold and its hover gif */
+.liquid-hero__intro .tagline-strong {
+    text-decoration: underline;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .liquid-hero__intro {
+        left: var(--space-md);
+        right: var(--space-md);
+        bottom: var(--space-md);
+    }
 }

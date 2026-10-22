@@ -26,6 +26,8 @@
     <meta name="twitter:description" content="Work with me - let's bring your brand vision to life. Get in touch for logo design, branding, and bespoke art projects.">
     <meta name="twitter:image" content="https://cdn.sanity.io/images/7z9npbl2/production/a82256590d39facff049bfbde2e82515e2888559-1920x1080.jpg?w=1200&amp;h=630&amp;fit=crop&amp;fm=jpg&amp;q=80">
 
+    <!-- Plantin (Adobe Fonts): the display serif, used as font-marker in styles.css -->
+    <link rel="stylesheet" href="https://use.typekit.net/bzi8cqp.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/liquid-hero.css">
     <link rel="icon" href="assets/favicon.ico" sizes="any">
@@ -34,11 +36,14 @@
     <script>try{if(localStorage.getItem('liquid-hero:reduced')==='1')document.documentElement.classList.add('liquid-hero-reduced');}catch(e){}</script>
 </head>
 
-<body class="theme-light">
+<body>
     <!-- Loading screen: spinning mark, hidden again by initPageLoader() -->
     <div class="page-loader" role="status" aria-label="Loading">
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
     </div>
+
+    <!-- Topographic lines on the black ground. See js/topo-bg.js -->
+    <canvas class="topo-bg" data-topo-bg aria-hidden="true"></canvas>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -66,7 +71,7 @@
         <div class="container">
             <div class="contact-layout">
                 <div class="contact-head">
-                    <h1 class="page-header__title">Let's Work Together.</h1>
+                    <h1 class="page-header__title">Let's Work Together!</h1>
                 </div>
 
                 <div class="contact-form">
@@ -181,7 +186,7 @@
                         <div class="form-captcha">
                             <div class="g-recaptcha"
                                  data-sitekey="RECAPTCHA_SITE_KEY"
-                                 data-theme="light"></div>
+                                 data-theme="dark"></div>
                         </div>
 
                         <div>
@@ -316,6 +321,7 @@
             });
         });
     </script>
+    <script src="js/topo-bg.js"></script>
 </body>
 
 </html>

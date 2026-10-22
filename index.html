@@ -26,8 +26,14 @@
     <meta name="twitter:description" content="Logo and graphic designer helping startups visualize their flare through bold, imaginative design.">
     <meta name="twitter:image" content="https://cdn.sanity.io/images/7z9npbl2/production/a82256590d39facff049bfbde2e82515e2888559-1920x1080.jpg?w=1200&amp;h=630&amp;fit=crop&amp;fm=jpg&amp;q=80">
 
+    <!-- Plantin (Adobe Fonts): the display serif, used as font-marker in styles.css -->
+    <link rel="stylesheet" href="https://use.typekit.net/bzi8cqp.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/liquid-hero.css">
+    <!-- hero gradient shrinks to a square on scroll + topo lines behind it -->
+    <link rel="stylesheet" href="css/hero-shrink.css">
+    <!-- CTA gradient box grows from a square to near full screen -->
+    <link rel="stylesheet" href="css/cta-grow.css">
     <link rel="icon" href="assets/favicon.ico" sizes="any">
     <script>document.documentElement.classList.add("is-loading");</script>
     <!-- Apply the saved motion setting before anything paints, so a
@@ -41,9 +47,16 @@
         <img class="page-loader__mark" src="assets/logos/logo-prime.svg" alt="">
     </div>
 
-    <!-- Liquid gradient background - fixed behind the whole page,
-         covered by the opaque sections from .hero-divider onward -->
-    <canvas class="liquid-hero__bg" data-liquid-hero></canvas>
+    <!-- Topographic lines on the black ground, behind the gradient.
+         See js/topo-bg.js -->
+    <canvas class="topo-bg" data-topo-bg aria-hidden="true"></canvas>
+
+    <!-- Liquid gradient background - fixed behind the whole page. The
+         frame clips it into a centred square as the hero scrolls, then
+         lifts it off the top. See css/hero-shrink.css + js/hero-shrink.js -->
+    <div class="hero-frame" data-hero-frame>
+        <canvas class="liquid-hero__bg" data-liquid-hero></canvas>
+    </div>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -76,7 +89,8 @@
     <!-- Hero Section -->
     <div class="hero-pin">
         <section class="liquid-hero">
-            <h1 class="liquid-hero__tagline" data-hero-tagline>Building <span class="tagline-term">Brand Systems</span> &amp; <span class="tagline-term">Digital Designs</span> for Founders <span class="tagline-strong gif-pop gif-pop--below">Forging a Path Forward<img class="gif-pop__img" src="assets/images/forwards.gif" alt="" aria-hidden="true" loading="lazy"></span></h1>
+            <!-- What I do, in one line, bottom-left of the hero -->
+            <h1 class="liquid-hero__intro">Building Creative Systems for Founders <span class="tagline-strong gif-pop">Forging a Path Forward<img class="gif-pop__img" src="assets/images/forwards.gif" alt="" aria-hidden="true" loading="lazy"></span></h1>
 
             <div class="liquid-hero__content">
                 <div class="liquid-hero__mark-tilt" data-logo-3d>
@@ -89,7 +103,7 @@
 
     <!-- Divider between hero and work -->
     <section class="hero-divider">
-        <h2 class="hero-divider__text">For Dreamers<br class="hero-divider__br"> &amp; Daredevils.</h2>
+        <h2 class="hero-divider__text">For Dreamers<br class="hero-divider__br"> &amp; Daredevils</h2>
     </section>
 
     <!-- Work Section -->
@@ -125,7 +139,7 @@
                          the middle of the photo -->
                     <div class="about-body">
                         <div class="about-description animate-on-scroll">
-                            <p><span class="salam gif-pop">Salam kenal<img class="gif-pop__img" src="assets/images/hello.gif" alt="" aria-hidden="true" loading="lazy"></span>, I'm Anderson. I grew up in Surabaya, Indonesia and started my design journey back in 2021. Specializing in creating logos and branding systems, I have also developed expertise in web design and illustration. Inspired by art galleries and comic books, I won't settle with being basic. I challenge new ideas and break rules to see what a logo and brand could possibly become.</p>
+                            <p><span class="salam gif-pop">Hello!<img class="gif-pop__img" src="assets/images/hello.gif" alt="" aria-hidden="true" loading="lazy"></span> I'm Anderson. I grew up in Surabaya, Indonesia and started my design journey back in 2021. Specializing in creating logos and branding systems, I have also developed expertise in web design and illustration. Inspired by art galleries and comic books, I won't settle with being basic. I challenge new ideas and break rules to see what a logo and brand could possibly become.</p>
                             <p>That's what Double Dash means to me.</p>
                             <p>Dash means a plethora of things. To help you dash out to find bold and brilliant ideas. To me dashing to get something out when needed. To created a dashing looking product. Then take all that and double down. So stop the head scratching, let's pull out the big guns, and dash to make your dreams a reality!</p>
                         </div>
@@ -142,10 +156,20 @@
     <!-- Outro: CTA band + full-screen footer -->
     <div class="outro" data-outro>
 
-      <section class="cta-band">
-        <h2 class="cta-band__heading">Ready to<br><em class="cta-band__hot">Rock &amp; Roll?</em></h2>
-        <a href="contact.html" class="cta-band__link cta-spark">Start a project <span class="cta-band__arrow" aria-hidden="true">&rarr;</span><img class="cta-spark__gif" src="assets/images/rock-and-roll.gif" alt="" aria-hidden="true" loading="lazy"></a>
-      </section>
+      <!-- The hero's shrink in reverse: the stage is held while the liquid
+           box grows from a small square out to near full screen, and the
+           CTA comes in on it. See css/cta-grow.css + js/cta-grow.js -->
+      <div class="cta-pin" data-cta-pin>
+        <div class="cta-stage">
+          <div class="cta-frame" data-cta-frame data-liquid-watch>
+            <canvas class="cta-liquid" data-liquid-hero aria-hidden="true"></canvas>
+          </div>
+          <section class="cta-band">
+            <h2 class="cta-band__heading">Ready to<br><em class="cta-band__hot">Rock &amp; Roll?</em></h2>
+            <a href="contact.html" class="cta-band__link cta-spark">Start a project <span class="cta-band__arrow" aria-hidden="true">&rarr;</span><img class="cta-spark__gif" src="assets/images/rock-and-roll.gif" alt="" aria-hidden="true" loading="lazy"></a>
+          </section>
+        </div>
+      </div>
 
       <footer class="site-footer">
 
@@ -186,6 +210,9 @@
     <script src="js/main.js"></script>
     <script src="js/portfolio-video.js"></script>
     <script src="js/sanity-cards.js"></script>
+    <script src="js/hero-shrink.js"></script>
+    <script src="js/topo-bg.js"></script>
+    <script src="js/cta-grow.js"></script>
 
     <!-- 3D extruded logo (three.js) -->
     <script type="importmap">

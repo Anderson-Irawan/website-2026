@@ -2,56 +2,12 @@
     Double Dash Creative - Main Stylesheet
    ============================================ */
 
-/* Font Face Declarations */
-@font-face {
-    font-family: 'Noto Serif';
-    src: url('../assets/fonts/NotoSerif-VariableFont_wdth,wght.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Noto Serif';
-    src: url('../assets/fonts/NotoSerif-Italic-VariableFont_wdth,wght.woff2') format('woff2');
-    font-weight: 100 900;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Archivo';
-    src: url('../assets/fonts/Archivo-VariableFont_wdth,wght.woff2') format('woff2');
-    font-weight: 100 900;
-    font-stretch: 62% 125%;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Archivo';
-    src: url('../assets/fonts/Archivo-Italic-VariableFont_wdth,wght.woff2') format('woff2');
-    font-weight: 100 900;
-    font-stretch: 62% 125%;
-    font-style: italic;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Instrument Serif';
-    src: url('../assets/fonts/InstrumentSerif-Regular.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Instrument Serif';
-    src: url('../assets/fonts/InstrumentSerif-Italic.woff2') format('woff2');
-    font-weight: 400;
-    font-style: italic;
-    font-display: swap;
-}
+/* Fonts - no local @font-face any more.
+   Plantin (the display serif) and Forma DJR Micro (the body sans) come
+   from Adobe Fonts - the use.typekit.net/bzi8cqp.css link in each page's
+   <head>. Plantin: regular, italic, bold, bold italic, plus
+   "plantin-condensed" bold. Forma DJR Micro: regular, italic, bold, bold
+   italic only - so weights 100/300/500 render as 400 and 600 as 700. */
 
 /* ============================================
    CSS Custom Properties (Design Tokens)
@@ -61,7 +17,7 @@
     --color-orange: #FC6935;    /* orange (primary accent) */
     --color-cream: #FAFAFF;  /* off-white (text on dark) */
     --color-blue: #2E2B8A;   /* indigo (secondary accent) */
-    --color-black: #000000;
+    --color-black: #0c0c0c;
     --color-mint: #FAFAFF;
 
     /* Neutrals */
@@ -71,9 +27,8 @@
     --color-gray-dark: #111111;
 
     /* Typography */
-    --font-marker: 'Instrument Serif', Georgia, serif;
-    --font-serif: 'Noto Serif', Georgia, serif;
-    --font-body: 'Archivo', sans-serif;
+    --font-marker: "plantin", Georgia, serif;
+    --font-body: "forma-djr-micro", Helvetica, Arial, sans-serif;
 
     /* The page ground and its ink. Named separately from the raw palette
        so the sections that carry their own ground - the hero, the navbar
@@ -93,13 +48,13 @@
          --fs-2  page title       ~36px           ~64px
          --fs-3  section / card   ~28px           ~44px
          --fs-4  sub-head / lead  ~22px           ~30px
-         --fs-5  body             ~17px           ~19px
+         --fs-5  body             ~15px           ~17px
          --fs-6  caption / label  ~13px           ~15px               */
     --fs-1: clamp(2.75rem, 1.5rem + 6vw, 6.25rem);
     --fs-2: clamp(2.15rem, 1.5rem + 3.2vw, 4rem);
     --fs-3: clamp(1.7rem, 1.35rem + 1.8vw, 2.75rem);
     --fs-4: clamp(1.3rem, 1.15rem + 0.9vw, 1.9rem);
-    --fs-5: clamp(1.05rem, 1rem + 0.25vw, 1.2rem);
+    --fs-5: clamp(0.95rem, 0.9rem + 0.2vw, 1.075rem);   /* was 1.05-1.2rem, read too big */
     --fs-6: clamp(0.82rem, 0.78rem + 0.18vw, 0.92rem);
 
     /* Spacing Scale */
@@ -179,6 +134,24 @@ body {
     line-height: 1.2;
     overflow-x: hidden;
 }
+
+/* Topographic lines + colour grain on the black ground, on every page
+   (js/topo-bg.js). Fixed behind everything; the canvas is transparent
+   between the lines, so the page colour shows through. On the homepage
+   it sits behind the hero's gradient frame too. */
+.topo-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -3;
+    display: block;
+    pointer-events: none;
+    transition: opacity 0.7s ease;
+}
+
+/* clear them off the orange outro */
+.outro-active .topo-bg { opacity: 0; }
 
 .container,
 .work-container {
@@ -314,28 +287,15 @@ h4 {
         opacity 0.4s var(--transition-smooth);
 }
 
-/* Transparent at the top of every page; the black backdrop fades in once
-   main.js adds .is-solid - on the homepage when the "For Dreamers"
-   divider passes mid-viewport (initHeroBgFade), elsewhere after 0.4 of a
-   viewport (initNavbar). */
-.navbar::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: var(--color-black);
-    opacity: 0;
-    /* background-color is in the list because [data-nav-tint] recolours it */
-    transition: opacity 0.4s var(--transition-smooth),
-        background-color 0.4s var(--transition-smooth);
-    z-index: -1;
-}
-
-.navbar.is-solid::before { opacity: 1; }
+/* No backdrop: the bar is transparent on every page, all the way down.
+   (It used to fade in a black - or, over [data-nav-tint] bands, orange -
+   backdrop as you scrolled.) */
 
 /* ── Light pages ──────────────────────────────────────────────
-   Projects, About and Contact carry .theme-light on <body>; the
-   homepage stays dark. Only the ground/ink pair (and the empty-frame
-   grey) change, so everything built on those tokens follows.
+   Not used right now: the whole site is dark, like the homepage. Put
+   .theme-light back on a page's <body> to make it white again. Only the
+   ground/ink pair (and the empty-frame grey) change, so everything built
+   on those tokens follows.
 
    The navbar ink is white for the black bar, so while the bar is
    still transparent over the white ground it goes black instead. The
@@ -446,7 +406,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 /* Text Cycling Animation for Nav Links */
 .nav-link-cycle {
     font-family: var(--font-body);
-    font-size: 0.8rem;
+    font-size: var(--fs-6);   /* overridden by .nav-links a below anyway */
     color: #fff;
     text-decoration: none;
     position: relative;
@@ -480,9 +440,12 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     color: var(--color-orange);
 }*/
 
+/* the size that actually applies to the bar's links (this selector beats
+   .nav-link-cycle above). Caption tier, ~13-15px; the phone menu sets its
+   own large size further down. Was 1.1rem (~18px). */
 .nav-links a {
     font-family: var(--font-body);
-    font-size: 1.1rem;
+    font-size: var(--fs-6);
     color: #fff;
     text-decoration: none;
     position: relative;
@@ -608,7 +571,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
         display: block;
         width: 100%;
         text-align: left;
-        font-family: var(--font-marker);   /* Instrument Serif */
+        font-family: var(--font-marker);   /* Plantin */
         font-weight: 400;
         text-transform: none;
         font-size: var(--fs-2);
@@ -873,22 +836,27 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     margin-bottom: var(--space-md);
 }
 
+/* Field titles in Plantin, like the page's headings. Sized so the
+   half-width ones ("What budget do you have in mind?") stay on one line. */
 .form-group label {
     display: block;
-    font-family: var(--font-serif);
-    font-weight: 600;
-    font-size: var(--fs-5);
+    font-family: var(--font-marker);   /* Plantin */
+    font-weight: 400;
+    font-size: clamp(1.05rem, 0.95rem + 0.3vw, 1.2rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
     margin-bottom: var(--space-xs);
     color: var(--page-ink);
 }
 
+/* what people type: body size (was the small caption size) */
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
     padding: 0.875rem 1rem;
     font-family: var(--font-body);
-    font-size: var(--fs-6);
+    font-size: var(--fs-5);
     border: 2px solid var(--page-ink);
     background-color: transparent;
     color: var(--page-ink);
@@ -897,8 +865,10 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    /* cream, knocked back so a hint never reads as a filled value */
-    color: rgba(0, 0, 0, 0.45);
+    /* off-white, a step back so a hint never reads as a filled value
+       (was 45% black, left from the white theme - invisible on dark) */
+    color: rgba(250, 250, 255, 0.55);
+    opacity: 1;   /* Firefox fades placeholders on its own otherwise */
 }
 
 /* only the textarea is tall, and only it can be dragged taller */
@@ -1028,6 +998,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
    from the global h1 rule. */
 .case-study-intro .title-section h1 {
     font-family: var(--font-marker);
+    font-style: italic;                /* every page title is italic */
     font-size: var(--fs-1);
     font-weight: 400;
     line-height: 1;
@@ -1637,9 +1608,17 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 .page-home .work-scatter--squish .work-row > .work-card {
     flex: none;
-    width: 80%;
+    width: 60%;   /* was 80% */
     /* auto margins beat the row's align-items: flex-start */
     margin-inline: auto;
+}
+
+/* Phones keep the wider card: at 60% of a phone screen, with the phone
+   frame height below, the card turns into a tall narrow strip. */
+@media (max-width: 760px) {
+    .page-home .work-scatter--squish .work-row > .work-card {
+        width: 80%;
+    }
 }
 
 /* The frame height was tuned for half-width cards, so a full-width card
@@ -1651,8 +1630,8 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
         height: auto;
         aspect-ratio: 3 / 2;
         /* At full row width 3:2 works out taller than the viewport, so the
-           card could not be seen in one piece without this. */
-        max-height: 80vh;
+           card could not be seen in one piece without this. (was 80vh) */
+        max-height: 65vh;
     }
 }
 
@@ -1741,12 +1720,26 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 }
 
 .work-card__title {
-    font-family: var(--font-marker); /* Instrument Serif */
+    font-family: var(--font-marker); /* Plantin */
     font-weight: 400;
     font-size: var(--fs-3);
     line-height: 1.05;
     transition: color 0.3s var(--transition-smooth);
     letter-spacing: -0.02em;
+}
+
+/* Short description under the title (projects page only, [data-descriptions]
+   in js/sanity-cards.js; the text is the "Short description" field in the
+   Studio). Body font, full page ink, kept to a readable line length. */
+.work-card__desc {
+    display: block;
+    max-width: 34em;
+    margin-top: 0.2rem;
+    font-family: var(--font-body);
+    font-size: var(--fs-5);
+    font-weight: 400;
+    line-height: 1.35;
+    color: var(--page-ink);
 }
 
 /* reserve the italic footprint so the hover swap never reflows */
@@ -1763,9 +1756,9 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     font-style: italic;
 }
 
-/* Homepage: the title is a display line sized off the viewport, so it
-   fills the card the way the image does. Long names wrap rather than
-   overflow; line-height is tight so a wrapped name still reads as one. */
+/* Homepage: the title is a display line sized to the card (fitTitles in
+   js/sanity-cards.js), so it fills the card the way the image does, and
+   always on one line. */
 .page-home .work-card__meta {
     align-items: center;
     text-align: center;
@@ -1791,11 +1784,21 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     justify-content: center;
 }
 
+/* Homepage labels are orange (text, outline and icon) and the titles are
+   page ink - swapped from the site default. */
+.page-home .tag {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+}
+
 /* --title-size is set by fitTitles() in js/sanity-cards.js; the clamp is
    only the first paint before the cards are measured */
 .page-home .work-card__title {
     font-size: var(--title-size, clamp(2.75rem, 8vw, 8.5rem));
-    color: var(--color-orange);
+    /* page ink; the orange is on the labels (was the other way round) */
+    color: var(--page-ink);
+    /* always one line - fitTitles() sizes it to fit the card */
+    white-space: nowrap;
     line-height: 0.92;
     letter-spacing: -0.035em;
     /* Trim the box to exactly cap height to baseline, so -0.4cap overlaps
@@ -1886,7 +1889,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     display: block;
     text-transform: none;
     font-family: var(--font-marker);
-    font-weight: 700;
     font-style: italic;
     font-size: var(--fs-2);
     color: var(--color-orange);
@@ -1917,7 +1919,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 /* "Salam kenal" - the greeting leads in the serif */
 .about-description .salam {
-    font-family: var(--font-marker);   /* Instrument Serif */
+    font-family: var(--font-marker);   /* Plantin */
     font-style: italic;
     font-weight: 400;                  /* it ships regular + italic only */
     font-size: calc(var(--fs-5) + 4px);
@@ -2121,7 +2123,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 .cta-band__heading {
     margin: 0;
     color: var(--outro-ink);
-    font-family: var(--font-marker);        /* Instrument Serif */
+    font-family: var(--font-marker);        /* Plantin */
     font-weight: 400;
     font-size: clamp(3rem, 10vw, 9rem);
     line-height: 0.95;
@@ -2132,7 +2134,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 .cta-band__hot { font-style: italic; }
 
 .cta-band__link {
-    font-family: var(--font-marker);        /* Instrument Serif, as the heading */
+    font-family: var(--font-marker);        /* Plantin, as the heading */
     font-size: var(--fs-4);
     font-weight: 400;
     color: var(--outro-ink);
@@ -2393,7 +2395,9 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     z-index: 9999;
     display: grid;
     place-items: center;
-    background-color: var(--page-bg);
+    /* always black, on every page - not --page-bg, which is white on the
+       light pages and left the off-white mark invisible */
+    background-color: var(--color-black);
     perspective: 800px;              /* the mark turns in depth, not flat */
     opacity: 0;
     visibility: hidden;
@@ -2446,24 +2450,29 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 .work-card__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.5rem;   /* a touch more room to suit the roomier labels */
 }
 
 .tag {
-    display: inline-flex;
-    align-items: center;
-    /* tight to the word: line-height 1 already trims the box vertically,
-       so this is mostly the side padding coming in */
-    padding: 0.18rem 0.42rem;
+    display: inline-block;
+    /* Balanced box: the text is trimmed to cap height and baseline, so
+       the padding is measured from the letters themselves and the word
+       sits dead centre (the font's own leading left it low, with more
+       room above than below). Even em padding scales with the text;
+       the sides are a touch wider than top/bottom, which reads as even. */
+    text-box: trim-both cap alphabetic;
+    padding: 0.55em 0.7em;
     /* page ink, not the indigo accent: indigo on the black ground is
        about 1.6:1 and all but disappears */
     border: 1px solid var(--page-ink);
     color: var(--page-ink);
-    font-family: var(--font-serif);
+    /* body font (Forma DJR Micro), in the case the category is written
+       in - no forced caps. 600 renders as Forma's bold (700). */
+    font-family: var(--font-body);
     font-size: var(--fs-6);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
+    /* no tightening at this small size - negative tracking crowded the
+       letters and left the right side of each word short */
+    letter-spacing: 0;
     line-height: 1;
     white-space: nowrap;
 }
@@ -2641,13 +2650,32 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 /* ── projects.html page title ─────────────────────────────────── */
 .page-header__title {
     margin: 0;
-    font-family: var(--font-marker);   /* Instrument Serif */
+    font-family: var(--font-marker);   /* Plantin */
+    font-style: italic;                /* every page title is italic */
     font-weight: 400;
     font-size: var(--fs-1);
     line-height: 1;
     letter-spacing: -0.04em;
     text-transform: none;              /* beat the global h1-h4 rule */
     color: var(--page-ink);
+}
+
+/* Projects page title: "Basic here is written in past tense." - big,
+   centred, orange, italic. Same size as the About page's headings
+   (--fs-2, ~64px on desktop). */
+.pj-statement {
+    margin: 0 auto var(--space-xl);
+    text-transform: none;              /* beat the global h1-h4 rule */
+    max-width: 18em;
+    text-align: center;
+    font-family: var(--font-marker);   /* Plantin */
+    font-style: italic;
+    font-weight: 400;
+    font-size: var(--fs-2);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    color: var(--color-orange);
 }
 
 /* the title lines up with the filter bar and the card grid below it */
@@ -2682,29 +2710,44 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
    House rules this follows:
      - sizes come from the --fs-1..6 tiers, never a raw clamp.
        fs-1 is the BIGGEST, fs-6 the smallest.
-     - big display lines are Instrument Serif (--font-marker) with
+     - big display lines are Plantin (--font-marker) with
        text-transform: none, to beat the global uppercase on h1-h4.
-     - small labels are Archivo (--font-body) uppercase at --fs-6.
+     - small labels are Forma DJR Micro (--font-body) uppercase at --fs-6.
      - accent is --color-orange, same as every other page.
    ============================================ */
-/* The about page's running text is Noto Serif; its headings stayed
-   Instrument Serif. Scoped to the page's own sections, so the shared nav
-   and footer keep the site's usual faces. */
+/* The about page's running text is the body font (Forma DJR Micro; it was
+   Noto Serif); its headings stay the display serif (Plantin). Scoped to
+   the page's own sections. */
 .page-about .ab-open,
 .page-about .ab-me,
 .page-about .ab-block {
-    font-family: var(--font-serif);
-    letter-spacing: -0.02em;
+    font-family: var(--font-body);
+    /* no section-wide tightening: each kind of text sets its own below */
+    letter-spacing: normal;
 }
 
-/* Archivo Thin reads fine at 100; a serif does not. The about page's
-   running text takes a normal weight instead of the site-wide thin. */
+/* The about page's running text takes a normal weight (400) instead of
+   the site-wide thin, at the font's own spacing. (It was squeezed to
+   -0.04em, a value left from Noto Serif that crowded Forma's letters.) */
 .page-about .ab-open__body p,
 .page-about .ab-me__body p,
 .page-about .ab-field li,
 .page-about .forge__col p {
     font-weight: 400;
-    letter-spacing: -0.04em;
+    letter-spacing: 0;
+}
+
+/* Big Plantin headings: a slight tightening suits display sizes */
+.page-about .ab-me__title,
+.page-about .ab-label,
+.page-about .forge__name {
+    letter-spacing: -0.02em;
+}
+
+/* Small all-caps headings (Logo & Brand, Illustration...): capitals need
+   a little air between them to read at this size, not less */
+.page-about .ab-field h3 {
+    letter-spacing: 0.08em;
 }
 
 
@@ -2712,7 +2755,51 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 .ab-block { padding-block: var(--space-4xl); }
 
-/* ── 1. what Double Dash is ──
+/* ── 1. the opening, on the growing liquid box ──
+   The box itself is css/cta-grow.css + js/cta-grow.js (the "Ready to
+   Rock & Roll?" effect). This is just the text centred on it. */
+.ab-hero__body {
+    position: relative;
+    z-index: 1;
+    /* the font size lives here so the 40em measure is in the text's own
+       size (~1200px on desktop, close to the full box), not the page's
+       16px. Was 26em, which bunched it up in the middle. */
+    font-size: var(--fs-4);
+    max-width: 40em;
+    margin: 0 auto;
+    /* clear of the box's own side margin (5vw, js/cta-grow.js) plus the
+       usual gutter, so it never touches the box edge */
+    padding: 0 calc(5vw + var(--page-inset));
+    box-sizing: content-box;
+    text-align: center;
+    color: var(--color-cream);
+}
+
+.ab-hero__body p {
+    margin: 0;
+    font-family: var(--font-marker);   /* Plantin */
+    font-style: italic;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+}
+
+/* the page's h1, kept for screen readers and search only */
+.ab-hero__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── (old) 1. what Double Dash is - no longer on the page ──
    Opens on the orange ground, same pairing the outro uses at the other
    end of the site: black ink, indigo for the accent. Everything below
    it returns to the black page. */
@@ -2860,7 +2947,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 }
 
 .ab-field h3 {
-    font-family: var(--font-serif);
+    font-family: var(--font-body);
     font-size: var(--fs-6);
     font-weight: 600;
     text-transform: uppercase;
@@ -2990,7 +3077,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
    <img>, so it cannot inherit currentColor - brightness(0) gives it
    the same solid-black treatment the footer logotype gets on orange.
    ============================================ */
-.navbar.is-tinted::before { background-color: var(--color-orange); }
 
 /* cream over the dark hero and the dark takeover sheet */
 .page-home .navbar:not(.is-solid) .logo,
@@ -3048,7 +3134,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 /* ============================================
    BODY COPY WEIGHT
 
-   Archivo Thin, the weight the homepage About section has always used,
+   Thin (100), the weight the homepage About section has always used,
    applied to prose everywhere so the site reads consistently.
 
    Set per-selector rather than on body: nav links, form labels and
@@ -3270,8 +3356,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
    transition already declared on .navbar, so the backdrop, the tint,
    the compact outro state and everything else behave as before.
    ============================================ */
-/* Nothing adds .is-hidden while initNavHide is disabled in main.js;
-   both are kept so the behaviour is one line away. */
+/* initNavHide() in main.js adds .is-hidden while scrolling down */
 .navbar.is-hidden {
     transform: translateY(-100%);
 }

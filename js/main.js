@@ -11,9 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initHeroBgFade();
     initNavbar();
     initNavTint();
-    // initNavHide();  // Disabled - the bar stays up the whole way down,
-    //                 // including over the footer. Re-enable this one line
-    //                 // to bring back hide-on-scroll-down.
+    initNavHide();    // the bar slides away scrolling down, back on scrolling up
     initMotionToggle();
     // initSocial();  // Disabled - the function below is commented out, so
     //                // calling it threw a ReferenceError and killed every
@@ -80,13 +78,14 @@ function initHeroPin() {
     const pin = document.querySelector('.hero-pin');
     if (!pin || !window.matchMedia) return;
 
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const html = document.documentElement;
 
+    // Armed on every device with motion on - phones included, so the hero
+    // hold (and the gradient shrink in it) is the same length as desktop.
     const apply = () => {
-        const on = fine.matches && !reduce.matches &&
+        const on = !reduce.matches &&
             !html.classList.contains('liquid-hero-reduced');
         if (on === html.classList.contains('has-hero-pin')) return;
 
@@ -105,7 +104,6 @@ function initHeroPin() {
     };
 
     apply();
-    fine.addEventListener('change', apply);
     reduce.addEventListener('change', apply);
     // The reduce-motion toggle flips a class on <html>; react to it.
     new MutationObserver(apply).observe(document.documentElement, {
@@ -153,9 +151,14 @@ function initOutro() {
     if (!outro || !window.IntersectionObserver) return;
 
     const root = document.documentElement;
+    // With the held CTA (homepage), go orange only once the footer arrives,
+    // so the page doesn't flash orange while the CTA box is growing.
+    const target = outro.querySelector('[data-cta-pin]')
+        ? (outro.querySelector('.site-footer') || outro)
+        : outro;
     new IntersectionObserver(function (entries) {
         root.classList.toggle('outro-active', entries[0].isIntersecting);
-    }, { rootMargin: '0px 0px -35% 0px' }).observe(outro);
+    }, { rootMargin: '0px 0px -35% 0px' }).observe(target);
 }
 
 /* ============================================
@@ -449,6 +452,9 @@ function initWorkFilters() {
 function initCtaSlide() {
     const band = document.querySelector('.cta-band');
     if (!band || !window.IntersectionObserver) return;
+    // the homepage's held CTA slides its link with the scroll instead
+    // (js/cta-grow.js)
+    if (band.closest('[data-cta-pin]')) return;
     if (window.matchMedia &&
         window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -572,11 +578,8 @@ function initHeroBgFade() {
             window.liquidHero.instances[0];
         if (hero && hero.setFrozen) hero.setFrozen(amb > 0.01);
 
-        if (navbar && divider) {
-            const dr = divider.getBoundingClientRect();
-            const mid = dr.top + dr.height / 2;
-            navbar.classList.toggle('is-solid', mid < vh * 0.5);
-        }
+        // (The nav used to get its black backdrop, .is-solid, here once the
+        // divider passed mid-screen. The nav has no backdrop any more.)
 
         // The divider phrase blurs as the projects come in: 0 until their
         // top has climbed to 75% of the way down the screen, 1 once it
@@ -713,30 +716,10 @@ function initCardParallax() {
    Navbar - fade the black backdrop in on scroll
    ============================================ */
 function initNavbar() {
-    const navbar = document.querySelector('.navbar');
-    if (!navbar) return;
-
-    // Homepage: the backdrop is driven by initHeroBgFade so it tracks
-    // the background fade to black exactly. Keyed off the same elements
-    // that function needs - other pages carry the hero canvas too, and
-    // keying off that alone left their bar with nothing to switch it on.
-    if (document.querySelector('.liquid-hero__bg') &&
-        document.querySelector('.portfolio-section') &&
-        document.querySelector('.hero-divider')) return;
-
-    // Most pages: black fades in after ~0.4 of a viewport.
-    const heroPin = document.querySelector('.hero-pin');
-    const TRIGGER = 0.4;
-
-    const onScroll = () => {
-        const base = window.innerHeight * TRIGGER;
-        const threshold = heroPin
-            ? Math.max(base, heroPin.offsetHeight - window.innerHeight)
-            : base;
-        navbar.classList.toggle('is-solid', window.pageYOffset > threshold);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    // The nav has no backdrop any more: it stays transparent on every page,
+    // so .is-solid (the black backdrop, and the white ink that went with it)
+    // is never added. Its text keeps the page's own ink - cream on the dark
+    // homepage, black on the light pages.
 }
 
 /* ============================================
