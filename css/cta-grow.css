@@ -76,3 +76,26 @@
 
 html.liquid-hero-reduced .cta-pin { height: auto; }
 html.liquid-hero-reduced .cta-stage { position: relative; }
+
+/* Projects page: pull the CTA pin up by the empty stage above its
+   starting square, so the square opens just under the last card.
+   The square starts at 45vmin (START_SQUARE in js/cta-grow.js),
+   centred in a 100svh stage, so the empty band above it is
+   (100svh - 45vmin) / 2. Motion only: with reduced motion the box
+   is full size from the start and would sit on top of the cards. */
+@media (prefers-reduced-motion: no-preference) {
+    html:not(.liquid-hero-reduced) .page-projects .cta-pin {
+        margin-top: calc((45vmin - 100svh) / 2);
+    }
+
+    /* The see-through stage now overlaps the bottom of the last card;
+       let clicks pass through to it. The link keeps its own, for the
+       click and the hover that sets the gradient going. */
+    html:not(.liquid-hero-reduced) .page-projects .cta-stage {
+        pointer-events: none;
+    }
+
+    html:not(.liquid-hero-reduced) .page-projects .cta-band__link {
+        pointer-events: auto;
+    }
+}
