@@ -19,25 +19,31 @@
    the homepage" in the Studio. That is the only difference between the
    two pages.
    ============================================ */
-/* Editing locally? Use the uncached API so a publish shows on the next
-   refresh. In production use the CDN, which is faster and far cheaper
-   but holds a 60 second cache - fine for visitors, maddening when you
-   are iterating on copy. */
-const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
-    ? 'api.sanity.io'
-    : 'apicdn.sanity.io';
-
-/* Clean case study urls are produced by .htaccess plus case.php, and a
-   local dev server has neither. Anything that is not the live host gets
-   the template with a query string instead, which the case study
-   renderer still understands. That keeps Live Server, a phone on the
-   LAN and a bare file:// preview all working. */
-function caseUrl(slug) {
-    const live = /(^|\.)doubledashcreative\.com$/.test(location.hostname);
-    return live ? '/work/' + slug : 'case-study.html?p=' + slug;
-}
-
 (function () {
+    /* SANITY_HOST and caseUrl are declared in js/projects.js too, which
+       the case study pages load alongside this file. Classic scripts
+       share one global scope, so a second top-level `const SANITY_HOST`
+       out there is a SyntaxError that kills whichever script parses
+       second - this file declares nothing globally, so keep them here. */
+
+    /* Editing locally? Use the uncached API so a publish shows on the next
+       refresh. In production use the CDN, which is faster and far cheaper
+       but holds a 60 second cache - fine for visitors, maddening when you
+       are iterating on copy. */
+    const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+        ? 'api.sanity.io'
+        : 'apicdn.sanity.io';
+
+    /* Clean case study urls are produced by .htaccess plus case.php, and a
+       local dev server has neither. Anything that is not the live host gets
+       the template with a query string instead, which the case study
+       renderer still understands. That keeps Live Server, a phone on the
+       LAN and a bare file:// preview all working. */
+    function caseUrl(slug) {
+        const live = /(^|\.)doubledashcreative\.com$/.test(location.hostname);
+        return live ? '/work/' + slug : 'case-study.html?p=' + slug;
+    }
+
     const SANITY = {
         projectId: '7z9npbl2',
         dataset: 'production',
