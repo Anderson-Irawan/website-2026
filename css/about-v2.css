@@ -12,6 +12,25 @@
     --abm-space: clamp(5rem, 10vw, 10rem);        /* between sections */
 }
 
+/* ── opening statement ─────────────────────────
+   One display line above the liquid box, set like the other page
+   titles. The top padding clears the fixed navbar. */
+.ab-v2 .abm-opener {
+    padding: calc(var(--space-4xl) + var(--space-lg)) var(--page-inset) clamp(3rem, 7vw, 6rem);
+}
+
+.ab-v2 .abm-opener__line {
+    margin: 0;
+    max-width: 16ch;
+    font-family: var(--font-marker);
+    font-weight: 400;
+    font-size: var(--fs-1);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+    color: var(--page-ink);
+}
+
 /* ── the shared grid ───────────────────────── */
 .ab-v2 .abm-grid {
     display: grid;
