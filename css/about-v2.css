@@ -129,10 +129,11 @@
     grid-column: 1 / 3;
 }
 
-/* plain stack of paragraphs beside a wide label, same half of the row
-   the process points used to take */
+/* plain stack of paragraphs. Left half of the row: no label sits beside
+   them any more, and the full four columns would run the lines too long
+   to read comfortably. */
 .ab-v2 .abm-paras {
-    grid-column: 3 / 5;
+    grid-column: 1 / 3;
     display: flex;
     flex-direction: column;
     gap: 1em;
