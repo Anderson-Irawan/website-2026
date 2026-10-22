@@ -1756,6 +1756,14 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     font-style: italic;
 }
 
+/* Projects page: no hover response at all. The hover image and video are
+   never built there (data-no-hover in sanity-cards.js); this stops the
+   zoom and the italic swap, and drops the reserved italic copy, which
+   fitTitles() would otherwise size against. */
+.page-projects .work-card:hover .work-card__img { transform: none; }
+.page-projects .work-card:hover .work-card__title { font-style: normal; }
+.page-projects .work-card__title::after { content: none; }
+
 /* Homepage: the title is a display line sized to the card (fitTitles in
    js/sanity-cards.js), so it fills the card the way the image does, and
    always on one line. */

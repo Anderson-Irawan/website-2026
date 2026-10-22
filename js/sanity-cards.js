@@ -69,6 +69,10 @@ function caseUrl(slug) {
        Touch devices get the still image and nothing else. */
     const CAN_HOVER = window.matchMedia('(hover: hover)').matches;
 
+    /* [data-no-hover] (the projects page): cards are the still image only,
+       so the hover image and video are never built or downloaded. */
+    const NO_HOVER = scatter.hasAttribute('data-no-hover');
+
     /* asset._ref is image-<hash>-<w>x<h>-<ext>, which maps straight onto a
        CDN url with no second request */
     function assetUrl(ref) {
@@ -97,7 +101,7 @@ function caseUrl(slug) {
         const still = p.cardStill && p.cardStill.asset;
         if (!still) return null;
 
-        const hover = p.cardHover || {};
+        const hover = NO_HOVER ? {} : (p.cardHover || {});
         const hoverImg = hover.image && hover.image.asset;
         const hoverVid = hover.videoPath;
         const poster = hover.poster && hover.poster.asset;
