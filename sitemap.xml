@@ -7,54 +7,58 @@
 
   <url>
     <loc>https://doubledashcreative.com/</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/projects</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/about</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/contact</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
 
   <!-- Case studies. Content streams from Sanity; lastmod is that
        project's _updatedAt in the Studio. -->
   <url>
     <loc>https://doubledashcreative.com/work/hot</loc>
-    <lastmod>2026-09-15</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/work/pagikopi</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/work/bci</loc>
-    <lastmod>2026-09-11</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/work/kynara</loc>
-    <lastmod>2026-09-16</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/work/cobc</loc>
-    <lastmod>2026-09-15</lastmod>
-  </url>
-  <url>
-    <loc>https://doubledashcreative.com/work/mumu</loc>
-    <lastmod>2026-09-15</lastmod>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/work/iscream</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-10-22</lastmod>
+  </url>
+  <url>
+    <loc>https://doubledashcreative.com/work/mumu</loc>
+    <lastmod>2026-10-22</lastmod>
   </url>
   <url>
     <loc>https://doubledashcreative.com/work/furari</loc>
-    <lastmod>2026-09-08</lastmod>
+    <lastmod>2026-10-22</lastmod>
+  </url>
+  <url>
+    <loc>https://doubledashcreative.com/work/nusa-antara</loc>
+    <lastmod>2026-10-22</lastmod>
   </url>
 
 </urlset>

@@ -981,8 +981,8 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     padding: var(--space-3xl) 0;
 }
 
-/* Title and role centred, then the description across the full width
-   beneath them. One column, so nothing sits beside anything. */
+/* Title and role on the left, then the description and scope beneath
+   them. */
 .case-study-intro-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -990,18 +990,18 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 }
 
 .case-study-intro .title-section {
-    text-align: center;
+    text-align: left;
 }
 
-/* The project title is a page title, so it is set like every other one
-   on the site - --fs-1, no uppercase - rather than inheriting the caps
-   from the global h1 rule. */
+/* The project title is a page title, set like the others on the light
+   pages (see .page-header__title) - --fs-1, upright, no uppercase -
+   rather than inheriting the caps from the global h1 rule. */
 .case-study-intro .title-section h1 {
     font-family: var(--font-marker);
-    font-style: italic;                /* every page title is italic */
     font-size: var(--fs-1);
     font-weight: 400;
     line-height: 1;
+    letter-spacing: -0.04em;
     text-transform: none;
     color: var(--page-ink);
     margin-bottom: var(--space-sm);
@@ -1012,7 +1012,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     font-family: var(--font-body);
     font-size: var(--fs-6);
     text-transform: uppercase;
-    color: var(--color-blue);
+    color: var(--color-orange);
 }
 
 .case-study-intro .description {
@@ -1099,7 +1099,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 }
 
 .case-study-solution h2 {
-    color: var(--color-blue);
+    color: var(--page-ink);
     margin-bottom: var(--space-md);
 }
 
@@ -1274,7 +1274,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 .cs-missing code {
     font-family: var(--font-body);
-    background: rgba(255, 255, 255, 0.1);
+    background: color-mix(in srgb, var(--page-ink) 8%, transparent);
     padding: 0.15em 0.4em;
 }
 
@@ -3170,7 +3170,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 /* ============================================
    CASE STUDY INTRO: description + scope
 
-   Two columns under the centred title. The scope column is dropped
+   Two columns under the title. The scope column is dropped
    entirely when a project has none, and :only-child then lets the
    description take the full width on its own.
    ============================================ */

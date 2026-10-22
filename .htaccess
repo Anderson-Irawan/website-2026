@@ -76,10 +76,6 @@ RewriteRule ^work/([a-z0-9-]+)/?$ /case.php?slug=$1 [L]
 RewriteCond %{DOCUMENT_ROOT}/sitemap.php -f
 RewriteRule ^sitemap\.xml$ /sitemap.php [L]
 
-# The projects page was folded into the home page, which now carries the
-# whole grid. Anything still asking for the old url lands on it rather
-# than seeing a second copy of the same thing.
-RewriteRule ^projects(\.html)?/?$ /? [R=301,L]
 # /index.html  and  /index   ->   /
 RewriteCond %{THE_REQUEST} \s/+index(?:\.html)?[\s?] [NC]
 RewriteRule ^ / [R=301,L]
