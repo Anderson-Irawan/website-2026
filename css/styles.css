@@ -1173,11 +1173,16 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     color: var(--page-ink);
 }
 
-.cs-more__grid {
+/* Qualified with .work-scatter, which sits on this div too and is
+   defined further down the file at the same specificity - so order,
+   not intent, decided which won. It is a wrapping flexbox with its own
+   page inset and a huge row gap, all of which this has to beat. */
+.work-scatter.cs-more__grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: clamp(1rem, 2.5vw, 2rem);
     row-gap: var(--space-xl);
+    padding: 0;
 }
 
 .cs-more__grid .work-row { display: contents; }
@@ -1197,11 +1202,11 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 .cs-more__grid .work-card__title { font-size: var(--fs-4); }
 
 @media (max-width: 1000px) {
-    .cs-more__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .work-scatter.cs-more__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 560px) {
-    .cs-more__grid { grid-template-columns: 1fr; }
+    .work-scatter.cs-more__grid { grid-template-columns: 1fr; }
 }
 
 /* ============================================
