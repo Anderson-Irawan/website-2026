@@ -23,6 +23,7 @@
     margin: 0;
     max-width: 16ch;
     font-family: var(--font-marker);
+    font-style: italic;
     font-weight: 400;
     font-size: var(--fs-1);
     line-height: 1;
