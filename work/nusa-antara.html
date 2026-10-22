@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="https://use.typekit.net/bzi8cqp.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/liquid-hero.css">
+    <link rel="stylesheet" href="/css/cta-grow.css">
     <link rel="icon" href="/assets/favicon.ico" sizes="any">
     <script>document.documentElement.classList.add("is-loading");</script>
     <!-- Apply the saved motion setting before anything paints. -->
@@ -74,19 +75,31 @@
          js/projects.js from the entry matching ?p=<slug>. -->
     <main data-case-study></main>
 
-    <!-- CTA Section -->
+    <!-- Other works: four projects from Sanity (js/sanity-cards.js).
+         data-exclude-current drops the one being read. -->
+    <section class="cs-more">
+        <h2 class="cs-more__title">Other works</h2>
+        <div class="work-scatter cs-more__grid" data-sanity-cards data-limit="4"
+             data-descriptions data-exclude-current></div>
+    </section>
+
     <!-- Outro: CTA band + full-screen footer -->
     <div class="outro" data-outro>
 
-      <!-- CTA band, parked for now. Delete this line and the closing
-           marker below to bring it back: the css, the parallax hooks
-           and initCtaExpand are all still in place.
-
-      <section class="cta-band">
-        <h2 class="cta-band__heading">Ready to<br><em class="cta-band__hot">Rock &amp; Roll?</em></h2>
-        <a href="/contact.html" class="cta-band__link cta-spark">Start a project <span class="cta-band__arrow" aria-hidden="true">&rarr;</span><img class="cta-spark__gif" src="/assets/images/rock-and-roll.gif" alt="" aria-hidden="true" loading="lazy"></a>
-      </section>
-      -->
+      <!-- The hero's shrink in reverse: the stage is held while the liquid
+           box grows from a small square out to near full screen, and the
+           CTA comes in on it. See css/cta-grow.css + js/cta-grow.js -->
+      <div class="cta-pin" data-cta-pin>
+        <div class="cta-stage">
+          <div class="cta-frame" data-cta-frame data-liquid-watch>
+            <canvas class="cta-liquid" data-liquid-hero aria-hidden="true"></canvas>
+          </div>
+          <section class="cta-band">
+            <h2 class="cta-band__heading">Ready to<br><em class="cta-band__hot">Rock &amp; Roll?</em></h2>
+            <a href="/contact.html" class="cta-band__link cta-spark">Start a project <span class="cta-band__arrow" aria-hidden="true">&rarr;</span><img class="cta-spark__gif" src="/assets/images/rock-and-roll.gif" alt="" aria-hidden="true" loading="lazy"></a>
+          </section>
+        </div>
+      </div>
 
       <footer class="site-footer">
 
@@ -126,6 +139,9 @@
     <script src="/js/main.js"></script>
     <script src="/js/portfolio-video.js"></script>
     <script src="/js/topo-bg.js"></script>
+    <script src="/js/sanity-cards.js"></script>
+    <script src="/js/liquid-hero.js" defer></script>
+    <script src="/js/cta-grow.js"></script>
 </body>
 
 </html>

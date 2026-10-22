@@ -57,6 +57,14 @@ function caseUrl(slug) {
        title: the "Short description" field in the Studio, or the first
        sentence of the intro when that is blank. */
     const DESCRIPTIONS = scatter.hasAttribute('data-descriptions');
+    /* [data-exclude-current] (the case study pages): drop the project the
+       visitor is already reading, so "Other works" never links to itself.
+       Same slug the case study renderer reads, in both url shapes. */
+    const EXCLUDE_CURRENT = scatter.hasAttribute('data-exclude-current');
+    const CURRENT_SLUG = EXCLUDE_CURRENT
+        ? (((location.pathname.match(/\/work\/([^\/.]+)/) || [])[1] ||
+            new URLSearchParams(location.search).get('p') || '').toLowerCase())
+        : '';
 
     function firstSentence(text) {
         const t = (text || '').trim().replace(/\s+/g, ' ');
@@ -223,6 +231,11 @@ function caseUrl(slug) {
                the attribute, so the projects page always shows everything. */
             if (FEATURED_ONLY) {
                 projects = projects.filter(function (p) { return p.featured; });
+            }
+            if (CURRENT_SLUG) {
+                projects = projects.filter(function (p) {
+                    return (p.slug || '').toLowerCase() !== CURRENT_SLUG;
+                });
             }
             /* Limit number of projects if data-limit is set */
             if (LIMIT && projects.length > LIMIT) {

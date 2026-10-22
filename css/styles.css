@@ -1150,6 +1150,56 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     width: 100%;
 }
 
+/* ── Other works, under every case study ─────
+   Pictures, so this runs wide at --page-inset like the image rows
+   rather than sitting in the narrower text column. The cards arrive
+   from sanity-cards.js two to a row; the rows dissolve into one grid. */
+.cs-more {
+    padding-block: clamp(5rem, 10vw, 9rem) 0;
+    padding-inline: var(--page-inset);
+}
+
+.cs-more__title {
+    margin: 0 0 var(--space-2xl);
+    text-align: center;
+    font-family: var(--font-marker);
+    font-weight: 400;
+    font-size: var(--fs-3);
+    text-transform: none;
+    color: var(--page-ink);
+}
+
+.cs-more__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: clamp(1rem, 2.5vw, 2rem);
+    row-gap: var(--space-xl);
+}
+
+.cs-more__grid .work-row { display: contents; }
+
+/* the squish layout sizes cards inline; this grid owns the widths */
+.cs-more__grid .work-card {
+    width: auto !important;
+    margin: 0 !important;
+    transform: none;
+}
+
+.cs-more__grid .work-card__frame {
+    height: auto;
+    aspect-ratio: 4 / 3;
+}
+
+.cs-more__grid .work-card__title { font-size: var(--fs-4); }
+
+@media (max-width: 1000px) {
+    .cs-more__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+    .cs-more__grid { grid-template-columns: 1fr; }
+}
+
 /* ============================================
    CASE STUDY ROWS - 1 to 4 images per row
 
@@ -1254,15 +1304,16 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     object-fit: cover;
 }
 
-/* the write-up bands stay full-bleed, their text takes the same inset
-   instead of the 1200px cap, so copy and images share an edge */
+/* Every block that carries copy sits in a centred column, narrower than
+   the images. The image rows and the hero keep --page-inset and run
+   wide, so the text has visibly more room at its sides than they do. */
 .cs-band .container,
-.case-study-intro .work-container {
-    max-width: none;
+.case-study-intro .work-container,
+.sm-section.cs-band {
+    max-width: var(--container-max);
+    margin-inline: auto;
     padding-inline: var(--page-inset);
 }
-
-.sm-section.cs-band { padding-inline: var(--page-inset); }
 .cs-band .case-study-solution { margin-inline: 0; }
 
 /* Every band heading, prose or image variant. A tier below the project
@@ -3233,7 +3284,8 @@ html.liquid-hero-reduced .ab-hero__promise { grid-area: auto; opacity: 1; }
    ============================================ */
 .case-study-body {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    /* the reference runs its copy at about 60% against the scope list */
+    grid-template-columns: 3fr 2fr;
     gap: var(--space-3xl);
     align-items: start;
 }
@@ -3263,6 +3315,11 @@ html.liquid-hero-reduced .ab-hero__promise { grid-area: auto; opacity: 1; }
     font-weight: 300;
     line-height: 1.5;
     padding-block: 0.3rem;
+}
+
+/* the dash standing in for a bullet, as the reference sets it */
+.case-study-scope li::before {
+    content: "— ";
 }
 
 @media (max-width: 860px) {

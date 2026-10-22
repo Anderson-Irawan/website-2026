@@ -211,7 +211,7 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
         const items = paraList(cell);
         if (!items.length) return '';
         return '<aside class="case-study-scope">' +
-            '<h2 class="case-study-scope__title">Scope</h2><ul>' +
+            '<h2 class="case-study-scope__title">Scope:</h2><ul>' +
             items.map(function (t) { return '<li>' + t + '</li>'; }).join('') +
             '</ul></aside>';
     }
