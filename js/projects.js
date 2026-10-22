@@ -226,10 +226,12 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
                 '<div class="image-box">' + media(r) + '</div>' +
                 '</div></section>';
         }
+        /* No image: heading above its paragraphs, not beside them, so the
+           text-only bands read top down. One block, so there is no grid
+           here with only prose to lay out. */
         return '<section class="section cs-band"><div class="container">' +
-            '<div class="case-study-solution">' +
-            '<div class="content"><h2 class="heading-lg">' + r.heading + '</h2></div>' +
-            '<div class="content">' + paras(r.text) + '</div>' +
+            '<div class="cs-prose">' +
+            '<h2 class="heading-lg">' + r.heading + '</h2>' + paras(r.text) +
             '</div></div></section>';
     }
 

@@ -1102,16 +1102,27 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
        hero, the intro and every image row, all of which sit at
        --page-inset - the bands are full-bleed so copy and images share an
        edge. */
-    .content,
     .content-img {
         margin-block: var(--space-lg);
     }
 }
 
-/* Full-bleed bands mean an uncapped line runs about 110 characters on a
-   wide screen. The cap shortens the line without moving its left edge. */
-.case-study-solution p {
+/* Text-only band: the heading sits above its paragraphs, both at the
+   band's own edge (--page-inset, via .cs-band .container). */
+.cs-prose {
+    margin-block: var(--space-sm);
+}
+
+/* One measure and one rhythm for band copy, whether it has an image
+   beside it or not. Full-bleed bands would otherwise run about 110
+   characters a line on a wide screen, and the global margin reset leaves
+   consecutive paragraphs touching with nothing between them. */
+.cs-band p {
     max-width: 68ch;
+}
+
+.cs-band p + p {
+    margin-top: var(--space-md);
 }
 
 .case-study-solution h2 {
@@ -1254,13 +1265,17 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 .sm-section.cs-band { padding-inline: var(--page-inset); }
 .cs-band .case-study-solution { margin-inline: 0; }
 
-.cs-band .case-study-solution h2 {
+/* Every band heading, prose or image variant. A tier below the project
+   title (--fs-1) so the sections read as sections instead of competing
+   with the page heading. */
+.cs-band h2 {
     font-family: var(--font-marker);
-    font-size: var(--fs-2);
+    font-size: var(--fs-3);
     font-weight: 400;
-    line-height: 1;
+    line-height: 1.05;
     text-transform: none;
     color: var(--page-ink);
+    margin-bottom: var(--space-md);
 }
 
 /* the hero and the beside-the-copy slot both take video too */
@@ -1354,7 +1369,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
     /* stacked: the grid gap is the whole separation now */
     .case-study-solution {
-        .content,
         .content-img {
             margin: 0;
         }
@@ -1373,13 +1387,8 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
         gap: var(--space-md);
     }
 
-    .case-study-solution {
-        h2 {
-            text-align: left;
-            font-size: 3rem;
-            margin: 0;
-        }
-    }
+    /* the 3rem heading that used to sit here fought the fluid --fs-3
+       scale, which already steps down on a narrow screen */
 
     .sm-section {
         h2 {
@@ -3210,7 +3219,7 @@ html.liquid-hero-reduced .ab-hero__promise { grid-area: auto; opacity: 1; }
 .ab-field li,
 .forge__col p,
 .case-study-intro .description,
-.case-study-solution p,
+.cs-band p,
 .cs-missing p {
     font-weight: 300;
 }
