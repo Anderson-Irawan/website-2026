@@ -1018,6 +1018,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 .case-study-intro .description {
     font-size: var(--fs-5);
     line-height: 1.6;
+    max-width: 68ch;   /* same measure as the write-up bands */
 }
 
 .case-study-intro .description p {
@@ -1088,14 +1089,29 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 .case-study-solution {
     display: grid;
     grid-template-columns: 2fr 3fr;
-    gap: var(--space-sm);
-    margin: var(--space-sm);
-    place-items: center;
+    /* was --space-sm, back when the halves carried their own 2rem margins
+       and the gap only had to close the remainder. Scales down so the
+       stacked phone layout does not inherit the desktop figure. */
+    gap: clamp(var(--space-lg), 4vw, var(--space-2xl));
+    margin-block: var(--space-sm);
+    /* align, not place: place-items also centred each half horizontally in
+       its track, which fights the capped measure below */
+    align-items: center;
 
+    /* Vertical only. A horizontal margin here indented the copy past the
+       hero, the intro and every image row, all of which sit at
+       --page-inset - the bands are full-bleed so copy and images share an
+       edge. */
     .content,
     .content-img {
-        margin: var(--space-lg);
+        margin-block: var(--space-lg);
     }
+}
+
+/* Full-bleed bands mean an uncapped line runs about 110 characters on a
+   wide screen. The cap shortens the line without moving its left edge. */
+.case-study-solution p {
+    max-width: 68ch;
 }
 
 .case-study-solution h2 {
@@ -1336,8 +1352,10 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
         margin: var(--space-xs);
     }
 
+    /* stacked: the grid gap is the whole separation now */
     .case-study-solution {
-        .content {
+        .content,
+        .content-img {
             margin: 0;
         }
     }
