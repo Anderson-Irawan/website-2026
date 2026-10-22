@@ -2787,7 +2787,37 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     box-sizing: content-box;
     text-align: center;
     color: var(--color-cream);
+    grid-area: 1 / 1;   /* shares the cell with .ab-hero__promise */
 }
+
+/* "That's the promise." - one line across the whole stage, laid over
+   the opening text in the same grid cell. js/cta-grow.js sizes it to
+   the stage width and stretches it in (data-grow-after) as the box
+   closes to its square, once the opening text has gone. */
+.ab-hero__promise {
+    grid-area: 1 / 1;
+    position: relative;
+    z-index: 1;
+    width: max-content;     /* so the js can read its natural width */
+    margin: 0;
+    font-family: var(--font-marker);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 11vw;        /* first paint only; the js fits it exactly */
+    line-height: 1;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    color: var(--color-cream);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* no motion: no stage hold, so it simply sits under the opening text */
+@media (prefers-reduced-motion: reduce) {
+    .ab-hero__promise { grid-area: auto; opacity: 1; }
+}
+
+html.liquid-hero-reduced .ab-hero__promise { grid-area: auto; opacity: 1; }
 
 .ab-hero__body p {
     margin: 0;

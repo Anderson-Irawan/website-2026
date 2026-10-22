@@ -50,6 +50,11 @@
     var LINK_FROM = 0.65;     // the link glides in between these
     var LINK_TO = 1;
     var LINK_SLIDE = 80;      // px it slides in from the left
+    var AFTER_FROM = 0.4;     // [data-grow-after] stretches in as the growth
+    var AFTER_TO = 0.05;      //   falls between these, i.e. once the text has
+                              //   gone and the box is closing to its square
+    var AFTER_SQUEEZE = 0.2;  // the horizontal scale it stretches out from
+    var AFTER_SPAN = 0.92;    // the width it is fitted to, share of the stage
 
     // ---- hover on the link: the gradient goes wild ----
     // Only two things change: it moves faster, and its colours cycle through
@@ -78,6 +83,21 @@
         var canvas = frame.querySelector('canvas');
         var texts = pin.querySelectorAll('[data-grow-text], .cta-band__heading');
         var link = pin.querySelector('[data-grow-link], .cta-band__link');
+        var afters = pin.querySelectorAll('[data-grow-after]');
+        var fittedW = 0;
+
+        // one line across the stage: measured at 100px, then scaled, since
+        // width is linear in font size. Only when the stage width changes.
+        function fitAfters(w) {
+            if (w === fittedW) return;
+            fittedW = w;
+            for (var i = 0; i < afters.length; i++) {
+                var a = afters[i];
+                a.style.fontSize = '100px';
+                var nat = a.offsetWidth;   // transforms do not affect this
+                if (nat) a.style.fontSize = (100 * w * AFTER_SPAN / nat).toFixed(2) + 'px';
+            }
+        }
         var leadAttr = parseFloat(pin.getAttribute('data-grow-lead'));
         var lead = isNaN(leadAttr) ? LEAD : leadAttr;
         // data-grow-reverse: start expanded (text showing) and shrink to the
@@ -131,6 +151,20 @@
                         ? 'translate3d(' + (-(1 - lp) * LINK_SLIDE).toFixed(1) + 'px,0,0)'
                         : '';
                     link.style.opacity = lp.toFixed(3);
+                }
+            }
+
+            // stretches in across the stage as the box closes, after the text
+            if (afters.length) {
+                fitAfters(w);
+                var ap = easeOut(clamp01((AFTER_FROM - g) / (AFTER_FROM - AFTER_TO)));
+                for (var j = 0; j < afters.length; j++) {
+                    var a = afters[j];
+                    if (reduced) { a.style.opacity = a.style.transform = ''; continue; }
+                    a.style.opacity = ap.toFixed(3);
+                    a.style.transform = ap < 1
+                        ? 'scaleX(' + (AFTER_SQUEEZE + (1 - AFTER_SQUEEZE) * ap).toFixed(4) + ')'
+                        : '';
                 }
             }
         }
@@ -193,6 +227,11 @@
             link.addEventListener('mouseleave', function () { setWild(false); });
             link.addEventListener('focus', function () { setWild(true); });
             link.addEventListener('blur', function () { setWild(false); });
+        }
+
+        // a fit taken before the webfont lands would use the fallback's widths
+        if (afters.length && document.fonts) {
+            document.fonts.ready.then(function () { fittedW = 0; update(); });
         }
 
         return update;
