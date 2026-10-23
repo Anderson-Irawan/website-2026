@@ -71,6 +71,11 @@
    width. On phones the <br> splits it into two lines, each sized to
    span the width. */
 .hero-divider__text {
+    /* difference blend: the phrase inverts whatever it sits over, so it
+       cuts through the montage square and reads as orange on the black
+       page either side of it */
+    mix-blend-mode: difference;
+
     position: fixed;
     /* centred on the hero's height (100svh), like the square and logo,
        so it stays lined up on phones when the address bar hides */

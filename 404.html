@@ -14,6 +14,9 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" href="/assets/favicon.ico" sizes="any">
     <script>document.documentElement.classList.add("is-loading");</script>
+    <!-- Apply the saved motion setting before anything paints, so a
+         reduced-motion visitor never sees a frame of movement first. -->
+    <script>try{if(localStorage.getItem('liquid-hero:reduced')==='1')document.documentElement.classList.add('liquid-hero-reduced');}catch(e){}</script>
 </head>
 
 <body>
@@ -32,17 +35,24 @@
                 <img src="/assets/logotype.svg" alt="Double Dash Creative" class="logo-mark">
             </a>
 
-            <button class="mobile-menu-toggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
 
             <ul class="nav-links">
                 <li><a href="/projects.html" class="nav-link-cycle"><span data-text="Projects">Projects</span></a></li>
                 <li><a href="/about.html" class="nav-link-cycle"><span data-text="About">About</span></a></li>
                 <li><a href="/contact.html" class="nav-link-cycle"><span data-text="Contact">Contact</span></a></li>
             </ul>
+            <div class="nav-actions">
+                <button class="motion-toggle" type="button" data-liquid-hero-toggle aria-pressed="false">
+                    <span class="motion-toggle__icon" aria-hidden="true"></span>
+                    <span class="motion-toggle__label">Reduce Motion</span>
+                </button>
+                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
         </div>
     </nav>
 

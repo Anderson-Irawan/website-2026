@@ -224,6 +224,45 @@
         }
     }
 
+    /* [data-reveal]: each card's picture starts under an orange block
+       that swipes off as the card comes into view, the same move the
+       homepage cards make (see .cards-reveal in css/styles.css). The
+       class only goes on once the cards exist and motion is allowed, so
+       a picture is never left stuck behind the block. */
+    function armReveal() {
+        if (!scatter.hasAttribute('data-reveal')) return;
+        const html = document.documentElement;
+        const reduce = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce || html.classList.contains('liquid-hero-reduced') ||
+            !window.IntersectionObserver) return;
+
+        const frames = scatter.querySelectorAll('.work-card__frame');
+        if (!frames.length) return;
+        html.classList.add('cards-reveal');
+
+        /* A beat between the cards in a row, so they come in one after
+           another rather than all at once. It cycles every third card
+           rather than running up the whole grid: cards further down the
+           page enter on their own anyway, and a delay that kept growing
+           would leave the last one waiting seconds. */
+        const STAGGER = parseFloat(scatter.getAttribute('data-reveal-stagger'));
+        const step = isNaN(STAGGER) ? 0.1 : STAGGER;
+        frames.forEach(function (frame, i) {
+            frame.style.transitionDelay = ((i % 3) * step).toFixed(2) + 's';
+        });
+
+        const io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (!e.isIntersecting) return;
+                e.target.classList.add('is-revealed');
+                io.unobserve(e.target);   // once revealed, it stays revealed
+            });
+        }, { rootMargin: '0px 0px -12% 0px' });
+
+        frames.forEach(function (frame) { io.observe(frame); });
+    }
+
     const QUERY = '*[_type == "project" && defined(slug.current)] | order(order asc) {' +
         'title, "slug": slug.current, categories, order, featured, cardStill, cardHover' +
         // the intro is only fetched where it may be needed as the fallback
@@ -317,6 +356,8 @@
             });
 
             if (!changed) return;
+
+            armReveal();
 
             /* measuring before the webfont lands would size off the
                fallback serif's widths. fonts.ready alone is not enough for
