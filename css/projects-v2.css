@@ -130,22 +130,12 @@
     border-color: var(--color-orange);
 }
 
-/* ── D. Quiet reveal ───────────────────────── */
-/* Hidden start state only once the script has armed it (html.pj-reveal),
-   so the cards are never stuck invisible if the script does not run. */
-.pj-reveal .pj-v2 .work-card {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
-        transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-/* the second card of a pair follows a beat later */
-.pj-reveal .pj-v2 .work-row > .work-card:nth-child(2) {
-    transition-delay: 0.12s;
-}
-
-.pj-reveal .pj-v2 .work-card.is-in {
-    opacity: 1;
-    transform: none;
+/* ── D. Orange swipe reveal ────────────────── */
+/* The cards now use the site's orange swipe (see "Orange swipe reveal"
+   in css/styles.css, armed by data-reveal on the grid in projects.html)
+   instead of the quiet fade-and-rise this page used to have. Quicker
+   here than elsewhere: this page is a long column of cards, and a slow
+   swipe on each one adds up. */
+.pj-v2 {
+    --card-reveal-time: 0.28s;
 }

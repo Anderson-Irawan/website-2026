@@ -196,13 +196,29 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
             '<div class="case-study-intro-grid">' +
             '<div class="title-section">' +
             '<h1 class="heading-lg">' + project.title + '</h1>' +
-            (project.role ? '<p class="meta">' + project.role + '</p>' : '') +
+            catTags(project.categories) +
             '</div>' +
             '<div class="case-study-body">' +
             '<div class="description">' + paras(r.text) + '</div>' +
             scopeList(r.scope) +
             '</div>' +
             '</div></div></section>';
+    }
+
+    /* The category labels under the title, the same outlined pills the
+       project cards carry. WORK_CATEGORIES lives in js/main.js, which
+       loads after this file but long before the fetch above resolves;
+       the guard is there in case that order ever changes. Projects
+       still coming from the sheet have no categories, and simply get
+       no labels. */
+    function catTags(cats) {
+        if (!cats || !cats.length) return '';
+        if (typeof WORK_CATEGORIES === 'undefined') return '';
+        const pills = cats.map(function (slug) {
+            const cat = WORK_CATEGORIES[slug];
+            return cat ? '<span class="tag">' + cat.label + '</span>' : '';
+        }).join('');
+        return pills ? '<span class="cs-tags">' + pills + '</span>' : '';
     }
 
     /* One scope item per line. Omitted entirely when empty, and the CSS
@@ -361,7 +377,7 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
        Anything not yet migrated keeps coming from the sheet.
        --------------------------------------------------------------- */
     const GROQ = '*[_type == "project"]{title, "slug": slug.current, role, ' +
-        'cardStill, cardHover, hero, intro, scope, blocks}';
+        'categories, cardStill, cardHover, hero, intro, scope, blocks}';
 
     /* asset._ref is image-<hash>-<w>x<h>-<ext>, which maps straight onto a
        CDN url with no second request */
@@ -483,7 +499,10 @@ const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
             }
         });
 
-        return { slug: doc.slug, title: doc.title, role: doc.role, rows: rows };
+        return {
+            slug: doc.slug, title: doc.title, role: doc.role,
+            categories: doc.categories || [], rows: rows,
+        };
     }
 
     /* ---- go ---- */

@@ -10,17 +10,10 @@
    overrides the ground for this one page. */
 body {
     background-color: var(--page-bg);
-    /* so the handover to the orange outro eases rather than snapping */
-    transition: background-color 0.7s var(--transition-smooth);
 }
 
-/* Reaching the footer, the ground under the blurred gradient turns brand
-   orange, so the wash reads orange instead of warm white. initOutro()
-   puts .outro-active on <html>. The footer itself paints nothing now -
-   it would have covered this up. */
-.outro-active body {
-    background-color: var(--color-orange);
-}
+/* (The page used to fade to brand orange on reaching the footer. The
+   footer paints its own solid orange now, so the ground stays black.) */
 
 
 /* Past the hero the gradient keeps animating but drops out of focus, so

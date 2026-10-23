@@ -6,7 +6,6 @@
    ============================================ */
 (function () {
     if (!document.body.classList.contains('pj-v2')) return;
-    var html = document.documentElement;
 
     // ---- 1. statement spans the screen ----
     var statement = document.querySelector('.pj-statement');
@@ -31,26 +30,7 @@
         if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', fit);
     }
 
-    // ---- 2. quiet reveal ----
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
-    if ((reduce && reduce.matches) || html.classList.contains('liquid-hero-reduced') ||
-        !window.IntersectionObserver) return;
-
-    html.classList.add('pj-reveal');
-    var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-            if (!e.isIntersecting) return;
-            e.target.classList.add('is-in');
-            io.unobserve(e.target);   // once in, it stays in
-        });
-    }, { rootMargin: '0px 0px -12% 0px' });
-
-    function watchCards() {
-        var cards = document.querySelectorAll('.pj-v2 .work-card:not(.is-in)');
-        for (var i = 0; i < cards.length; i++) io.observe(cards[i]);
-    }
-    // the cards are built from Sanity after load
-    var grid = document.querySelector('[data-sanity-cards]');
-    if (grid) new MutationObserver(watchCards).observe(grid, { childList: true, subtree: true });
-    watchCards();
+    /* The cards reveal with the site's orange swipe now, which
+       js/sanity-cards.js arms from data-reveal on the grid. This file
+       only sizes the opening statement. */
 })();

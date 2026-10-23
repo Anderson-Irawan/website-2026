@@ -150,8 +150,8 @@ body {
     transition: opacity 0.7s ease;
 }
 
-/* clear them off the orange outro */
-.outro-active .topo-bg { opacity: 0; }
+/* (They used to fade out at the footer, back when the whole page turned
+   orange. The footer paints its own solid orange over them now.) */
 
 .container,
 .work-container {
@@ -735,7 +735,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 .contact-head {
     margin: 0;
     text-align: left;
-    position: sticky;
     top: 7rem;      /* clear of the fixed navbar */
 }
 
@@ -836,28 +835,29 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     margin-bottom: var(--space-md);
 }
 
-/* Field titles in Plantin, like the page's headings. Sized so the
-   half-width ones ("What budget do you have in mind?") stay on one line. */
+/* Field titles in Plantin, at the same size as the body copy and what
+   people type into the fields below them. */
 .form-group label {
     display: block;
     font-family: var(--font-marker);   /* Plantin */
     font-weight: 400;
-    font-size: clamp(1.05rem, 0.95rem + 0.3vw, 1.2rem);
+    font-size: var(--fs-5);
     line-height: 1.2;
     letter-spacing: -0.01em;
     margin-bottom: var(--space-xs);
     color: var(--page-ink);
 }
 
-/* what people type: body size (was the small caption size) */
+/* what people type, at body size in a shallower box with a hairline
+   border (was 0.875rem padding and a 2px rule, which read heavy) */
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 0.875rem 1rem;
+    padding: 0.6rem 0.75rem;
     font-family: var(--font-body);
     font-size: var(--fs-5);
-    border: 2px solid var(--page-ink);
+    border: 1px solid var(--page-ink);
     background-color: transparent;
     color: var(--page-ink);
     transition: border-color 0.3s var(--transition-smooth);
@@ -873,7 +873,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 /* only the textarea is tall, and only it can be dragged taller */
 .form-group textarea {
-    min-height: 150px;
+    min-height: 120px;
     resize: vertical;
 }
 
@@ -893,8 +893,8 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FAFAFF' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 1rem center;
-    padding-right: 2.5rem;
+    background-position: right 0.75rem center;
+    padding-right: 2.1rem;
 }
 
 /* Sticky Shark Animation */
@@ -1330,7 +1330,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
    with the page heading. */
 .cs-band h2 {
     font-family: var(--font-marker);
-    font-size: var(--fs-3);
+    font-size: var(--fs-4);
     font-weight: 400;
     line-height: 1.05;
     text-transform: none;
@@ -1835,27 +1835,9 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     color: var(--page-ink);
 }
 
-/* reserve the italic footprint so the hover swap never reflows */
-.work-card__title::after {
-    content: attr(data-title);
-    display: block;
-    height: 0;
-    overflow: hidden;
-    font-style: italic;
-    visibility: hidden;
-}
-
-.work-card:hover .work-card__title {
-    font-style: italic;
-}
-
-/* Projects page: no hover response at all. The hover image and video are
-   never built there (data-no-hover in sanity-cards.js); this stops the
-   zoom and the italic swap, and drops the reserved italic copy, which
-   fitTitles() would otherwise size against. */
-.page-projects .work-card:hover .work-card__img { transform: none; }
-.page-projects .work-card:hover .work-card__title { font-style: normal; }
-.page-projects .work-card__title::after { content: none; }
+/* (Titles used to swap to italic on hover, with a hidden italic copy
+   under each one reserving the width so the swap never reflowed. Both
+   are gone: the image is the whole hover now.) */
 
 /* Homepage: the title is a display line sized to the card (fitTitles in
    js/sanity-cards.js), so it fills the card the way the image does, and
@@ -1869,16 +1851,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
        sibling; the title has to sit in its own layer to show on top */
     position: relative;
     z-index: 1;
-}
-
-/* No italic swap here, so no reserved italic copy either - leaving it in
-   would make fitTitles() size off the wider italic and shrink every title. */
-.page-home .work-card:hover .work-card__title {
-    font-style: normal;
-}
-
-.page-home .work-card__title::after {
-    content: none;
 }
 
 .page-home .work-card__tags {
@@ -2343,8 +2315,9 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 /* ── full-screen footer ───────────────────────────────────── */
 .site-footer {
-    /* no background of its own: the page ground behind the blurred
-       gradient carries the orange here (see .outro-active body). */
+    /* solid orange, painted by the footer itself. The page behind it
+       stays black: it no longer fades to orange on the way down. */
+    background-color: var(--color-orange);
     /* was 100svh, when this held the thanks line, the wordmark and a
        tall portrait illustration. It is a lockup and two short rows now,
        so it sizes to its content with a floor rather than a screenful. */
@@ -2356,39 +2329,88 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     /* no top rule - the orange band is the divider */
 }
 
-/* the thanks + shark row soaks up all the leftover height, so the link
-   row and copyright sit tight together at the bottom */
+/* One row, split down the middle: the mark-and-wordmark lockup on the
+   left, the page links starting at the centre line. It soaks up the
+   leftover height, so the social row and copyright sit tight together
+   at the bottom. */
 .footer-top {
     flex: 1;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* The row sits at the bottom of the stretched area, so the spare
+       height falls above the lockup rather than between it and the rule
+       below. align-items keeps the lockup and the links level with each
+       other inside that row. */
+    align-content: end;
     align-items: center;
-    justify-content: center;
-    gap: clamp(0.9rem, 2.2vw, 1.8rem);
+    gap: clamp(1.5rem, 4vw, 4rem);
 }
 
-/* the unicorn mark, centred above the lockup, back at the size it was
-   before the ring experiment */
+/* ── page links: left-aligned, starting at the centre ── */
+.footer-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+}
+
+.footer-nav a {
+    font-family: var(--font-marker);   /* Plantin */
+    font-weight: 400;
+    font-size: var(--fs-4);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--outro-ink);
+    text-decoration: none;
+    width: fit-content;
+}
+
+/* An arrow slides in beside the word on hover, in place of the
+   underline this used to grow. It sits after the word and points back
+   at it, so it reads as a marker singling that link out, and it drifts
+   in from the right towards the word. It is in the markup from the
+   start, just invisible, so its width is always reserved and the line
+   never jumps. */
+.footer-nav a::after {
+    content: '\2190';   /* ← */
+    display: inline-block;
+    margin-left: 0.3em;
+    opacity: 0;
+    transform: translateX(0.3em);
+    transition: opacity 0.25s var(--transition-smooth),
+        transform 0.25s var(--transition-smooth);
+}
+
+.footer-nav a:hover::after,
+.footer-nav a:focus-visible::after {
+    opacity: 1;
+    transform: none;
+}
+
+/* ── the lockup: mark, then the wordmark beside it ── */
+.footer-lockup {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.6rem, 1.5vw, 1.25rem);
+}
+
+/* the unicorn mark, sitting to the left of the wordmark */
 .footer-mark {
     display: block;
     width: auto;
-    height: clamp(58px, 8vw, 104px);
+    height: clamp(36px, 4.6vw, 68px);   /* was up to 96px */
+    flex: none;
     /* the artwork ships cream; same trick the navbar tint uses to put it
        on a light ground without a second copy of the file */
     filter: brightness(0);
-    /* its weight sits to the right, so dead-centre reads as off-centre */
-    transform: translateX(-5%);
 }
 
-
-/* Landscape lockup, 2035.33 x 411.44, spanning the whole container. The
-   footer sizes to its content now, so the cap is only there to stop a
-   wide, short viewport blowing the lockup up past the rows beneath. */
+/* "DOUBLE DASH CREATIVE", 2035.33 x 411.44. It used to span the whole
+   container; now it is a set width beside the mark. */
 .footer-wordmark {
     display: block;
-    width: 100%;
+    width: clamp(150px, 24vw, 380px);   /* was up to 540px */
     height: auto;
-    max-height: 34vh;
     object-fit: contain;
 }
 
@@ -2405,9 +2427,9 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
     /* the rule dividing this row from the lockup, with room on both sides:
        margin above it, padding below it */
-    margin-top: clamp(1.5rem, 4vw, 3rem);
-    border-top: 3px solid var(--outro-ink);
-    padding-top: clamp(1.5rem, 4vw, 3rem);
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    border-top: 1px solid var(--outro-ink);
+    padding-top: clamp(1rem, 2.5vw, 1.75rem);
     padding-bottom: clamp(0.25rem, 1vw, 0.75rem);
 }
 
@@ -2420,13 +2442,8 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     gap: clamp(0.75rem, 2vw, 1.25rem);
 }
 
-.footer-follow__label {
-    font-family: var(--font-body);
-    font-size: var(--fs-6);
-    color: var(--outro-ink);
-    white-space: nowrap;
-}
-
+/* (The "Follow for more:" label that used to sit before the icons is
+   gone; the icons speak for themselves.) */
 
 .footer-copyright {
     font-size: var(--fs-6);
@@ -2473,13 +2490,30 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     .logo-mark { transition: none; }
 }
 
-@media (max-width: 900px) {
-    /* stacked: it shares the fold with the thanks + links, so less height -
-       and it spans the full width now, so re-centre it. */
-}
+/* Narrow: the lockup and the links stop fitting side by side, so the
+   lockup runs full width with the links as a wrapping row under it. */
+@media (max-width: 760px) {
+    .footer-top {
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: clamp(1.75rem, 6vw, 3rem);
+    }
 
+    .footer-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+    }
 
-@media (max-width: 640px) {
+    .footer-lockup {
+        width: 100%;
+    }
+
+    .footer-wordmark {
+        width: auto;
+        flex: 1;
+        min-width: 0;
+    }
 }
 
 /* ==================================================================
@@ -3303,32 +3337,30 @@ html.liquid-hero-reduced .ab-hero__promise { grid-area: auto; opacity: 1; }
     grid-column: 1 / -1;
 }
 
+/* "Scope" set like the other headings on the page: Plantin, no caps */
 .case-study-scope__title {
-    font-family: var(--font-body);
-    font-size: var(--fs-6);
-    font-weight: 500;
-    text-transform: uppercase;
+    font-family: var(--font-marker);   /* Plantin */
+    font-size: var(--fs-4);
+    font-weight: 400;
+    text-transform: none;              /* beat the global h1-h4 rule */
+    letter-spacing: -0.01em;
     line-height: 1.2;
     margin: 0 0 var(--space-sm);
-    padding-bottom: 0.7rem;
+    padding-bottom: 0;
 }
 
+/* the items as a bulleted list, the same as the about page's skills */
 .case-study-scope ul {
-    list-style: none;
+    list-style: disc;
     margin: 0;
-    padding: 0;
+    padding-left: 1.1em;
 }
 
 .case-study-scope li {
     font-size: var(--fs-5);
-    font-weight: 300;
     line-height: 1.5;
-    padding-block: 0.3rem;
-}
-
-/* the dash standing in for a bullet, as the reference sets it */
-.case-study-scope li::before {
-    content: "— ";
+    padding-block: 0.2rem;
+    padding-left: 0.2em;
 }
 
 @media (max-width: 860px) {
@@ -3542,4 +3574,242 @@ html.liquid-hero-reduced .ab-hero__promise { grid-area: auto; opacity: 1; }
 .notfound__home {
     text-decoration: underline;
     text-underline-offset: 0.25em;
+}
+
+/* ==================================================================
+   "EXPLORE MORE WORK" - a row of project cards, from Sanity
+   ==================================================================
+   Used at the foot of the about page and every case study. The cards
+   themselves are the normal .work-card; these rules only lay them out
+   in an even row and size the type down. Unscoped on purpose, so any
+   page can drop the markup in:
+
+     <section class="abm-section abm-more">
+       <h2 class="abm-more__title">Explore more work</h2>
+       <div class="work-scatter abm-cards" data-sanity-cards
+            data-random data-limit="3"></div>
+     </section>
+   ================================================================== */
+/* Space above as well as below, so on a case study it does not sit hard
+   against the last picture. (The about page overrides this with its own
+   .abm-section rhythm.) */
+.abm-more {
+    padding-block: var(--abm-space, clamp(5rem, 10vw, 10rem));
+}
+
+.abm-more__title {
+    margin: 0 0 var(--space-2xl);
+    text-align: center;
+    font-family: var(--font-marker);   /* Plantin */
+    font-weight: 400;
+    font-size: var(--fs-3);
+    text-transform: none;              /* beat the global h1-h4 rule */
+}
+
+/* the cards arrive in rows of two; dissolve the rows into one grid */
+.abm-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--abm-gap, clamp(1rem, 2.2vw, 2.25rem));
+    row-gap: var(--space-xl);
+    padding-inline: var(--page-inset);
+}
+
+.abm-cards .work-row { display: contents; }
+
+/* the scatter grid sizes cards by nth-child; this is one even row */
+.abm-cards .work-card {
+    width: auto !important;
+    margin: 0 !important;
+    transform: none;
+}
+
+.abm-cards .work-card__frame {
+    height: auto;
+    aspect-ratio: 4 / 3;
+}
+
+.abm-cards .work-card__title { font-size: var(--fs-4); }
+.abm-cards .work-card__desc { font-size: var(--fs-6); }
+
+.abm-cards .tag {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+}
+
+@media (max-width: 1000px) {
+    .abm-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+    .abm-cards { grid-template-columns: 1fr; }
+}
+
+/* ==================================================================
+   CASE STUDY MEASURE  (after hoodzpahdesign.com)
+   ==================================================================
+   The pictures keep the full page width. The words step in from the
+   left and run a narrow measure, so the copy sits nearer the middle of
+   the page than the images do, and the page reads as writing laid over
+   a wider gallery rather than one column of equal-width blocks.
+
+   --cs-step    how far the text moves in past the images' edge
+   --cs-measure how wide the text block itself is allowed to run
+
+   Last in the file so it wins over the earlier full-bleed rules.
+   ================================================================== */
+.case-study-intro,
+.cs-band {
+    --cs-step: clamp(0rem, 9vw, 11rem);
+    --cs-measure: 64rem;
+}
+
+/* intro (title, copy, scope) and the text-only write-up bands */
+.case-study-intro .work-container,
+.cs-band .container {
+    max-width: none;
+    padding-inline: calc(var(--page-inset) + var(--cs-step)) var(--page-inset);
+}
+
+.case-study-intro-grid,
+.cs-band .container .case-study-solution {
+    max-width: var(--cs-measure);
+}
+
+/* A band with an image beside the copy: the picture keeps its own
+   width, so only the words step in. */
+.sm-section.cs-band .content-img {
+    padding-left: var(--cs-step);
+}
+
+/* Stacked: the step-in would eat the measure on a narrow screen, so it
+   collapses and everything shares the page gutter again. */
+@media (max-width: 860px) {
+    .case-study-intro,
+    .cs-band {
+        --cs-step: 0rem;
+    }
+
+    .sm-section.cs-band .content-img {
+        padding-left: 0;
+    }
+}
+
+/* ── Case study write-up bands: top down, centred on the page ───────
+   Down the page, each write-up puts its heading above the copy instead
+   of beside it, and the whole block sits in the middle of the page.
+   The words stay left-aligned inside it - a centred line of prose is
+   hard to follow. The pictures still run the full width, so the text
+   reads as a centred column over a wider gallery.
+   The intro at the top keeps its own layout. Last in the file, so it
+   wins over the step-in rules above. */
+.cs-band .container {
+    /* symmetric again: the block below centres itself */
+    padding-inline: var(--page-inset);
+}
+
+.cs-band .container .case-study-solution {
+    grid-template-columns: 1fr;
+    /* the gap is the whole space between heading and copy: the cells
+       drop their own 2rem margin below, which was stacking with it */
+    gap: var(--space-sm);
+    /* the same column the intro uses, so every block lines up */
+    max-width: var(--cs-measure);
+    margin-inline: auto;
+    /* items fill the column and their text stays left */
+    place-items: start stretch;
+    text-align: left;
+}
+
+.cs-band .container .case-study-solution .content {
+    margin: 0;
+}
+
+/* the heading's own bottom margin would sit on top of the gap too */
+.cs-band .container .case-study-solution h2 {
+    margin-bottom: 0;
+}
+
+/* The category labels under a case study title, where the orange role
+   line used to be. Same outlined pill as the project cards, in the
+   brand orange so the accent under the title is kept. */
+.case-study-intro .cs-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: var(--space-sm);
+}
+
+.case-study-intro .cs-tags .tag {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+}
+
+/* Intro centred to match the write-up bands below: the title, the copy
+   and the scope list run as one column down the middle of the page at
+   the same width, text still left-aligned inside it. Replaces the
+   step-in, which put the intro left while everything below it sat
+   centred. */
+.case-study-intro .work-container {
+    padding-inline: var(--page-inset);
+}
+
+.case-study-intro-grid {
+    max-width: var(--cs-measure);
+    margin-inline: auto;
+    gap: var(--space-xl);
+}
+
+/* the write-up and the scope list side by side inside that column */
+.case-study-body {
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-2xl);
+}
+
+/* The title and its labels centre over the column. The write-up and the
+   scope list below stay left-aligned, so the prose is still easy to
+   follow. */
+.case-study-intro .title-section {
+    text-align: center;
+}
+
+.case-study-intro .cs-tags {
+    justify-content: center;
+}
+
+/* Orange swipe reveal on project cards, the same move the homepage ones
+   make: each frame starts under an orange block that slides off to the
+   right as the card comes into view.
+
+   Used by any grid carrying data-reveal (the projects page and the
+   "Explore more work" rows). Only armed once js/sanity-cards.js adds
+   .cards-reveal to <html>, so the pictures are never stuck behind an
+   orange block if the script does not run or the visitor has reduced
+   motion on. --card-reveal-time is the swipe speed, per page. */
+.cards-reveal .work-card__frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;   /* above the image, the hover image and the video */
+    background: var(--color-orange);
+    pointer-events: none;
+    /* anchored right, so shrinking it uncovers the image from the left */
+    transform-origin: 100% 50%;
+    transform: scaleX(1);
+    transition: transform var(--card-reveal-time, 0.45s)
+        cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.cards-reveal .work-card__frame.is-revealed::after {
+    transform: scaleX(0);
+}
+
+/* Stacked on phones: the two-column rule above is later in the file than
+   the old 860px media query, so the stack has to be restated here or the
+   scope list stays wedged in a third of a phone screen. */
+@media (max-width: 860px) {
+    .case-study-body {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
 }

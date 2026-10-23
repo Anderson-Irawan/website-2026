@@ -58,13 +58,14 @@
     color: var(--page-ink);
 }
 
-/* ── Services | Selected Clients band ──────── */
-/* a band set apart by a thin rule above and below */
+/* ── Skills band ───────────────────────────── */
+/* A full-bleed indigo band, so the skills read as their own block
+   rather than more text on the black page. The page ink (cream) sits
+   on indigo at about 11:1, so it stays easily readable. */
 .ab-v2 .abm-band {
-    padding-bottom: var(--space-3xl);
+    background-color: var(--color-blue);   /* indigo #2E2B8A */
     margin-top: var(--abm-space);
-    border-block: 1px solid rgba(250, 250, 255, 0.18);
-    padding-top: var(--space-2xl);
+    padding-block: var(--abm-space);
 }
 
 .ab-v2 .abm-list {
@@ -199,33 +200,6 @@
     padding-bottom: var(--abm-space);
 }
 
-/* ── Latest on Instagram ───────────────────── */
-.ab-v2 .abm-insta {
-    padding-bottom: var(--abm-space);
-    text-align: center;
-}
-
-/* the hosted widget drops in here. Empty until then, so it collapses
-   and the section is just its title and the link. */
-.ab-v2 .abm-insta__embed {
-    padding-inline: var(--page-inset);
-}
-
-.ab-v2 .abm-insta__link {
-    display: inline-block;
-    margin-top: var(--space-xl);
-    font-family: var(--font-body);
-    font-size: var(--fs-5);
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    transition: color 0.2s ease;
-}
-
-.ab-v2 .abm-insta__link:hover { color: var(--color-orange); }
-
-.ab-v2 .abm-insta__title,
 .ab-v2 .abm-more__title {
     margin: 0 0 var(--space-2xl);
     text-align: center;
@@ -279,7 +253,6 @@
     .ab-v2 .abm-me .abm-label--wide { grid-row: auto; }
     .ab-v2 .abm-person { grid-row: auto; }
     .ab-v2 .abm-bio { grid-row: auto; }
-    .ab-v2 .abm-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 560px) {
@@ -287,4 +260,37 @@
     .ab-v2 .abm-person { max-width: 22rem; }
     /* one column: 2 / -1 would invent a second, implicit one */
     .ab-v2 .abm-list--bullets { grid-column: 1 / -1; }
+}
+
+/* ── Instagram feed (Behold) ────────────────
+   The widget draws its own grid; these only place it on the page and
+   set its width. Colours, columns and gaps are set in the Behold
+   dashboard, not here. */
+.ab-v2 .abm-gram {
+    padding-inline: var(--page-inset);
+    text-align: center;
+}
+
+.ab-v2 .abm-gram behold-widget {
+    display: block;
+    width: 100%;
+    margin-inline: auto;
+}
+
+/* the handle under the feed; also the whole section's content while the
+   feed id is still a placeholder, so the section is never just a heading */
+.ab-v2 .abm-gram__link {
+    display: inline-block;
+    margin-top: var(--space-lg);
+    font-family: var(--font-marker);   /* Plantin */
+    font-style: italic;
+    font-size: var(--fs-4);
+    color: var(--color-orange);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.ab-v2 .abm-gram__link:hover,
+.ab-v2 .abm-gram__link:focus-visible {
+    opacity: 0.75;
 }
