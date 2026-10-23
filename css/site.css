@@ -1,3 +1,10 @@
+/* Double Dash Creative - all site CSS in one file. Sections below were
+   separate files (styles, liquid-hero, hero-shrink, montage, cta-grow,
+   about-v2, projects-v2); the order is the cascade order, so keep it. */
+
+/* ======================================================================
+   css/styles.css
+   ====================================================================== */
 /* ============================================
     Double Dash Creative - Main Stylesheet
    ============================================ */
@@ -375,27 +382,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     height: auto;
     color: var(--color-orange);
 }
-
-/* Lottie Logo Styling */
-#lottie-logo {
-    width: 40px;
-    height: 53px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#lottie-logo svg {
-    width: 100%;
-    height: 100%;
-}
-
-/* Apply red color to Lottie animation paths */
-#lottie-logo svg path {
-    stroke: var(--color-orange) !important;
-    fill: var(--color-orange) !important;
-}
-
 
 .nav-links {
     display: flex;
@@ -3737,7 +3723,7 @@ html.liquid-hero-reduced .ab-hero__promise { grid-area: auto; opacity: 1; }
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: var(--space-sm);
+    margin: var(--space-sm);
 }
 
 .case-study-intro .cs-tags .tag {
@@ -3812,4 +3798,1176 @@ html.liquid-hero-reduced .ab-hero__promise { grid-area: auto; opacity: 1; }
         grid-template-columns: 1fr;
         gap: var(--space-lg);
     }
+}
+
+/* ======================================================================
+   css/liquid-hero.css
+   ====================================================================== */
+/* ============================================
+   LIQUID HERO - homepage gradient hero
+   ============================================ */
+
+/* The gradient canvas is fixed behind the whole page (see
+   .liquid-hero__bg). It fades out to the page ground as you scroll
+   toward the .hero-divider, so everything below reads as the light
+   page. This file loads after styles.css on the homepage, so it has to
+   name the same token rather than a raw colour - otherwise it quietly
+   overrides the ground for this one page. */
+body {
+    background-color: var(--page-bg);
+}
+
+/* (The page used to fade to brand orange on reaching the footer. The
+   footer paints its own solid orange now, so the ground stays black.) */
+
+
+/* Past the hero the gradient keeps animating but drops out of focus, so
+   it reads as ambient colour behind the work instead of competing with
+   it. The opacity drop is what keeps the page ink readable over it -
+   blur alone would still leave a dark ground under dark text. */
+@media (prefers-reduced-motion: reduce) {
+    .liquid-hero__bg { transition: none; }
+}
+
+
+.liquid-hero {
+    position: relative;
+    width: 100%;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* clip the horizontal spill of the oversized 3D logo canvas (it's
+       230% wide) so it never widens the page, but leave the vertical
+       axis visible so the logo can still drift up/down on scroll */
+    overflow-x: clip;
+    background: transparent;
+}
+
+/* Delayed / "pinned" scroll before the content below: the gradient
+   shrinks to the square during this hold (js/hero-shrink.js).
+   Armed on every device with motion on (phones too, so the scroll is the
+   same length as desktop) when <html> carries .has-hero-pin.
+   svh, not vh: the phone address bar showing/hiding would otherwise
+   change these heights mid-scroll. */
+.hero-pin {
+    position: relative;
+}
+
+.has-hero-pin .hero-pin {
+    height: 200vh;  /* 1 extra screen of hold; raise/lower to taste */
+    height: 200svh;
+}
+
+.has-hero-pin .hero-pin .liquid-hero {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+}
+
+/* WebGL gradient canvas - fixed to the viewport and pinned behind
+   every section. The page background shows it from the top down until
+   an opaque section (the .hero-divider onward) scrolls over it. */
+.liquid-hero__bg {
+    /* 0 = sharp hero, 1 = fully out of focus. initHeroBgFade() writes this
+       inline per scroll frame on the homepage. */
+    --amb: 0;
+
+    position: fixed;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+
+    /* All three read --amb, so they move together with the scroll. No
+       transition on purpose: the value already IS the scroll position, and
+       easing it would only make the blur lag behind the page.
+
+       The scale is there because a blur samples past the element's edges,
+       so an unscaled canvas shows a soft transparent band down all four
+       sides. Growing it with the blur keeps those edges off-screen. */
+    opacity: calc(1 - var(--amb) * 0.7);
+    filter: blur(calc(var(--amb) * 90px)) saturate(calc(1 + var(--amb) * 0.5));
+    transform: scale(calc(1 + var(--amb) * 0.5));
+}
+
+/* Pages with no hero start fully out of focus. The homepage writes an
+   inline --amb over the top of this. */
+.liquid-hero__bg.is-ambient { --amb: 1; }
+
+/* Centered brand mark.
+   The mark is a touch heavier on its right side, so a small left shift
+   optically centres it. (Value is % of the viewport - the old -11% was
+   left over from when the hero had a headline block beside the logo and
+   is far too much now.) */
+.liquid-hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+    /* translateX = optical centring. No vertical drop now that the
+       tagline is gone: the mark sits in the middle of the screen. */
+    transform: translate(-3%, 0);
+    /* Let the cursor drive the gradient through the mark. */
+    pointer-events: none;
+}
+
+/* Tagline on the background plane, behind the logo. Driven by
+   initHeroTagline() in main.js for the parallax + fade on scroll. */
+.liquid-hero__tagline {
+    position: absolute;
+    top: 16%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 1; /* above the gradient (0), below the logo (2) */
+    /* vw-based so the block keeps the same proportions / wrap across
+       desktop sizes; phones get a bump below.
+
+       The width is derived from the font size rather than set on its own,
+       so the measure stays a fixed number of ems however wide the screen
+       is - which is what decides where the lines break. --tag-measure is
+       that number: raise it if "Forging a Path Forward" wraps, lower it
+       to pull the lines closer together. */
+    --tag-font: 3.6vw;
+    --tag-measure: 10.8;
+    width: calc(var(--tag-font) * var(--tag-measure));
+    text-align: center;
+    text-wrap: balance;
+    font-family: var(--font-marker);
+    font-weight: 400;
+    font-size: var(--tag-font);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    text-transform: none; /* override the global h1-h4 uppercase */
+    color: var(--color-cream);
+    pointer-events: none; /* never intercept the cursor -> gradient/tilt effects */
+    will-change: transform, opacity;
+}
+
+/* "Brand Systems" and "Digital Designs" are no longer picked out: no
+   italic, no underline, no hover. The spans are left in the markup as a
+   hook in case they get a treatment again, and they deliberately carry
+   no pointer-events, so the cursor passes straight through to the liquid
+   gradient behind the tagline. */
+
+/* Heavier tail phrase. Plantin has a real bold, so this is the true
+   700 weight. */
+.liquid-hero__tagline .tagline-strong {
+    /* its own line, and never split across two */
+    display: block;
+    white-space: nowrap;
+    /* the tagline is pointer-events:none so the cursor reaches the
+       gradient; this phrase opts back in so its gif pop can fire */
+    pointer-events: auto;
+}
+
+/* The tagline sits at z-index 1, below the logo at 2, so its gif would
+   pop out behind the mark. Lift the whole layer only while it's hovered. */
+.liquid-hero__tagline:has(.gif-pop:hover) {
+    z-index: 5;
+}
+
+/* Band between the hero and the work section. Transparent - it sits on
+   the page-wide gradient background, which is still mostly liquid here. */
+.hero-divider {
+    /* one full screen tall, with the phrase centred in it. 100svh stops
+       the mobile address bar from changing the height */
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: clamp(6rem, 24vw, 19.5rem);
+    /* clip only sideways: the phrase is pinned mid-screen and must not
+       be cut off by the section's bottom edge as it scrolls away */
+    overflow-x: clip;
+    text-align: center;
+}
+
+/* the forced break only applies on phones, where the phrase is two lines */
+.hero-divider__br { display: none; }
+
+.hero-divider__text {
+    margin: 0;
+    white-space: nowrap;
+    font-family: var(--font-marker); /* Plantin */
+    /* Plantin has real bold and bold italic, so any weight here is the
+       true face, not a browser-made one */
+    font-style: italic;
+    /* tier 1 floor (~47px mobile / 120px desktop) but keeps growing
+       on ultra-wide screens so it still spans the band */
+    font-size: max(var(--fs-3), 4vw);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--color-orange); /* off-white #FAFAFF, the light text colour */
+    /* sits behind the spinning mark (z-index 2) */
+    position: relative;
+    z-index: 1;
+    /* --work-p (0 -> 1) is the blur, driven by the projects coming in;
+       --work-fade then fades it out. Both are written by initHeroBgFade() */
+    filter: blur(calc(var(--work-p, 0) * 24px));
+    opacity: calc(1 - var(--work-fade, 0));
+}
+
+/* Holds the three.js <canvas> (the extruded 3D logo) and the flat
+   <img>, which shows until the 3D build is ready and as the
+   no-WebGL fallback. */
+.liquid-hero__mark-tilt {
+    position: relative;
+    /* moves the mark right by the same amount as PIVOT_OFFSET_X (15 of the
+       209 SVG units across the mark, about 7.2% of its width) */
+    translate: 6.4% 0;
+    /* blurs with the divider phrase as the projects come in, then fades */
+    filter: blur(calc(var(--work-p, 0) * 24px));
+    opacity: calc(1 - var(--work-fade, 0));
+    width: clamp(300px, 56vw, 760px);
+    aspect-ratio: 209 / 140;
+}
+
+/* The canvas is drawn larger than the logo box so the model never
+   clips against the canvas edge as it tilts/spins. Kept in sync with
+   CANVAS_OVERSCAN in js/logo-3d.js. */
+.liquid-hero__mark-tilt canvas {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 230% !important;
+    height: 230% !important;
+    transform: translate(-50%, -50%);
+    display: block;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    /* the oversized canvas overlaps siblings once the hero drops its
+       overflow clip - cursor logic lives on window, so it needs no hits */
+    pointer-events: none;
+}
+
+.liquid-hero__mark {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 0.6s ease;
+    /* Full size at the top, like the 3D logo; js/logo-3d.js shrinks it
+       with the gradient square (heroScale). */
+    transform: scale(1);
+}
+
+.liquid-hero__mark-tilt.is-3d canvas { opacity: 1; }
+.liquid-hero__mark-tilt.is-3d .liquid-hero__mark { opacity: 0; }
+
+/* ------------------------------------------------------------------
+   Tablet + phone. The desktop's absolute layout doesn't hold on these
+   aspect ratios, so rebuild the tagline-over-logo stack as a centred
+   column. These blocks are LAST in the file on purpose - they must
+   win over the unscoped .liquid-hero__mark* rules above.
+   Note: the logo SIZE bump is phones-only (<=640); tablet keeps the
+   desktop mark size.
+   ------------------------------------------------------------------ */
+@media (max-width: 1024px) {
+    .liquid-hero {
+        flex-direction: column;
+        justify-content: center;
+        gap: 0;
+        padding: 13vh var(--space-md);
+    }
+
+    .liquid-hero__tagline {
+        position: static;
+        margin: 0 0 -2vh;
+        width: 72vw;
+        font-size: max(5.2vw, 1.9rem);
+    }
+
+    .liquid-hero__content {
+        transform: translate(-3%, 0);
+        padding: var(--space-sm);
+    }
+}
+
+/* Phones: let the mark run edge to edge (and past, clipped) so it
+   dominates the hero. Keep in sync with logo-3d.js SMALL_SCREEN. */
+@media (max-width: 640px) {
+    /* the wider phone mark needs less of the desktop left nudge to read as
+       centred; this is the value to tune */
+    .liquid-hero__content {
+        transform: translate(-1%, 0);
+    }
+
+    /* on phones the opening line stays in the centred stack above the mark,
+       so the two start together in the middle of the screen */
+    .liquid-hero__tagline {
+        width: 88vw;
+        font-size: max(9vw, 2.1rem);
+    }
+
+    /* the phrase is wider than the phone measure, so let it wrap again */
+    .liquid-hero__tagline .tagline-strong {
+        display: inline;
+        white-space: normal;
+    }
+
+    .liquid-hero__mark-tilt {
+        width: 130vw;
+        /* less than desktop: the phone mark is much wider. Tuned so the
+           mark's body sits on the screen centre (was 4.6%, which left it
+           ~2.3% of the screen right of centre) */
+        translate: 2.35% 0;
+    }
+
+    .liquid-hero__mark {
+        transform: scale(1);   /* full size at the top, as on desktop */
+    }
+
+    /* Same full-screen band as desktop (was 40svh + 25svh margin, which
+       made the phone scroll much shorter). The phrase itself is fixed
+       mid-screen now, so this is just scroll space. */
+    .hero-divider {
+        /* the side padding meant for desktop left ~200px for the phrase;
+           give it the page gutter instead */
+        padding-inline: var(--space-md);
+    }
+
+    /* bigger on phones, set on two lines ("For Dreamers" / "& Daredevils"),
+       and behind the mark (z-index 1), so the logo ends up above it */
+    .hero-divider__text {
+        text-align: center;
+        font-size: var(--fs-1);
+        white-space: normal;
+        z-index: 1;
+    }
+
+    .hero-divider__br { display: inline; }
+}
+
+.liquid-hero__footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    padding: 0 var(--space-lg) var(--space-lg);
+    pointer-events: none;
+}
+
+.liquid-hero__footer a,
+.liquid-hero__footer button {
+    pointer-events: auto;
+}
+
+/* Reduce-motion toggle */
+
+/* Reduce motion: the divider phrase sits up under the mark instead of
+   mid-screen. The mark keeps its usual start position. Placed last so it
+   wins over the breakpoint rules above. */
+@media (prefers-reduced-motion: reduce) {
+    .hero-divider {
+        height: auto;
+        align-items: flex-start;
+        padding-top: 4vh;
+        padding-bottom: 12vh;
+    }
+}
+
+html.liquid-hero-reduced .hero-divider {
+    height: auto;
+    align-items: flex-start;
+    padding-top: 4vh;
+    padding-bottom: 12vh;
+}
+
+/* ------------------------------------------------------------------
+   Intro line, bottom-left of the hero: what I do, in one sentence.
+   It is the page's h1. Sits on the same left edge as the nav logo,
+   above the gradient and the "For Dreamers" phrase, and scrolls away
+   with the hero.
+   ------------------------------------------------------------------ */
+.liquid-hero__intro {
+    position: absolute;
+    left: var(--page-inset);
+    bottom: var(--page-inset);
+    z-index: 3;
+    max-width: 17em;
+    margin: 0;
+    font-family: var(--font-marker);   /* Plantin */
+    font-weight: 400;
+    font-size: var(--fs-4);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-transform: none;   /* override the global h1 uppercase */
+    text-wrap: balance;
+    color: var(--color-cream);
+}
+
+/* the tail phrase keeps its synthetic bold and its hover gif */
+.liquid-hero__intro .tagline-strong {
+    text-decoration: underline;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .liquid-hero__intro {
+        left: var(--space-md);
+        right: var(--space-md);
+        bottom: var(--space-md);
+    }
+}
+
+/* ======================================================================
+   css/hero-shrink.css
+   ====================================================================== */
+/* ============================================
+   HERO SHRINK - the gradient background
+   pulls in from the screen edges into a centred
+   square as the hero is held, then the square
+   scrolls up and off the screen with the page.
+
+   js/hero-shrink.js writes these on .hero-frame
+   every scroll frame:
+     --inset-x / --inset-top / --inset-bottom  px cut from each side
+     --shrink               0 -> 1 progress
+     --lift                 px scrolled up after
+   ============================================ */
+
+.hero-frame {
+    /* the value to tune: the square's side as a fraction of the screen's
+       shorter side (read by the js). 0.45 on a 1440x900 screen = 405px.
+       The logo ends at 80% of this (LOGO_IN_SQUARE in js/logo-3d.js) */
+    --frame-square: 0.45;
+    /* how much the gradient itself shrinks inside the card */
+    --frame-scale: 0.12;
+
+    --inset-x: 0;
+    --inset-top: 0;
+    --inset-bottom: 0;
+    --shrink: 0;
+    --lift: 0;
+
+    /* takes over the canvas's old fixed, behind-everything slot */
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+
+    /* clip-path, not width/height: the canvas never resizes, so the
+       WebGL buffer is never rebuilt mid-scroll */
+    clip-path: inset(
+        calc(var(--inset-top) * 1px)
+        calc(var(--inset-x) * 1px)
+        calc(var(--inset-bottom) * 1px)
+    );
+    transform: translate3d(0, calc(var(--lift) * -1px), 0);
+}
+
+/* The canvas now lives inside the frame, so it fills the frame instead
+   of being fixed to the viewport itself. */
+.hero-frame .liquid-hero__bg {
+    position: absolute;
+    z-index: auto;
+}
+
+/* While the effect is on (js adds .is-active), the card stays sharp and
+   shrinks with the frame. The old blur-out behind the work is dropped:
+   the square has already scrolled away by then. */
+.hero-frame.is-active .liquid-hero__bg {
+    opacity: 1;
+    filter: none;
+    transform: scale(calc(1 - var(--shrink) * var(--frame-scale)));
+}
+
+/* (The topographic lines' styles, .topo-bg, moved to css/styles.css -
+   every page has them now.) */
+
+/* "For Dreamers & Daredevils." - fixed mid-screen, layered between the
+   topo lines (-3) and the gradient (-1). The full-screen gradient hides
+   it at first; as the square shrinks it shows around the edges, and once
+   the square has left it is there on its own until the projects come in
+   (the blur + fade from --work-p / --work-fade in liquid-hero.css).
+
+   Its .hero-divider section stays in the page as empty scroll space.
+
+   js/hero-shrink.js sets the font size so the line spans the screen
+   width. On phones the <br> splits it into two lines, each sized to
+   span the width. */
+.hero-divider__text {
+    /* difference blend: the phrase inverts whatever it sits over, so it
+       cuts through the montage square and reads as orange on the black
+       page either side of it */
+    mix-blend-mode: difference;
+
+    position: fixed;
+    /* centred on the hero's height (100svh), like the square and logo,
+       so it stays lined up on phones when the address bar hides */
+    top: 50vh;
+    top: 50svh;
+    left: 50%;
+    translate: -50% -50%;
+    width: max-content;
+    z-index: -2;
+    margin: 0;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 12vw;   /* fallback until the script has measured it */
+    line-height: 0.95;
+    pointer-events: none;
+}
+
+/* Homepage project cards: an orange cover over the image frame while it
+   stretches in, swiping away left to right once the card settles in the
+   middle of the screen. js/hero-shrink.js puts .card-reveal on <html>
+   (only with motion on) and .is-revealed on each frame when it settles. */
+.card-reveal .page-home .work-card__frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;   /* above the image, the hover image and the video */
+    background: var(--color-orange);
+    pointer-events: none;
+    /* anchored right, so shrinking it uncovers the image from the left */
+    transform-origin: 100% 50%;
+    transform: scaleX(1);
+    /* swipe speed (was 0.9s) */
+    transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.card-reveal .page-home .work-card__frame.is-revealed::after {
+    transform: scaleX(0);
+}
+
+/* Homepage project cards stack: each card holds in the middle of the
+   screen while the next one slides up over it (the one underneath blurs,
+   dims and shrinks a touch - js/hero-shrink.js, stackCards). Only with
+   motion on (.card-reveal); otherwise they scroll as a normal list.
+
+   The cards arrive two to a .work-row; display: contents dissolves the
+   rows so all the cards share one parent and stack as one pile. The row
+   gap is the same as the grid's, so the spacing does not change. */
+.card-reveal .page-home .work-scatter--squish .work-row {
+    display: contents;
+}
+
+/* Scroll space between stacked cards: how long each one holds, sharp and
+   on its own, before the next appears at the bottom and the blur starts.
+   (The grid's own gap is ~6rem, which made them blur almost at once.) */
+.card-reveal .page-home .work-scatter--squish {
+    row-gap: 45vh;
+    row-gap: 45svh;
+}
+
+.card-reveal .page-home .work-scatter--squish .work-card {
+    position: sticky;
+    /* --stack-top centres the card on the screen; set per card by the js */
+    top: var(--stack-top, 15vh);
+}
+
+/* Reduced motion: no shrink. js/hero-shrink.js keeps the gradient full
+   screen and lets it scroll away with the hero, so the page below matches
+   the full version (black + still topo lines). */
+
+/* ======================================================================
+   css/montage.css
+   ====================================================================== */
+/* ============================================
+   MONTAGE - a square of work behind the
+   "For Dreamers & Daredevils" phrase.
+
+   Same size and place as the gradient square the
+   hero shrinks into, so once that square lifts
+   away this one takes over the space.
+
+   Layering, from the back: topo lines and this
+   square both sit at -3, and this comes after
+   them in the markup, so it paints over the
+   lines; the phrase is at -2, above it; the
+   gradient frame is at -1, above that.
+
+   js/montage.js swaps the picture every half
+   second and writes --montage-in as it fades up.
+   ============================================ */
+
+.montage {
+    /* keep in sync with --frame-square in css/hero-shrink.css */
+    --montage-square: 0.45;
+
+    position: fixed;
+    /* centred on the hero's height, exactly like the phrase in front of
+       it, so the two line up however tall the screen is */
+    top: 50vh;
+    top: 50svh;
+    left: 50%;
+    translate: -50% -50%;
+    width: calc(min(100vw, 100svh) * var(--montage-square));
+    aspect-ratio: 1;
+    z-index: -3;
+    overflow: hidden;
+    pointer-events: none;
+
+    /* --montage-in fades it up once the gradient square has gone;
+       --work-fade takes it away again as the projects arrive, the same
+       value the phrase in front of it uses */
+    opacity: calc(var(--montage-in, 0) * (1 - var(--work-fade, 0)));
+    /* and it blurs out with the phrase */
+    filter: blur(calc(var(--work-p, 0) * 24px));
+}
+
+.montage__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Reduced motion: no cycling (js/montage.js leaves a single still), and
+   no square at all if the script never runs. */
+@media (prefers-reduced-motion: reduce) {
+    .montage { opacity: calc(var(--montage-in, 0) * (1 - var(--work-fade, 0))); }
+}
+
+/* ======================================================================
+   css/cta-grow.css
+   ====================================================================== */
+/* ============================================
+   CTA GROW - the hero's shrink in reverse
+   for "Ready to Rock & Roll?".
+
+   The stage is held for 1.4 screens of scroll
+   (.cta-pin is 2.4 screens tall, the stage is
+   sticky). js/cta-grow.js grows the liquid box
+   from a small centred square out to near full
+   screen, leaving a margin on every side, brings
+   the CTA in on top of it, then rests on the
+   finished CTA before the section lets go.
+
+   js writes on .cta-frame: --it / --ix / --ib,
+   the px cut from the top, sides and bottom.
+   ============================================ */
+
+.cta-pin {
+    position: relative;
+    height: 240vh;   /* 1.4 screens of hold: grow, then a rest on the finished CTA */
+    height: 240svh;
+}
+
+.cta-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+.cta-frame {
+    --it: 0;
+    --ix: 0;
+    --ib: 0;
+    position: absolute;
+    inset: 0;
+    clip-path: inset(
+        calc(var(--it) * 1px)
+        calc(var(--ix) * 1px)
+        calc(var(--ib) * 1px)
+    );
+}
+
+.cta-liquid {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* The CTA sits centred on the box, in off-white so it reads on the
+   gradient. Its opacity is set by the js as the box fills out. */
+.cta-stage .cta-band {
+    position: relative;
+    z-index: 1;
+    align-items: center;
+    text-align: center;
+    padding: 0 var(--container-padding);
+}
+
+.cta-stage .cta-band__link { align-self: center; }
+
+.cta-stage .cta-band__heading,
+.cta-stage .cta-band__link {
+    color: var(--color-cream);
+}
+
+/* Reduced motion: no hold and no grow - the box is simply full size */
+@media (prefers-reduced-motion: reduce) {
+    /* .ab-hero named too: its own height rule below is the more specific
+       of the two, so .cta-pin alone would not beat it here */
+    .cta-pin,
+    .cta-pin.ab-hero { height: auto; }
+    .cta-stage { position: relative; }
+}
+
+/* The About opener runs this in reverse and ends on "That's the promise.",
+   so it wants less hold than the CTA at the foot of a page: the line had
+   half a screen of dead scroll after it landed. */
+.cta-pin.ab-hero {
+    height: 190vh;
+    height: 190svh;
+}
+
+html.liquid-hero-reduced .cta-pin { height: auto; }
+html.liquid-hero-reduced .cta-stage { position: relative; }
+
+/* Projects page: pull the CTA pin up by the empty stage above its
+   starting square, so the square opens just under the last card.
+   The square starts at 45vmin (START_SQUARE in js/cta-grow.js),
+   centred in a 100svh stage, so the empty band above it is
+   (100svh - 45vmin) / 2. Motion only: with reduced motion the box
+   is full size from the start and would sit on top of the cards. */
+@media (prefers-reduced-motion: no-preference) {
+    html:not(.liquid-hero-reduced) .page-projects .cta-pin {
+        margin-top: calc((45vmin - 100svh) / 2);
+    }
+
+    /* The see-through stage now overlaps the bottom of the last card;
+       let clicks pass through to it. The link keeps its own, for the
+       click and the hover that sets the gradient going. */
+    html:not(.liquid-hero-reduced) .page-projects .cta-stage {
+        pointer-events: none;
+    }
+
+    html:not(.liquid-hero-reduced) .page-projects .cta-band__link {
+        pointer-events: auto;
+    }
+}
+
+/* ======================================================================
+   css/about-v2.css
+   ====================================================================== */
+/* ============================================
+   ABOUT v2 - laid out after
+   mondaynights.co/about. Scoped to body.ab-v2.
+
+   A quiet four-column grid, small type and a lot
+   of air: label | content | label | content.
+   The opening liquid box stays as it is.
+   ============================================ */
+
+.ab-v2 {
+    --abm-gap: clamp(1rem, 2.2vw, 2.25rem);       /* between columns */
+    --abm-space: clamp(5rem, 10vw, 10rem);        /* between sections */
+}
+
+/* ── opening statement ─────────────────────────
+   One display line above the liquid box, set like the other page
+   titles. The top padding clears the fixed navbar. */
+.ab-v2 .abm-opener {
+    padding: calc(var(--space-4xl) + var(--space-lg)) var(--page-inset) clamp(3rem, 7vw, 6rem);
+}
+
+.ab-v2 .abm-opener__line {
+    margin: 0;
+    font-family: var(--font-marker);
+    font-style: italic;
+    font-weight: 400;
+    font-size: var(--fs-1);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+    color: var(--page-ink);
+}
+
+/* ── the shared grid ───────────────────────── */
+.ab-v2 .abm-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--abm-gap);
+    row-gap: var(--space-xl);
+    padding-inline: var(--page-inset);
+    align-items: start;
+}
+
+.ab-v2 .abm-band,
+.ab-v2 .abm-section {
+    padding-block: var(--abm-space) 0;
+}
+
+/* Small section labels, the reference's quiet headings */
+.ab-v2 .abm-label {
+    margin: 0;
+    font-family: var(--font-marker);   /* Plantin */
+    font-weight: 400;
+    font-size: var(--fs-4);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-transform: none;              /* beat the global h1-h4 rule */
+    color: var(--page-ink);
+}
+
+/* ── Skills band ───────────────────────────── */
+/* A full-bleed indigo band, so the skills read as their own block
+   rather than more text on the black page. The page ink (cream) sits
+   on indigo at about 11:1, so it stays easily readable. */
+.ab-v2 .abm-band {
+    background-color: var(--color-blue);   /* indigo #2E2B8A */
+    margin-top: var(--abm-space);
+    padding-block: var(--abm-space);
+}
+
+.ab-v2 .abm-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--fs-5);
+    line-height: 1.5;
+}
+
+/* Skills: bullets, run down up to three columns across the rest of the
+   row (fewer once a column would drop below 12rem) */
+.ab-v2 .abm-list--bullets {
+    grid-column: 2 / -1;
+    list-style: disc;
+    padding-left: 1.1em;
+    columns: 3 12rem;
+    column-gap: var(--abm-gap);
+}
+
+.ab-v2 .abm-list--bullets li {
+    break-inside: avoid;
+    padding-left: 0.2em;
+}
+
+.ab-v2 .abm-list--bullets li::marker { color: var(--color-orange); }
+
+.ab-v2 .abm-list a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: rgba(250, 250, 255, 0.4);
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.ab-v2 .abm-list a:hover {
+    color: var(--color-orange);
+    text-decoration-color: currentColor;
+}
+
+/* ── centred statement ─────────────────────── */
+.ab-v2 .abm-statement {
+    padding: var(--abm-space) var(--page-inset) 0;
+    text-align: center;
+}
+
+.ab-v2 .abm-statement p {
+    margin: 0 auto;
+    max-width: 22em;
+    font-family: var(--font-marker);
+    font-style: italic;
+    font-weight: 400;
+    font-size: var(--fs-2);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+}
+
+/* ── wide label left, its content on the right ── */
+.ab-v2 .abm-label--wide {
+    grid-column: 1 / 3;
+}
+
+/* plain stack of paragraphs. Left half of the row: no label sits beside
+   them any more, and the full four columns would run the lines too long
+   to read comfortably. */
+.ab-v2 .abm-paras {
+    grid-column: 1 / 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.ab-v2 .abm-paras p,
+.ab-v2 .abm-bio p {
+    margin: 0;
+    font-size: var(--fs-5);
+    line-height: 1.5;
+}
+
+/* ── Get to Know Me: photo card | bio ──────── */
+.ab-v2 .abm-me .abm-label--wide { grid-row: 1; }
+
+.ab-v2 .abm-person {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+}
+
+.ab-v2 .abm-person img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+}
+
+.ab-v2 .abm-person figcaption {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: var(--space-sm);
+    text-align: center;
+}
+
+.ab-v2 .abm-person__name {
+    font-family: var(--font-marker);
+    font-size: var(--fs-5);
+}
+
+/* the role in a rounded outline, like the reference */
+.ab-v2 .abm-pill {
+    display: inline-block;
+    padding: 0.35em 0.9em;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: var(--fs-6);
+    line-height: 1;
+}
+
+.ab-v2 .abm-bio {
+    grid-column: 3 / 5;
+    grid-row: 1 / 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+/* ── Explore more work ── */
+.ab-v2 .abm-more {
+    padding-bottom: var(--abm-space);
+}
+
+/* The cards, title and column count come from the shared .abm-more /
+   .abm-cards rules (same as the case studies), so both pages match. */
+
+/* ── narrower screens ──────────────────────── */
+@media (max-width: 1000px) {
+    .ab-v2 .abm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ab-v2 .abm-label--wide,
+    .ab-v2 .abm-paras,
+    .ab-v2 .abm-bio { grid-column: 1 / -1; }
+    .ab-v2 .abm-me .abm-label--wide { grid-row: auto; }
+    .ab-v2 .abm-person { grid-row: auto; }
+    .ab-v2 .abm-bio { grid-row: auto; }
+}
+
+@media (max-width: 560px) {
+    .ab-v2 .abm-grid { grid-template-columns: 1fr; }
+    .ab-v2 .abm-person { max-width: 22rem; }
+    /* one column: 2 / -1 would invent a second, implicit one */
+    .ab-v2 .abm-list--bullets { grid-column: 1 / -1; }
+}
+
+/* ── Instagram feed (Behold) ────────────────
+   The widget draws its own grid; these only place it on the page and
+   set its width. Colours, columns and gaps are set in the Behold
+   dashboard, not here. */
+.ab-v2 .abm-insta {
+    padding-bottom: var(--abm-space);
+    text-align: center;
+}
+
+.ab-v2 .abm-insta__title {
+    margin: 0 0 var(--space-2xl);
+    text-align: center;
+    font-family: var(--font-marker);   /* Plantin, same as Explore more work */
+    font-weight: 400;
+    font-size: var(--fs-3);
+    text-transform: none;              /* beat the global h1-h4 rule */
+}
+
+.ab-v2 .abm-insta__embed {
+    padding-inline: var(--page-inset);
+}
+
+.ab-v2 .abm-insta__embed > div,
+.ab-v2 .abm-insta__embed behold-widget {
+    display: block;
+    width: 100%;
+    margin-inline: auto;
+}
+
+/* the handle under the feed */
+.ab-v2 .abm-insta__link {
+    display: inline-block;
+    margin-top: var(--space-lg);
+    font-family: var(--font-marker);   /* Plantin */
+    font-style: italic;
+    font-size: var(--fs-4);
+    color: var(--color-orange);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.ab-v2 .abm-insta__link:hover,
+.ab-v2 .abm-insta__link:focus-visible {
+    opacity: 0.75;
+}
+
+/* ======================================================================
+   css/projects-v2.css
+   ====================================================================== */
+/* ============================================
+   PROJECTS v2 - brings the Projects page
+   closer to the homepage, with light motion only.
+   Everything is scoped to body.pj-v2.
+
+   A. Opener: the statement spans the screen and
+      gets most of the first screen to itself.
+   B. Grid: full width, two columns with one even
+      spacing value (--pj-gap); the right column
+      sits half a card lower.
+   C. Titles bigger, in an even stack under the
+      image (no overlap), labels orange.
+   D. One quiet fade-and-rise as each card enters
+      (js/projects-v2.js). Nothing else moves.
+   ============================================ */
+
+/* ── Page width ────────────────────────────── */
+/* Full width, like the rest of the site: the statement and the grid run
+   edge to edge inside the usual --page-inset gutter. */
+
+/* ── A. Opener ─────────────────────────────── */
+.pj-v2 .page-header {
+    /* most of the first screen, the statement sitting a little above the
+       middle, so the first row of work peeks in at the bottom */
+    min-height: 78vh;
+    min-height: 78svh;
+    display: flex;
+    align-items: center;
+    padding-top: 110px;   /* clear of the nav */
+    padding-bottom: 0;
+}
+
+.pj-v2 .page-header > .container { width: 100%; }
+
+.pj-v2 .pj-statement {
+    max-width: none;
+    margin: 0;
+    /* js/projects-v2.js sizes it so the line spans the screen; this is the
+       size before it measures, and the size on phones, where it wraps */
+    font-size: var(--fs-1);
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+}
+
+@media (min-width: 761px) {
+    .pj-v2 .pj-statement { white-space: nowrap; }
+}
+
+/* ── B. Even grid ──────────────────────────── */
+/* One spacing value for the whole grid: the gap between the two columns
+   and the gap from one row's labels to the next row's images are the
+   same --pj-gap, so the spacing reads consistent in both directions. */
+.pj-v2 {
+    --pj-gap: clamp(1.5rem, 3.5vw, 3.5rem);       /* between the two columns */
+    --pj-row-gap: clamp(4rem, 8vw, 9rem);         /* between projects, top to bottom */
+}
+
+.pj-v2 .work-scatter--squish {
+    --col-gap: var(--pj-gap);   /* the rows read this for their column gap */
+    row-gap: var(--pj-row-gap);
+}
+
+.pj-v2 .work-scatter--squish .work-row {
+    row-gap: var(--pj-row-gap); /* used when a row stacks on phones */
+}
+
+/* Every card the same height, so the vertical gap never varies: the
+   description always takes exactly two lines (shorter ones keep the
+   space, longer ones end in an ellipsis). */
+.pj-v2 .work-card__desc {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    min-height: calc(2em * 1.35);   /* two lines at its 1.35 line height */
+}
+
+@media (min-width: 761px) {
+    /* a set shape, so every image is the same size at any width.
+       3:2 landscape (was 5:4, which read too tall) */
+    .pj-v2 .work-scatter--squish .work-card__frame {
+        height: auto;
+        aspect-ratio: 3 / 2;
+    }
+
+    /* The right column sits half a card lower. `translate` is a share of
+       the card's own height, and it moves the whole column without
+       touching the gaps, so the spacing inside each column stays even.
+       It also leaves `transform` free for the reveal. */
+    .pj-v2 .work-scatter--squish .work-row > .work-card:nth-child(2) {
+        translate: 0 50%;
+    }
+
+    /* room under the grid for the last right card's overhang: half a
+       card = half of (a column's width x 2/3 for the 3:2 image) plus
+       roughly half the title/description/labels under it */
+    .pj-v2 .work-scatter--squish {
+        padding-bottom: calc(
+            (100vw - var(--page-inset) * 2 - var(--pj-gap)) / 2 / 3 + 5rem
+        );
+    }
+}
+
+/* ── C. Titles + labels ────────────────────── */
+/* Title, description and labels sit in an even stack under the image -
+   nothing overlaps it, so every card lines up the same way. */
+.pj-v2 .work-card__meta {
+    margin-top: var(--space-md);
+    padding-top: 0;
+    gap: 0.6rem;
+}
+
+/* One shared size for every title: fitTitles() in js/sanity-cards.js
+   sets --title-size so the longest name fits its card on one line; it is
+   capped at --fs-3 (~28-44px) so short names do not balloon. */
+.pj-v2 .work-card__title {
+    font-size: min(var(--title-size, var(--fs-3)), var(--fs-3));
+    white-space: nowrap;
+    color: var(--page-ink);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    /* trimmed to cap height so the gap to the image above is exactly the
+       meta's margin, not that plus the font's built-in leading */
+    text-box: trim-both cap alphabetic;
+}
+
+.pj-v2 .tag {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+}
+
+/* ── D. Orange swipe reveal ────────────────── */
+/* The cards now use the site's orange swipe (see "Orange swipe reveal"
+   in css/styles.css, armed by data-reveal on the grid in projects.html)
+   instead of the quiet fade-and-rise this page used to have. Quicker
+   here than elsewhere: this page is a long column of cards, and a slow
+   swipe on each one adds up. */
+.pj-v2 {
+    --card-reveal-time: 0.28s;
 }

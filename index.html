@@ -28,14 +28,7 @@
 
     <!-- Plantin (Adobe Fonts): the display serif, used as font-marker in styles.css -->
     <link rel="stylesheet" href="https://use.typekit.net/bzi8cqp.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/liquid-hero.css">
-    <!-- hero gradient shrinks to a square on scroll + topo lines behind it -->
-    <link rel="stylesheet" href="css/hero-shrink.css">
-    <!-- montage square behind the "For Dreamers" phrase -->
-    <link rel="stylesheet" href="css/montage.css">
-    <!-- CTA gradient box grows from a square to near full screen -->
-    <link rel="stylesheet" href="css/cta-grow.css">
+    <link rel="stylesheet" href="css/site.css">
     <link rel="icon" href="assets/favicon.ico" sizes="any">
     <script>document.documentElement.classList.add("is-loading");</script>
     <!-- Apply the saved motion setting before anything paints, so a
@@ -219,14 +212,14 @@
       </footer>
     </div>
 
-    <script src="js/liquid-hero.js" defer></script>
-    <script src="js/main.js"></script>
-    <script src="js/portfolio-video.js"></script>
-    <script src="js/sanity-cards.js"></script>
-    <script src="js/hero-shrink.js"></script>
-    <script src="js/topo-bg.js"></script>
-    <script src="js/montage.js"></script>
-    <script src="js/cta-grow.js"></script>
+    <script src="js/site.js" defer></script>
+    
+    
+    
+    
+    
+    
+    
 
     <!-- 3D extruded logo (three.js) -->
     <script type="importmap">
@@ -237,7 +230,16 @@
       }
     }
     </script>
-    <script type="module" src="js/logo-3d.js"></script>
+    <script>
+    /* three.js (~700 KB) is a progressive enhancement: the flat logo shows
+       until the 3D build is ready, so fetch it only once the page has loaded
+       and the browser is idle. */
+    window.addEventListener('load', function () {
+        var go = function () { import('./js/logo-3d.js').catch(function () {}); };
+        if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 2000 });
+        else setTimeout(go, 200);
+    });
+    </script>
 
 </body>
 
