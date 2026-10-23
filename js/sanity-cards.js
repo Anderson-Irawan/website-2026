@@ -19,25 +19,30 @@
    the homepage" in the Studio. That is the only difference between the
    two pages.
    ============================================ */
-/* Editing locally? Use the uncached API so a publish shows on the next
-   refresh. In production use the CDN, which is faster and far cheaper
-   but holds a 60 second cache - fine for visitors, maddening when you
-   are iterating on copy. */
-const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
-    ? 'api.sanity.io'
-    : 'apicdn.sanity.io';
-
-/* Clean case study urls are produced by .htaccess plus case.php, and a
-   local dev server has neither. Anything that is not the live host gets
-   the template with a query string instead, which the case study
-   renderer still understands. That keeps Live Server, a phone on the
-   LAN and a bare file:// preview all working. */
-function caseUrl(slug) {
-    const live = /(^|\.)doubledashcreative\.com$/.test(location.hostname);
-    return live ? '/work/' + slug : 'case-study.html?p=' + slug;
-}
-
+/* Everything lives inside the closure below. js/projects.js declares its
+   own SANITY_HOST and caseUrl at the top level, and the case study pages
+   load both files: two top-level `const SANITY_HOST` declarations in one
+   page is a syntax error that stops whichever script loads second, which
+   is how the case study grid came up empty. */
 (function () {
+    /* Editing locally? Use the uncached API so a publish shows on the
+       next refresh. In production use the CDN, which is faster and far
+       cheaper but holds a 60 second cache - fine for visitors, maddening
+       when you are iterating on copy. */
+    const SANITY_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+        ? 'api.sanity.io'
+        : 'apicdn.sanity.io';
+
+    /* Clean case study urls are produced by .htaccess plus case.php, and
+       a local dev server has neither. Anything that is not the live host
+       gets the template with a query string instead, which the case
+       study renderer still understands. That keeps Live Server, a phone
+       on the LAN and a bare file:// preview all working. */
+    function caseUrl(slug) {
+        const live = /(^|\.)doubledashcreative\.com$/.test(location.hostname);
+        return live ? '/work/' + slug : 'case-study.html?p=' + slug;
+    }
+
     const SANITY = {
         projectId: '7z9npbl2',
         dataset: 'production',
@@ -52,6 +57,20 @@ function caseUrl(slug) {
        shows: [data-featured-only] limits it to the ones ticked "Show on
        the homepage" in the Studio. */
     const FEATURED_ONLY = scatter.hasAttribute('data-featured-only');
+    /* [data-random]: shuffle before the limit is applied, so a grid with
+       data-limit shows a different handful on every visit. */
+    const RANDOM = scatter.hasAttribute('data-random');
+    /* [data-exclude-current] (the case studies): drop the project being
+       viewed, so "more work" never offers the page you are already on.
+       Same slug rule as js/projects.js: /work/<slug> is the real url,
+       ?p=<slug> still works anywhere the rewrite is not in play. */
+    const EXCLUDE_CURRENT = scatter.hasAttribute('data-exclude-current');
+
+    function currentSlug() {
+        const fromPath = (location.pathname.match(/\/work\/([^\/.]+)/) || [])[1] || '';
+        return (fromPath ||
+            new URLSearchParams(location.search).get('p') || '').toLowerCase();
+    }
     const LIMIT = scatter.getAttribute('data-limit') ? parseInt(scatter.getAttribute('data-limit'), 10) : null;
     /* [data-descriptions] (the projects page) puts a short line under each
        title: the "Short description" field in the Studio, or the first
@@ -223,6 +242,22 @@ function caseUrl(slug) {
                the attribute, so the projects page always shows everything. */
             if (FEATURED_ONLY) {
                 projects = projects.filter(function (p) { return p.featured; });
+            }
+            if (EXCLUDE_CURRENT) {
+                const here = currentSlug();
+                if (here) {
+                    projects = projects.filter(function (p) {
+                        return String(p.slug).toLowerCase() !== here;
+                    });
+                }
+            }
+            /* Shuffle first, so the limit below takes a random handful
+               rather than always the same first few. Fisher-Yates. */
+            if (RANDOM) {
+                for (let i = projects.length - 1; i > 0; i--) {
+                    const j2 = Math.floor(Math.random() * (i + 1));
+                    [projects[i], projects[j2]] = [projects[j2], projects[i]];
+                }
             }
             /* Limit number of projects if data-limit is set */
             if (LIMIT && projects.length > LIMIT) {
