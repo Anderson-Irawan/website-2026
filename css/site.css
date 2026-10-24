@@ -4011,10 +4011,14 @@ body {
     /* sits behind the spinning mark (z-index 2) */
     position: relative;
     z-index: 1;
-    /* --work-p (0 -> 1) is the blur, driven by the projects coming in;
-       --work-fade then fades it out. Both are written by initHeroBgFade() */
-    filter: blur(calc(var(--work-p, 0) * 24px));
+    /* --work-fade (0 -> 1, written by initHeroBgFade()) fades it out as the
+       projects come in, and it recedes 6% as it goes - the same amount the
+       stacked cards shrink by, so it reads as the first card of the same
+       deck. No blur: the phrase carries mix-blend-mode, and a filter on a
+       blended layer is re-rendered and re-blended every frame. Both
+       properties here are compositor-only. */
     opacity: calc(1 - var(--work-fade, 0));
+    scale: calc(1 - var(--work-fade, 0) * 0.06);
 }
 
 /* Holds the three.js <canvas> (the extruded 3D logo) and the flat
@@ -4296,7 +4300,7 @@ html.liquid-hero-reduced .hero-divider {
    topo lines (-3) and the gradient (-1). The full-screen gradient hides
    it at first; as the square shrinks it shows around the edges, and once
    the square has left it is there on its own until the projects come in
-   (the blur + fade from --work-p / --work-fade in liquid-hero.css).
+   (the fade + recede from --work-fade, in the rule further up).
 
    Its .hero-divider section stays in the page as empty scroll space.
 
@@ -4417,11 +4421,10 @@ html.liquid-hero-reduced .hero-divider {
     pointer-events: none;
 
     /* --montage-in fades it up once the gradient square has gone;
-       --work-fade takes it away again as the projects arrive, the same
-       value the phrase in front of it uses */
-    opacity: calc(var(--montage-in, 0) * (1 - var(--work-fade, 0)));
-    /* and it blurs out with the phrase */
-    filter: blur(calc(var(--work-p, 0) * 24px));
+       --montage-out takes it away again, but only once the first project
+       card has covered it (js/montage.js), so the fade happens out of
+       sight. No blur. */
+    opacity: calc(var(--montage-in, 0) * (1 - var(--montage-out, 0)));
 }
 
 .montage__img {
@@ -4436,7 +4439,7 @@ html.liquid-hero-reduced .hero-divider {
 /* Reduced motion: no cycling (js/montage.js leaves a single still), and
    no square at all if the script never runs. */
 @media (prefers-reduced-motion: reduce) {
-    .montage { opacity: calc(var(--montage-in, 0) * (1 - var(--work-fade, 0))); }
+    .montage { opacity: calc(var(--montage-in, 0) * (1 - var(--montage-out, 0))); }
 }
 
 /* ======================================================================

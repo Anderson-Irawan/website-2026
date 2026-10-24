@@ -155,11 +155,14 @@ if (host) {
 function build(host) {
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Lite tier (window.lite, from site.js): no multisampling, which is
+    // the most memory-hungry part of a WebGL canvas on a phone.
+    renderer = new THREE.WebGLRenderer({ antialias: !window.lite, alpha: true });
   } catch (e) {
     return null; // no WebGL -> flat <img> stays
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  // 1.5 on the lite tier: with no multisampling it still reads as smooth
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.lite ? 1.5 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.15;
   host.appendChild(renderer.domElement);
