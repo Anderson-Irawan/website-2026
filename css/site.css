@@ -4217,6 +4217,20 @@ html.liquid-hero-reduced .hero-divider {
     color: var(--color-cream);
 }
 
+/* With the hero pinned the line is fixed to the screen, so it stays at the
+   bottom while the hero scrolls away without any script holding it there.
+   It used to be absolute inside the hero and have its own scroll cancelled
+   by a per-frame translateY (js/hero-shrink.js): scrolling runs on the
+   compositor, the script runs a frame behind it, and the line visibly
+   jittered against the page on phones. Fixed is placed by the compositor
+   with no script involved. Only the slide off to the left is still driven
+   by script, and that moves the way scroll does anyway.
+   Without the pin (reduced motion) it stays absolute and scrolls away. */
+.has-hero-pin .liquid-hero__intro {
+    position: fixed;
+    will-change: transform;
+}
+
 /* the tail phrase keeps its synthetic bold and its hover gif */
 .liquid-hero__intro .tagline-strong {
     text-decoration: underline;

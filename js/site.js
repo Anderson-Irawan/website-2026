@@ -2849,16 +2849,13 @@ try {
             var nextTop = next ? next.getBoundingClientRect().top : Infinity;
             var ip = ease(clamp01((INTRO_START * vh - nextTop) /
                                   ((INTRO_START - INTRO_END) * vh)));
-            // far enough to clear the left edge completely
-            var away = intro.offsetLeft + intro.offsetWidth + 40;
-            // Cancel out the hero scrolling up, so the line stays put at the
-            // bottom of the screen and only moves sideways. (Desktop: zero
-            // while the hero is pinned; phones: the hero moves from the start.)
-            var heroTop = intro.offsetParent
-                ? intro.offsetParent.getBoundingClientRect().top : 0;
-            var dy = Math.max(0, -heroTop);
-            intro.style.transform = (ip > 0 || dy > 0)
-                ? 'translate3d(' + (-away * ip).toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0)'
+            // The line is position:fixed while the hero is pinned (css), so
+            // it stays at the bottom of the screen with no help from here -
+            // this only slides it off to the left. Far enough to clear the
+            // left edge completely; measured only while it is moving, since
+            // offsetLeft forces a layout.
+            intro.style.transform = ip > 0
+                ? 'translate3d(' + (-(intro.offsetLeft + intro.offsetWidth + 40) * ip).toFixed(1) + 'px,0,0)'
                 : '';
         }
 
