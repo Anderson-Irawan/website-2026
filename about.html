@@ -88,8 +88,12 @@
          held while the box shrinks to a small square and the text drifts
          out of focus. css/cta-grow.css + js/cta-grow.js; the text styling
          is .ab-hero in css/styles.css. -->
-    <div class="cta-pin ab-hero" data-cta-pin data-grow-lead="0" data-grow-reverse
-         data-grow-portion="0.9">
+    <div class="cta-pin ab-hero ab-hero--skills" data-cta-pin data-grow-lead="0" data-grow-reverse
+         data-grow-portion="0.9" data-grow-split="0.5">
+        <!-- phase 2: the liquid gives way to this solid blue. It sits outside
+             the stage, which blends as its own group, so that it can blend
+             with the topo lines behind the page (css .cta-blue) -->
+        <div class="cta-blue" aria-hidden="true"><div class="cta-solid"></div></div>
         <div class="cta-stage">
             <div class="cta-frame" data-cta-frame data-liquid-watch>
                 <canvas class="cta-liquid" data-liquid-hero aria-hidden="true"></canvas>
@@ -109,34 +113,45 @@
             </div>
             <!-- stretches in across the stage once the text above has
                  gone (data-grow-after, js/cta-grow.js) -->
-            <p class="ab-hero__promise" data-grow-after>That's the promise.</p>
+            <p class="ab-hero__promise" data-grow-after><span>That's the</span> <span>promise.</span></p>
+            <!-- phase 2 of the stage (js/cta-grow.js): once the promise has
+                 faded and the box has grown to solid blue, the skills play.
+                 Same labels as the project categories (WORK_CATEGORIES in
+                 js/site.js). -->
+            <div class="abm-skills ab-hero__skills" data-grow-skills>
+                <!-- the homepage's square of work, cycling on the left
+                     (js/montage.js, which only runs it while this is shown) -->
+                <div class="montage montage--skills" data-montage aria-hidden="true"></div>
+                <div class="ab-hero__skills-list">
+                    <h2 class="abm-label">Skills</h2>
+                    <ul class="abm-list abm-skills__list" data-skills data-grow-play>
+                        <li>Logo Design</li>
+                        <li>Brand System</li>
+                        <li>Illustrations</li>
+                        <li>Motion Graphics</li>
+                        <li>Web &amp; Digital</li>
+                        <li>Social Media</li>
+                        <li>Print &amp; Packaging</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+    (function () {
+        var list = document.querySelector('[data-skills]');
+        if (!list) return;
+        var items = list.children;
+        for (var i = 0; i < items.length; i++) items[i].style.setProperty('--i', i);
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        list.classList.add('is-armed');   // js/cta-grow.js adds .is-in
+    })();
+    </script>
 
     <!-- ══ ABOUT, laid out after mondaynights.co/about ═══════════════
          Quiet four-column grid, small type, lots of air. Styles in
          css/about-v2.css. Copy is unchanged from the old sections. -->
-
-    <!-- Skills | bulleted list across the rest of the row -->
-    <section class="abm-band">
-        <div class="abm-grid">
-            <h2 class="abm-label">Skills</h2>
-            <ul class="abm-list abm-list--bullets">
-                <li>Logo Design</li>
-                <li>Brand Systems</li>
-                <li>Custom Logotypes &amp; Type</li>
-                <li>Brand Guidelines</li>
-                <li>Packaging Design</li>
-                <li>Icon Design</li>
-                <li>Character Illustration</li>
-                <li>Motion Graphics</li>
-                <li>Merchandise &amp; Print</li>
-                <li>Social Media Design</li>
-                <li>Web Design</li>
-                <li>Brand Voice &amp; Positioning</li>
-            </ul>
-        </div>
-    </section>
 
     <!-- one centred statement -->
     <section class="abm-statement">

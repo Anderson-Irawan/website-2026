@@ -2919,6 +2919,9 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
     pointer-events: none;
 }
 
+/* the two halves slide off in opposite directions (js/cta-grow.js) */
+.ab-hero__promise span { display: inline-block; }
+
 /* no motion: no stage hold, so it simply sits under the opening text */
 @media (prefers-reduced-motion: reduce) {
     .ab-hero__promise { grid-area: auto; opacity: 1; }
@@ -4549,6 +4552,108 @@ html.liquid-hero-reduced .hero-divider {
 html.liquid-hero-reduced .cta-pin { height: auto; }
 html.liquid-hero-reduced .cta-stage { position: relative; }
 
+/* The About opener has a second phase after "That's the promise.": the
+   promise fades, the box grows to full bleed and the liquid gives way to
+   solid blue, then the skills play on it (js/cta-grow.js writes
+   --solid, 0 to 1). */
+.cta-pin.ab-hero--skills {
+    height: 280vh;
+    height: 280svh;
+}
+
+/* Pinned like the stage and drawn under it, but outside it: the stage is a
+   blending group of its own, so only a sibling can blend with the topo lines
+   fixed behind the page. screen keeps the blue as it is on the dark ground
+   and lets the lines lighten it. js/cta-grow.js writes --ix/--it/--ib (the
+   same inset as the liquid frame) and --solid (0 to 1). */
+.cta-blue {
+    --it: 0;
+    --ix: 0;
+    --ib: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    margin-bottom: -100vh;
+    margin-bottom: -100svh;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    clip-path: inset(
+        calc(var(--it) * 1px)
+        calc(var(--ix) * 1px)
+        calc(var(--ib) * 1px)
+    );
+}
+
+.cta-solid {
+    --solid: 0;
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-blue);
+    opacity: var(--solid);
+}
+
+@media (prefers-reduced-motion: reduce) { .cta-blue { display: none; } }
+html.liquid-hero-reduced .cta-blue { display: none; }
+
+.ab-hero__skills {
+    grid-area: 1 / 1;
+    position: relative;
+    z-index: 1;
+    align-self: stretch;
+    justify-self: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* the middle of the stage is the line... */
+    align-items: center;
+    opacity: 0;              /* js/cta-grow.js brings it in */
+    pointer-events: none;
+}
+
+/* ...the skills start from it, text aligned left */
+.ab-v2 .ab-hero__skills-list { grid-column: 2; justify-self: start; text-align: left; }
+.ab-v2 .ab-hero__skills .abm-skills__list li { margin-inline: 0; }
+
+/* the homepage montage, now in flow on the left of the stage rather than
+   fixed behind the page */
+.montage.montage--skills {
+    position: absolute;
+    top: 50%;
+    /* right-aligned in the left half: its right edge sits a clear gutter
+       short of the centre line the skills start from */
+    left: auto;              /* the homepage rule's left: 50% would win over right */
+    right: calc(50% + clamp(2rem, 7vw, 7rem));
+    translate: 0 -50%;
+    z-index: auto;
+    width: min(30vw, 50svh);
+    opacity: 1;              /* the layer around it does the fading */
+}
+
+/* phones: no room beside the list, so the square sits above it */
+@media (max-width: 760px) {
+    .ab-hero__skills {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        align-content: center;
+        row-gap: var(--space-lg);
+    }
+    .ab-v2 .ab-hero__skills-list { grid-column: 1; justify-self: center; }
+    .montage.montage--skills {
+        position: relative;
+        top: auto;
+        right: auto;
+        translate: none;
+        width: min(46vw, 30svh);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta-pin.ab-hero--skills { height: auto; }
+    .ab-hero__skills { grid-area: auto; opacity: 1; padding-block: var(--space-4xl); }
+}
+
+html.liquid-hero-reduced .cta-pin.ab-hero--skills { height: auto; }
+html.liquid-hero-reduced .ab-hero__skills { grid-area: auto; opacity: 1; padding-block: var(--space-4xl); }
+
 /* Projects page: pull the CTA pin up by the empty stage above its
    starting square, so the square opens just under the last card.
    The square starts at 45vmin (START_SQUARE in js/cta-grow.js),
@@ -4644,6 +4749,7 @@ html.liquid-hero-reduced .cta-stage { position: relative; }
     margin-top: var(--abm-space);
     padding-block: var(--abm-space);
 }
+/* (the skills now live on the opener's stage, see .ab-hero__skills) */
 
 .ab-v2 .abm-list {
     list-style: none;
@@ -4653,8 +4759,99 @@ html.liquid-hero-reduced .cta-stage { position: relative; }
     line-height: 1.5;
 }
 
-/* Skills: bullets, run down up to three columns across the rest of the
-   row (fewer once a column would drop below 12rem) */
+/* Skills: label centred, the skills stacked under it. Each slides in
+   from the left in turn once the list scrolls into view (about.html arms
+   it with .is-armed, then .is-in). Without JS or with reduced motion the
+   classes never land, so the list just shows. */
+.ab-v2 .abm-skills {
+    padding-inline: var(--page-inset);
+    text-align: center;
+}
+
+.ab-v2 .abm-skills__list {
+    margin: var(--space-lg) auto 0;
+    font-family: var(--font-marker);   /* Plantin */
+    font-size: var(--fs-2);
+    font-style: italic;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.ab-v2 .abm-skills__list { counter-reset: skill; }
+
+.ab-v2 .abm-skills__list li { padding-block: 0.1em; }
+
+/* [1] [2] ... numbering before each skill */
+.ab-v2 .abm-skills__list li::before {
+    counter-increment: skill;
+    content: "[" counter(skill) "]";
+    margin-right: 0.6em;
+    font-size: 0.5em;
+    vertical-align: 0.5em;
+    letter-spacing: 0;
+    color: var(--color-orange);
+}
+
+/* an orange bar sweeps across each skill, then wipes off to the right,
+   uncovering the text behind it */
+.ab-v2 .abm-skills__list li {
+    position: relative;
+    width: fit-content;      /* shrink to the word, so the bar is as long as it */
+    margin-inline: auto;
+}
+
+/* the bar covers exactly the word (number included) */
+.ab-v2 .abm-skills__list li::after {
+    content: "";
+    position: absolute;
+    inset: 0.12em -0.3em;    /* italic glyphs overhang the box, so pad past it */
+    background: var(--color-orange);
+    clip-path: inset(0 100% 0 0);
+    pointer-events: none;
+}
+
+/* hide the text with colour, not opacity: the bar is a child of the li,
+   so fading the li would hide the bar too */
+.ab-v2 .abm-skills__list.is-armed li,
+.ab-v2 .abm-skills__list.is-armed li::before { color: transparent; }
+
+.ab-v2 .abm-skills__list.is-in li {
+    animation: skill-text 0.9s steps(1, end) forwards;
+    animation-delay: calc(var(--i, 0) * 0.2s);
+}
+
+.ab-v2 .abm-skills__list.is-in li::before {
+    animation: skill-num 0.9s steps(1, end) forwards;
+    animation-delay: calc(var(--i, 0) * 0.2s);
+}
+
+.ab-v2 .abm-skills__list.is-in li::after {
+    animation: skill-bar 0.9s forwards;
+    animation-delay: calc(var(--i, 0) * 0.2s);
+}
+
+/* the text only appears once the bar fully covers it, at 50% */
+@keyframes skill-text {
+    0%   { color: transparent; }
+    50%  { color: var(--page-ink); }
+    100% { color: var(--page-ink); }
+}
+
+@keyframes skill-num {
+    0%   { color: transparent; }
+    50%  { color: var(--color-orange); }
+    100% { color: var(--color-orange); }
+}
+
+/* grows from the left edge to the right, then its left edge closes in
+   to the right until nothing is left; each leg eases in and out */
+@keyframes skill-bar {
+    0%   { clip-path: inset(0 100% 0 0); animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1); }
+    50%  { clip-path: inset(0 0 0 0);    animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1); }
+    100% { clip-path: inset(0 0 0 100%); }
+}
+
+/* (old multi-column bullet list, no longer used on the page) */
 .ab-v2 .abm-list--bullets {
     grid-column: 2 / -1;
     list-style: disc;

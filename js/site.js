@@ -3248,8 +3248,13 @@ try {
         }
         box.style.setProperty('--montage-out', out.toFixed(3));
 
-        /* only run the cycle while it is actually on screen */
-        if (p > 0.01 && out < 1 && !document.hidden) start();
+        /* only run the cycle while it is actually on screen. On the About
+           page the square sits in the skills layer, which js/cta-grow.js
+           fades in; it is on screen once that has some opacity. */
+        const host = box.closest('[data-grow-skills]');
+        const shown = !host || host.style.opacity === '' ||
+            parseFloat(host.style.opacity) > 0.01;
+        if (p > 0.01 && out < 1 && shown && !document.hidden) start();
         else stop();
     }
 
@@ -3413,6 +3418,10 @@ try {
                               //   is not left sitting there mid-scroll
     var AFTER_SQUEEZE = 0.2;  // the horizontal scale it stretches out from
     var AFTER_SPAN = 0.92;    // the width it is fitted to, share of the stage
+    var P2_GROW = 0.6;        // phase 2 (data-grow-split), as a share of it: the
+    var P2_SOLID_FROM = 0.3;  //   promise slides off and the box grows together,
+    var P2_SKILLS = 0.62;     //   done by P2_GROW; the blue starts at P2_SOLID_FROM
+                              //   of the growth and the skills play from P2_SKILLS
 
     // ---- hover on the link: the gradient goes wild ----
     // Only two things change: it moves faster, and its colours cycle through
@@ -3465,6 +3474,15 @@ try {
         // data-grow-reverse: start expanded (text showing) and shrink to the
         // square as you scroll, like the homepage hero
         var reverse = pin.hasAttribute('data-grow-reverse');
+        // data-grow-split: share of the hold used by the shrink and the
+        // promise; the rest is phase 2 - the promise fades, the box grows
+        // to full bleed and turns solid blue, then [data-grow-skills] plays
+        var splitAttr = parseFloat(pin.getAttribute('data-grow-split'));
+        var split = isNaN(splitAttr) ? 0 : splitAttr;
+        var blue = pin.querySelector('.cta-blue');
+        var solid = pin.querySelector('.cta-solid');
+        var skills = pin.querySelector('[data-grow-skills]');
+        var play = pin.querySelector('[data-grow-play]');
 
         function update() {
             var w = stage.clientWidth || 1;
@@ -3472,24 +3490,52 @@ try {
             var reduced = isReduced();
 
             // 0 = small square, 1 = grown to the margins
-            var g = 1;
+            var g = 1, q = 0;
             if (!reduced) {
                 var hold = Math.max(1, pin.offsetHeight - h);
                 var s = -pin.getBoundingClientRect().top + lead * h;
-                g = ease(clamp01(s / (hold * portion + lead * h)));
+                var hold1 = split ? hold * split : hold;
+                g = ease(clamp01(s / (hold1 * portion + lead * h)));
                 if (reverse) g = 1 - g;
+                if (split) q = clamp01((s - hold1) / Math.max(1, hold - hold1));
             }
+            // phase 2: the promise slides off (fade, 0 to 1) while the box
+            // grows from the square to full bleed (grow), going solid blue
+            // one eased value drives both, so the slide and the growth move as one
+            var grow = ease(clamp01(q / P2_GROW));
+            var fade = grow;
 
             var side = Math.min(w, h) * START_SQUARE;
             var sx = (w - side) / 2, sy = (h - side) / 2;           // square
             var mx = Math.max(MARGIN_MIN, w * MARGIN_X);            // margins
             var my = Math.max(MARGIN_MIN, h * MARGIN_Y);
-            frame.style.setProperty('--ix', (sx + (mx - sx) * g).toFixed(1));
-            frame.style.setProperty('--it', (sy + (my - sy) * g).toFixed(1));
-            frame.style.setProperty('--ib', (sy + (my - sy) * g).toFixed(1));
+            var ix = sx + (mx - sx) * g, iy = sy + (my - sy) * g;
+            if (q > 0) { ix = sx * (1 - grow); iy = sy * (1 - grow); }
+            frame.style.setProperty('--ix', ix.toFixed(1));
+            frame.style.setProperty('--it', iy.toFixed(1));
+            frame.style.setProperty('--ib', iy.toFixed(1));
+            if (blue) {
+                blue.style.setProperty('--ix', ix.toFixed(1));
+                blue.style.setProperty('--it', iy.toFixed(1));
+                blue.style.setProperty('--ib', iy.toFixed(1));
+            }
 
             // the gradient settles from a slight zoom as the box opens
-            if (canvas) canvas.style.scale = reduced ? '' : (1 + ZOOM * (1 - g)).toFixed(4);
+            if (canvas) canvas.style.scale = reduced ? '' : (1 + ZOOM * (1 - (q > 0 ? grow : g))).toFixed(4);
+            if (solid) {
+                // the liquid gives way as the blue comes in, so it is gone
+                // by the time the box is solid
+                var sa = clamp01((grow - P2_SOLID_FROM) / (1 - P2_SOLID_FROM));
+                solid.style.setProperty('--solid', sa.toFixed(3));
+                if (canvas) canvas.style.opacity = reduced || !sa ? '' : (1 - sa).toFixed(3);
+            }
+            if (skills) {
+                skills.style.opacity = reduced ? '' : clamp01((q - P2_SKILLS) / 0.06).toFixed(3);
+                if (play && !reduced) {
+                    if (q > P2_SKILLS + 0.02) play.classList.add('is-in');
+                    else if (q < P2_SKILLS - 0.1) play.classList.remove('is-in');
+                }
+            }
 
             // text rises a touch and comes into focus as the box fills out
             var tp = easeOut(clamp01((g - TEXT_FROM) / (TEXT_TO - TEXT_FROM)));
@@ -3516,17 +3562,28 @@ try {
                 }
             }
 
-            // stretches in across the stage as the box closes, after the text
+            // stretches in across the stage as the box closes, after the text,
+            // then in phase 2 its first half slides off to the left and its
+            // last half off to the right
             if (afters.length) {
                 fitAfters(w);
                 var ap = easeOut(clamp01((AFTER_FROM - g) / (AFTER_FROM - AFTER_TO)));
                 for (var j = 0; j < afters.length; j++) {
                     var a = afters[j];
-                    if (reduced) { a.style.opacity = a.style.transform = ''; continue; }
+                    var halves = a.children;
+                    if (reduced) {
+                        a.style.opacity = a.style.transform = '';
+                        for (var k = 0; k < halves.length; k++) halves[k].style.transform = '';
+                        continue;
+                    }
                     a.style.opacity = ap.toFixed(3);
                     a.style.transform = ap < 1
                         ? 'scaleX(' + (AFTER_SQUEEZE + (1 - AFTER_SQUEEZE) * ap).toFixed(4) + ')'
                         : '';
+                    for (var k = 0; k < halves.length; k++) {
+                        halves[k].style.transform = fade > 0
+                            ? 'translate3d(' + ((k ? 1 : -1) * fade * w).toFixed(1) + 'px,0,0)' : '';
+                    }
                 }
             }
         }
