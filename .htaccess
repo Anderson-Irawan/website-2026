@@ -99,7 +99,10 @@ RewriteRule ^(.+?)/?$ $1.html [L]
 </IfModule>
 
 <IfModule mod_headers.c>
-    <FilesMatch "\.(html|csv)$">
+    # js and css too: without this a browser can keep running an old
+    # script after an upload (an older logo-3d.js grew on scroll). no-cache
+    # still caches, it just checks first - an unchanged file is a quick 304.
+    <FilesMatch "\.(html|csv|js|css)$">
         Header set Cache-Control "no-cache"
     </FilesMatch>
 </IfModule>

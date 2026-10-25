@@ -235,7 +235,7 @@
        until the 3D build is ready, so fetch it only once the page has loaded
        and the browser is idle. */
     window.addEventListener('load', function () {
-        var go = function () { import('./js/logo-3d.js').catch(function () {}); };
+        var go = function () { import('./js/logo-3d.js?v=20261025').catch(function () {}); };
         if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 2000 });
         else setTimeout(go, 200);
     });
