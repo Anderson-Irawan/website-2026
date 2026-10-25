@@ -60,10 +60,10 @@
                 <li><a href="contact.html" class="nav-link-cycle"><span data-text="Contact">Contact</span></a></li>
             </ul>
             <div class="nav-actions">
-                <button class="motion-toggle" type="button" data-liquid-hero-toggle aria-pressed="false">
-                    <span class="motion-toggle__icon" aria-hidden="true"></span>
-                    <span class="motion-toggle__label">Reduce Motion</span>
-                </button>
+                <!-- The Reduce Motion button used to sit here. Taken out of
+                     every page's nav; everything it drove is still in place.
+                     docs/reduce-motion-button.md has the markup and how to
+                     put it back. -->
                 <button class="mobile-menu-toggle" aria-label="Toggle menu">
                     <span></span>
                     <span></span>
@@ -88,12 +88,18 @@
          held while the box shrinks to a small square and the text drifts
          out of focus. css/cta-grow.css + js/cta-grow.js; the text styling
          is .ab-hero in css/styles.css. -->
+    <!-- ══ THE BLUE RUN ══════════════════════════════════════════════
+         One blue layer, not two: .cta-blue is sticky for the whole of
+         .ab-blue, so the blue the opener's stage ends on is the same blue
+         the statement, the process paragraphs and About Me stand on, and
+         it lets go before the Instagram feed. It sits outside the stage,
+         which blends as its own group, so that it can blend with the topo
+         lines behind the page (css .cta-blue). -->
+    <div class="ab-blue">
+    <div class="cta-blue" aria-hidden="true"><div class="cta-solid"></div></div>
+
     <div class="cta-pin ab-hero ab-hero--skills" data-cta-pin data-grow-lead="0" data-grow-reverse
          data-grow-portion="0.9" data-grow-split="0.5">
-        <!-- phase 2: the liquid gives way to this solid blue. It sits outside
-             the stage, which blends as its own group, so that it can blend
-             with the topo lines behind the page (css .cta-blue) -->
-        <div class="cta-blue" aria-hidden="true"><div class="cta-solid"></div></div>
         <div class="cta-stage">
             <div class="cta-frame" data-cta-frame data-liquid-watch>
                 <canvas class="cta-liquid" data-liquid-hero aria-hidden="true"></canvas>
@@ -164,27 +170,27 @@
             <div class="abm-paras">
                 <!-- DRAFT COPY - written to be rewritten in your own words -->
                 <p>
-                    No two brands turn up in the same shape, so neither does the
+                    <span style="color: var(--color-orange);">[Flexibility]</span> No two brands turn up in the same shape, so neither does the
                     work. A startup still finding its feet needs something other
                     than a company rebuilding twenty years of history, and I would
                     far rather bend the process around your project than squeeze
                     your project into a process.
                 </p>
                 <p>
-                    You will always know where things stand. I talk through the
+                    <span style="color: var(--color-orange);">[Communication]</span> You will always know where things stand. I talk through the
                     thinking at every stage, in plain words rather than design
                     jargon, and I would sooner ask one more question now than hand
                     over something that quietly missed what you actually meant.
                 </p>
                 <p>
-                    Good design starts with understanding the business behind it.
+                    <span style="color: var(--color-orange);">[Insight]</span> Good design starts with understanding the business behind it.
                     Before anything gets drawn I want to know who you are speaking
                     to, what everyone else in your corner of the market is doing,
                     and what you are trying to change. A mark that looks sharp and
                     says nothing is just decoration.
                 </p>
                 <p>
-                    Settling for basic is the one thing I will not do. The brief is
+                    <span style="color: var(--color-orange);">[Creativity]</span> Settling for basic is the one thing I will not do. The brief is
                     where we start, not where we stop, and the ideas worth having
                     usually sit a little past the obvious ones. That is where I
                     keep digging.
@@ -193,19 +199,91 @@
         </div>
     </section>
 
-    <!-- Get to Know Me | photo card | bio -->
+    <script>
+    /* The mission line and the four paragraphs under it. The orange bar
+       sweeps across the line as it arrives - the same bar the skills get -
+       and the paragraphs slide up and fade in one behind another. The two
+       are watched separately, a section apart, so neither plays off
+       screen. Styles: .abm-statement / .abm-paras in css/site.css. */
+    (function () {
+        var line = document.querySelector('.abm-statement');
+        var paras = document.querySelector('.abm-paras');
+
+        /* the stagger, read by the transition delays */
+        if (paras) {
+            var kids = paras.children;
+            for (var i = 0; i < kids.length; i++) kids[i].style.setProperty('--i', i);
+        }
+
+        /* nothing armed with motion off: the css leaves the line plain and
+           the paragraphs where they are */
+        if (!window.IntersectionObserver ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+            document.documentElement.classList.contains('liquid-hero-reduced')) return;
+
+        /* Plays every time it comes round, not once: .is-in goes on as the
+           block passes the threshold and comes off again only when it is
+           right off the screen - rewind it any sooner and the words would
+           blank out while they were still in view. Dropping .is-in resets
+           both animations, so the next arrival starts them from the top. */
+        function arm(el, threshold) {
+            if (!el) return;
+            el.classList.add('is-armed');
+            new IntersectionObserver(function (entries) {
+                var e = entries[entries.length - 1];
+                if (e.intersectionRatio + 0.001 >= threshold) el.classList.add('is-in');
+                else if (!e.isIntersecting) el.classList.remove('is-in');
+            }, { threshold: [0, threshold] }).observe(el);
+        }
+
+        arm(line, 0.4);
+        /* lower: the block is four paragraphs tall, and waiting for 40% of
+           it would start the first one well up the screen */
+        arm(paras, 0.2);
+    })();
+    </script>
+
+    <!-- ══ GET TO KNOW ME - two parts on one pin ══════════════════════
+         ROUGH DRAFT. Part one: the picture alone in the middle of the
+         screen, "About Me" lying across it, stickers drifting round it.
+         Part two, further down the same pin: the picture slides left, the
+         bio comes in beside it in two columns, and the stickers gather
+         down the left edge of the frame, clear of the words. Styles: .abm-me in css/site.css; the two
+         numbers that drive it are written by the script below. -->
     <section class="abm-section abm-me">
-        <div class="abm-grid">
-            <h2 class="abm-label abm-label--wide">Get to Know Me!</h2>
+      <div class="abm-me__stage">
+        <div class="abm-me__inner">
+            <div class="abm-me__shot">
+            <h2 class="abm-label abm-label--wide">About Me</h2>
             <figure class="abm-person">
-                <img src="assets/photos/couch smiling.jpg"
-                     alt="Anderson Irawan, founder of Double Dash Creative"
-                     loading="lazy" decoding="async">
+                <!-- The stickers hang off the picture's own box, so the
+                     caption under it does not throw the slots off. Any
+                     number of files from assets/stickers/, comma
+                     separated (js/site.js, initPhotoStickers).
+
+                     The face box - left right top bottom, shares of the
+                     square - is where he is once the picture is cropped:
+                     middle, top half. A sticker that would land on it is
+                     pushed down below it instead. -->
+                <div class="abm-person__frame"
+                     data-stickers="durian.png, horse.png, shark.png"
+                     data-sticker-face="22 70 0 55">
+                    <!-- the crop clips the picture's stretch; the stickers
+                         are the frame's own children, outside it, so they
+                         are not stretched with it -->
+                    <div class="abm-person__crop">
+                        <img src="assets/photos/headshot.jpg"
+                             alt="Anderson Irawan, founder of Double Dash Creative"
+                             loading="lazy" decoding="async">
+                    </div>
+                </div>
                 <figcaption>
                     <span class="abm-person__name">Anderson Irawan</span>
                     <span class="abm-pill">Founder</span>
                 </figcaption>
             </figure>
+            </div>
+
             <div class="abm-bio">
                 <p>
                             Growing up in Surabaya, Indonesia, I never would have truly learned my talents in the arts and design if it weren't for the plain papers and pencils just lying around the house. The fascination of replicating what I've seen in real life to paper truly engulfed me to create and create, day after day.
@@ -221,8 +299,75 @@
                         </p>
             </div>
         </div>
+      </div>
     </section>
 
+
+    <script>
+    /* About Me, in two parts on one pin (ROUGH DRAFT).
+
+       Two numbers, both 0 to 1, written on the section and read by the
+       css: --am-in, part one arriving, and --p2, how far through the
+       swap - the picture sliding left, the bio coming in beside it. The
+       same --p2 goes on the photo's box as --gather, which is what sends
+       the stickers over to the right of the frame (js/site.js).
+
+       Part one holds for the first fifth of the pin, the swap plays out
+       over the next 60%, and the rest is a rest on the finished layout. */
+    (function () {
+        var sec = document.querySelector('.abm-me');
+        if (!sec) return;
+        var host = sec.querySelector('[data-stickers]');
+        var wide = window.matchMedia('(min-width: 1001px)');
+        var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        function clamp(n) { return n < 0 ? 0 : n > 1 ? 1 : n; }
+
+        function set(a, b, g) {
+            sec.style.setProperty('--am-in', a);
+            sec.style.setProperty('--p2', b);
+            if (host) host.style.setProperty('--gather', g);
+        }
+
+        function update() {
+            /* no pin on a narrow screen or with motion off - the css lays
+               it out in one column and this just leaves it alone */
+            if (!wide.matches || reduced.matches ||
+                document.documentElement.classList.contains('liquid-hero-reduced')) {
+                /* laid out, but not gathered: with nothing to slide out
+                   of the way, the stickers keep their own places round the
+                   picture (js/site.js holds them off the words there) */
+                set(1, 1, 0);
+                return;
+            }
+            var vh = window.innerHeight || 1;
+            var hold = Math.max(1, sec.offsetHeight - vh);
+            var s = -sec.getBoundingClientRect().top;   // 0 as the pin locks
+
+            var into = clamp((s + vh * 0.45) / (vh * 0.45));   // arriving
+            var p = clamp(s / hold);                           // through the pin
+            /* the swap takes most of the pin now: over a third of a screen
+               it read as a snap rather than a move */
+            var p2 = clamp((p - 0.22) / 0.62);                 // the swap
+
+            set(into.toFixed(3), p2.toFixed(3), p2.toFixed(3));
+        }
+
+        var ticking = false;
+        function onScroll() {
+            if (!ticking) { ticking = true; requestAnimationFrame(function () {
+                ticking = false;
+                update();
+            }); }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        update();
+    })();
+    </script>
+
+    </div><!-- /.ab-blue -->
 
     <section class="abm-section abm-insta">
         <h2 class="abm-insta__title">Latest on Instagram</h2>

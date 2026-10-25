@@ -586,15 +586,28 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 @media (max-width: 640px) {
     .nav-links .nav-social {
         display: flex;
-        gap: var(--space-sm);
+        gap: var(--space-md);
         margin-top: var(--space-sm);
         padding-top: var(--space-lg);
         border-top: 1px solid rgba(250, 250, 255, 0.15);
     }
 
     .nav-links .nav-social a {
-        display: flex;
+        /* .nav-links a makes every link a full-width block; the icons are
+           a row inside one item, so they take their own size back */
+        display: inline-flex;
+        align-items: center;
+        width: auto;
+        flex: none;
+        padding: 0;
         color: var(--color-cream);
+        transition: color 0.3s var(--transition-smooth),
+            transform 0.3s var(--transition-bounce);
+    }
+
+    .nav-links .nav-social a:active {
+        color: var(--color-orange);
+        transform: scale(1.12);
     }
 
     .nav-links .nav-social a svg {
@@ -2499,6 +2512,39 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
         width: auto;
         flex: 1;
         min-width: 0;
+    }
+}
+
+/* Phones: the lockup stands up - mark over wordmark, both centred - and
+   the page links go back to a stacked column under it, centred to match.
+   Same breakpoint as the burger menu. */
+@media (max-width: 640px) {
+    .footer-top {
+        justify-items: center;
+        text-align: center;
+    }
+
+    .footer-lockup {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.7rem;
+    }
+
+    .footer-mark {
+        height: clamp(44px, 12vw, 64px);
+    }
+
+    /* the 760px rule above lets the wordmark flex to fill the row; in a
+       column it has to go back to a width of its own */
+    .footer-wordmark {
+        flex: none;
+        width: min(78vw, 320px);
+    }
+
+    .footer-nav {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.55rem;
     }
 }
 
@@ -4572,10 +4618,24 @@ html.liquid-hero-reduced .cta-stage { position: relative; }
     --ib: 0;
     position: sticky;
     top: 0;
+    /* On the About page this one layer carries the blue from the opener's
+       stage all the way down to the foot of About Me (.ab-blue), so it has
+       to sit under the page's own text: -2 is below in-flow content and
+       still above the fixed topo lines at -3, which is what lets it screen
+       with them. A positioned layer at z-index auto would paint over the
+       paragraphs it is meant to be the ground for. */
+    z-index: -2;
+    /* the large viewport, not the small one: on a phone with the address
+       bar retracted the screen is taller than 100svh, and a box that tall
+       left a black band along the bottom once the blue went full bleed.
+       The overshoot hangs below the fold while the bar is showing, where
+       it cannot be seen, and js/cta-grow.js takes it back off the bottom
+       of the clip so the growing square still lines up with the liquid
+       one. Both are 100vh on a desktop, so nothing changes there. */
     height: 100vh;
-    height: 100svh;
+    height: 100lvh;
     margin-bottom: -100vh;
-    margin-bottom: -100svh;
+    margin-bottom: -100lvh;
     mix-blend-mode: screen;
     pointer-events: none;
     clip-path: inset(
@@ -4881,6 +4941,99 @@ html.liquid-hero-reduced .ab-hero__skills { grid-area: auto; opacity: 1; padding
     text-decoration-color: currentColor;
 }
 
+/* ══ STICKERS ══════════════════════════════════
+   Cut-outs hung round the edge of a photo, each drifting and turning at
+   its own rate as the picture goes past (js/site.js, initPhotoStickers,
+   which also places them). The layer is the photo's own box, so the slots
+   are shares of it and the whole arrangement scales with the picture. */
+.sticker-layer {
+    position: absolute;
+    inset: 0;
+    /* Over everything on the page, under the navbar (1000) and the page
+       loader. This only reaches that high because no box between here and
+       the page is a stacking context of its own - see .abm-person. */
+    z-index: 900;
+    pointer-events: none;   /* nothing here is in the way of a click */
+}
+
+.sticker {
+    position: absolute;
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    width: var(--w, 24%);
+    /* One property, in order: centre it on its slot, carry it along by the
+       drift the script writes (--dy), then turn it about its own middle.
+       Doing the rest pose with rotate/translate instead would leave the
+       drift running along the sticker's own tilted axis. */
+    transform:
+        translate(-50%, -50%)
+        translate3d(var(--dx, 0px), var(--dy, 0px), 0)
+        rotate(calc(var(--r, 0deg) + var(--dr, 0deg)));
+    will-change: transform;
+}
+
+/* No shadow added here: each sticker draws its own ground - the durian
+   stands on an ellipse, the shark in a puddle - and a drop-shadow would
+   trace round those shapes as well. */
+.sticker img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* Smaller on a phone, and the slots pulled in toward the photo: hung a
+   tenth of the width off the edge there, a sticker is most of the way
+   into the gutter and the page would clip it. */
+@media (max-width: 640px) {
+    .sticker {
+        width: calc(var(--w, 24%) * 0.8);
+        left: calc(50% + (var(--x, 50%) - 50%) * 0.7);
+    }
+}
+
+/* Stacked, there is no drift: they pop in as the picture arrives (the
+   script puts .is-in on the layer) and then sit still. The pop is on the
+   <img>, not the sticker itself - that carries the transform that places
+   and turns it, and scaling the two together would drag it off its slot
+   as it grew. The overshoot in the curve is the pop. */
+@media (max-width: 1000px) {
+    .sticker img {
+        opacity: 0;
+        scale: 0.3;
+        transition:
+            opacity 0.25s ease calc(var(--i, 0) * 0.12s),
+            scale 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) calc(var(--i, 0) * 0.12s);
+    }
+
+    .sticker-layer.is-in .sticker img {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+/* no pop with motion off: they are simply there */
+@media (prefers-reduced-motion: reduce) {
+    .sticker img { opacity: 1; scale: 1; transition: none; }
+}
+
+html.liquid-hero-reduced .sticker img { opacity: 1; scale: 1; transition: none; }
+
+/* ── the blue run ──────────────────────────────
+   How far the opener's blue reaches: .cta-blue is sticky inside this, so
+   it stays the full screen from the stage down to the end of About Me and
+   lets go here, leaving the Instagram feed on black. There is no second
+   blue to match - it is the same layer, same colour, same screen blend
+   over the topo lines the whole way.
+
+   No z-index here on purpose: that would make this a stacking context,
+   seal the topo lines out of the blue's backdrop and leave it flat. */
+.ab-v2 .ab-blue {
+    position: relative;
+    /* the sections only pad at the top, so the blue would otherwise close
+       flush with the last line of the bio */
+    padding-bottom: var(--abm-space);
+}
+
 /* ── centred statement ─────────────────────── */
 .ab-v2 .abm-statement {
     padding: var(--abm-space) var(--page-inset) 0;
@@ -4899,6 +5052,40 @@ html.liquid-hero-reduced .ab-hero__skills { grid-area: auto; opacity: 1; padding
     text-wrap: balance;
 }
 
+/* The mission line gets the skills' orange bar: it sweeps across, then
+   wipes off to the right, uncovering the words behind it. Same keyframes
+   (skill-bar / skill-text), a little slower - there is more to cross.
+   Armed by a script in about.html; unarmed, the bar sits clipped to
+   nothing and the line is simply there. */
+.ab-v2 .abm-statement p {
+    position: relative;
+}
+
+.ab-v2 .abm-statement p::after {
+    content: "";
+    position: absolute;
+    /* As chunky as the skills bars, which get their air from a 1.5
+       line-height. This line is set at 1.05, so there is no leading to
+       borrow and the glyphs overhang the box - the bar has to reach out
+       past it on every side to cover them with the same slab of orange. */
+    inset: -0.22em -0.4em;
+    background: var(--color-orange);
+    clip-path: inset(0 100% 0 0);
+    pointer-events: none;
+}
+
+/* hidden with colour, not opacity: the bar is the p's own ::after, so
+   fading the p would take the bar with it */
+.ab-v2 .abm-statement.is-armed p { color: transparent; }
+
+.ab-v2 .abm-statement.is-in p {
+    animation: skill-text 1.1s steps(1, end) forwards;
+}
+
+.ab-v2 .abm-statement.is-in p::after {
+    animation: skill-bar 1.1s forwards;
+}
+
 /* ── wide label left, its content on the right ── */
 .ab-v2 .abm-label--wide {
     grid-column: 1 / 3;
@@ -4908,7 +5095,10 @@ html.liquid-hero-reduced .ab-hero__skills { grid-area: auto; opacity: 1; padding
    them any more, and the full four columns would run the lines too long
    to read comfortably. */
 .ab-v2 .abm-paras {
-    grid-column: 1 / 3;
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, 40rem);
+    text-align: center;
     display: flex;
     flex-direction: column;
     gap: 1em;
@@ -4919,6 +5109,21 @@ html.liquid-hero-reduced .ab-hero__skills { grid-area: auto; opacity: 1; padding
     margin: 0;
     font-size: var(--fs-5);
     line-height: 1.5;
+}
+
+/* Each one slides up into place and fades in, a tenth of a second behind
+   the one above it (--i, set by the script in about.html). Change the
+   translate to -1.5rem 0 to have them come in from the side instead. */
+.ab-v2 .abm-paras.is-armed p {
+    opacity: 0;
+    translate: 0 1.75rem;
+}
+
+.ab-v2 .abm-paras.is-armed.is-in p {
+    opacity: 1;
+    translate: none;
+    transition: opacity 0.7s ease calc(var(--i, 0) * 0.12s),
+                translate 0.9s cubic-bezier(.2, .7, .2, 1) calc(var(--i, 0) * 0.12s);
 }
 
 /* ── Get to Know Me: photo card | bio ──────── */
@@ -4994,6 +5199,170 @@ html.liquid-hero-reduced .ab-hero__skills { grid-area: auto; opacity: 1; padding
     /* one column: 2 / -1 would invent a second, implicit one */
     .ab-v2 .abm-list--bullets { grid-column: 1 / -1; }
 }
+
+/* ── Get to Know Me: two parts, on one pin ───
+   ROUGH DRAFT.
+
+   Part one is the picture on its own in the middle of the screen, the
+   heading lying across it, the stickers drifting round it. Part two, a
+   little further down the same pin, slides the picture over to the left,
+   brings the bio in beside it in two columns, and collects the stickers
+   down the picture's left edge, clear of the words.
+
+   The script in about.html writes two numbers on the section, both 0 to
+   1: --am-in (part one arriving) and --p2 (how far through the swap).
+   Under 1000px, and with motion off, there is no pin and no swap - the
+   picture sits above the bio and everything shows at once. */
+.ab-v2 .abm-me {
+    position: relative;
+    /* The hold: part one, the swap, then a rest on the finished layout.
+       Tall on purpose - the swap wants room to happen in, and at 240 it
+       went past too fast to read. */
+    height: 300vh;
+    height: 300svh;
+    padding-block: 0;
+}
+
+.ab-v2 .abm-me__stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    display: grid;
+    place-items: center;
+    /* no clipping here: the stickers hang outside the picture, and the
+       page already stops any sideways scroll */
+}
+
+.ab-v2 .abm-me__inner {
+    width: min(100%, 86rem);
+    padding-inline: var(--page-inset);
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+}
+
+/* Part one holds the picture out in the middle of the screen; part two
+   walks it back into its own column on the left. One translate does it,
+   so the grid below is simply the finished layout. */
+.ab-v2 .abm-me__shot {
+    position: relative;
+    grid-column: 1;
+    justify-self: center;
+    width: min(100%, 26rem);
+    translate: calc((1 - var(--p2, 0)) * 26vw) 0;
+    opacity: var(--am-in, 1);
+}
+
+.ab-v2 .abm-me .abm-person {
+    /* max-width: none beats the old 22rem cap further up, which left the
+       picture sitting against the left of its box on a wide phone; auto
+       margins keep it centred whatever width it ends up. */
+    width: 100%;
+    max-width: none;
+    margin-block: 0;
+    margin-inline: auto;
+}
+
+/* the picture's own box, which the stickers hang off (the figure is a
+   caption taller, and the slots would be thrown off by it) */
+.ab-v2 .abm-person__frame {
+    position: relative;
+}
+
+/* the square the picture is seen through: it holds its shape while the
+   picture stretches inside it */
+.ab-v2 .abm-person__crop {
+    overflow: hidden;
+}
+
+/* Square, the same shape as the homepage montage. The photo is a 2:3
+   portrait, so a square takes a third of it: anchored near the top, which
+   keeps his head in frame - centred, it crops from the eyebrows down.
+
+   (It used to smear as it travelled, scaled by a --stretch the script
+   wrote. Taken out: it sits still now.) */
+.ab-v2 .abm-me .abm-person img {
+    aspect-ratio: 1 / 1;
+    object-position: 50% 4%;
+}
+
+/* the heading lies across the picture in part one, and goes as the swap
+   starts - white through difference, so it inverts whatever it crosses */
+.ab-v2 .abm-me .abm-label--wide {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    margin: 0;
+    width: max-content;
+    text-align: center;
+    white-space: nowrap;
+    font-size: clamp(2.75rem, 15vw, 12rem);
+    line-height: 0.9;
+    color: #fff;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    opacity: calc(var(--am-in, 1) * (1 - var(--p2, 0)));
+    scale: calc(1 - var(--p2, 0) * 0.06);
+}
+
+/* part two: the bio arrives beside the picture, in two columns */
+.ab-v2 .abm-me .abm-bio {
+    grid-column: 2;
+    display: block;
+    columns: 2;
+    column-gap: clamp(1.5rem, 2.5vw, 2.5rem);
+    width: auto;
+    margin: 0;
+    text-align: left;
+    opacity: var(--p2, 1);
+    translate: calc((1 - var(--p2, 0)) * 3rem) 0;
+}
+
+.ab-v2 .abm-me .abm-bio p {
+    break-inside: avoid;       /* keep each paragraph in one column */
+    margin-bottom: 1em;
+    font-size: var(--fs-6);
+}
+
+/* No pin on a narrow screen, and none with motion off: the picture sits
+   above the bio, one column, everything showing. */
+@media (max-width: 1000px) {
+    .ab-v2 .abm-me { height: auto; padding-block: var(--abm-space) 0; }
+    .ab-v2 .abm-me__stage { position: static; height: auto; }
+    .ab-v2 .abm-me__inner {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        text-align: center;
+    }
+    .ab-v2 .abm-me__shot { translate: none; opacity: 1; }
+    .ab-v2 .abm-me .abm-bio {
+        grid-column: 1;
+        columns: 1;
+        width: min(100%, 40rem);
+        opacity: 1;
+        translate: none;
+        margin-top: var(--space-xl);
+        text-align: center;
+    }
+    /* back up to body size: two columns were what made it small */
+    .ab-v2 .abm-me .abm-bio p { font-size: var(--fs-5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ab-v2 .abm-me { height: auto; padding-block: var(--abm-space) 0; }
+    .ab-v2 .abm-me__stage { position: static; height: auto; }
+    .ab-v2 .abm-me__shot { translate: none; opacity: 1; }
+    .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; }
+}
+
+html.liquid-hero-reduced .ab-v2 .abm-me { height: auto; padding-block: var(--abm-space) 0; }
+html.liquid-hero-reduced .ab-v2 .abm-me__stage { position: static; height: auto; }
+html.liquid-hero-reduced .ab-v2 .abm-me__shot { translate: none; opacity: 1; }
+html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; }
 
 /* ── Instagram feed (Behold) ────────────────
    The widget draws its own grid; these only place it on the page and

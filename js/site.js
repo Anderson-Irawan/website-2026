@@ -565,9 +565,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initNavTint();
     initNavHide();    // the bar slides away scrolling down, back on scrolling up
     initMotionToggle();
-    // initSocial();  // Disabled - the function below is commented out, so
-    //                // calling it threw a ReferenceError and killed every
-    //                // init after this line.
+    // initSocial() (the fixed side rails) stays off - see the commented
+    // function below. The burger menu's half of it lives on its own now:
+    initNavSocial();   // must run before initMobileMenu, which wires the
+                       // close-on-tap handler onto every link in the menu
     initOutro();
     initWorkTags();
     initWorkFilters();
@@ -577,6 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
     initSlidingPortfolio();
     initCardParallax();
+    initPhotoStickers();
     // initContactForm(); // Disabled - using EmailJS in contact.html instead
 });
 
@@ -1223,6 +1225,356 @@ function initCardParallax() {
 }
 
 /* ============================================
+   Stickers round the photos - cut-outs hung off
+   the edges of a picture, each drifting at its own
+   rate as the photo goes past. The rates here are
+   deliberately overdone: the work cards lag at
+   0.1, these go up to 0.95, and they turn as they
+   travel.
+
+   Hang them by listing the files on the photo's
+   own box:
+
+     <div class="about-image" data-stickers="horse.png, shark.png">
+
+   The names are files in assets/stickers/. They
+   are handed the slots below in turn, so any
+   number works, and a name that is not there
+   drops out quietly rather than hanging a broken
+   picture off the photo.
+   ============================================ */
+function initPhotoStickers() {
+    const hosts = document.querySelectorAll('[data-stickers]');
+    if (!hosts.length) return;
+
+    const DIR = 'assets/stickers/';
+
+    // x / y place the sticker's centre as a share of the photo, so past
+    // 100 or under 0 hangs it off that edge; w is its width the same way,
+    // r the angle it rests at. rate: px of travel per px the photo sits
+    // from the middle of the screen. spin: degrees over that same travel.
+    const SLOTS = [
+        // The first three ring the photo - corner, far side, under it - so
+        // a set of three lands spread out rather than bunched, and they are
+        // all one size: the sizes used to vary a little from slot to slot,
+        // which just read as one sticker being smaller than the others.
+        { x: -14,  y: 10,  w: 46, r: -15, rate: 0.62, spin: -30, turn: -6 },
+        { x: 112,  y: 48,  w: 46, r: 13,  rate: 0.90, spin: 38,  turn: 5 },
+        { x: 12,   y: 102, w: 46, r: 18,  rate: 0.34, spin: -22, turn: -8 },
+        { x: 98,   y: 92,  w: 36, r: -9,  rate: 0.50, spin: -20, turn: 6 },
+        { x: 4,    y: 96,  w: 40, r: 18,  rate: 0.74, spin: 26,  turn: -4 },
+        { x: 54,   y: -12, w: 34, r: -7,  rate: 0.46, spin: 34,  turn: 7 },
+        { x: -14,  y: 58,  w: 32, r: 22,  rate: 0.26, spin: -16, turn: -5 },
+        { x: 114,  y: 70,  w: 30, r: -20, rate: 0.95, spin: 44,  turn: 8 },
+        { x: 42,   y: 110, w: 34, r: 9,   rate: 0.55, spin: -34, turn: -6 }
+    ];
+
+    const GATHER_X = 0;   // where they gather, as a share of the photo
+    const EDGE = 8;       // px kept clear of the window's own sides
+    const SLIDE = 1.3;    // how far out the diagonal entrance starts
+    const SLIDE_Y = 0.75; // and how far below, against that - the angle
+
+    // Stacked layouts put the words directly under the picture, so there
+    // the drift is stopped at its bottom edge rather than being allowed to
+    // carry a sticker down over them. Both numbers match css/site.css:
+    // the breakpoint the About page stacks at, and the size the stickers
+    // come down to on a phone.
+    const STACKED = window.matchMedia ?
+        window.matchMedia('(max-width: 1000px)') : null;
+    const PHONE = 640;
+    const SHRINK = 0.8;
+
+    const sets = [];
+
+    hosts.forEach(function (host) {
+        // built once: the motion toggle calls this again to wire the drift
+        let layer = host.querySelector(':scope > .sticker-layer');
+        if (!layer) {
+            const files = (host.getAttribute('data-stickers') || '')
+                .split(',').map(function (f) { return f.trim(); })
+                .filter(function (f) { return f; });
+            if (!files.length) return;
+
+            layer = document.createElement('div');
+            layer.className = 'sticker-layer';
+            layer.setAttribute('aria-hidden', 'true');
+
+            files.forEach(function (file, i) {
+                const slot = SLOTS[i % SLOTS.length];
+                const el = document.createElement('div');
+                el.className = 'sticker';
+                el.style.cssText = '--x:' + slot.x + '%;--y:' + slot.y + '%;' +
+                    '--w:' + slot.w + '%;--r:' + slot.r + 'deg';
+                // on the element, not in a list: a file that fails to load
+                // takes its sticker out, and the rest keep their slots
+                el.style.setProperty('--i', i);   // the pop's stagger
+                el.dataset.i = i;
+                el.dataset.x = slot.x;
+                el.dataset.y = slot.y;
+                el.dataset.w = slot.w;
+                el.dataset.rate = slot.rate;
+                el.dataset.spin = slot.spin;
+                el.dataset.turn = slot.turn;
+
+                const img = document.createElement('img');
+                img.src = DIR + encodeURIComponent(file);
+                img.alt = '';
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                img.addEventListener('error', function () { el.remove(); });
+
+                el.appendChild(img);
+                layer.appendChild(el);
+            });
+
+            /* in front of the picture, not after it: on the homepage the
+               photo is styled through img:last-child, and a layer appended
+               after it would take that rule away. z-index puts the layer
+               on top either way. */
+            host.insertBefore(layer, host.firstChild);
+        }
+        const items = Array.from(layer.children);
+        if (!items.length) return;
+
+        /* How far past each edge of the photo - top, right, bottom, left,
+           as a share of its width - a sticker may ever reach:
+
+             data-sticker-room="12 24 12 0"
+
+           A photo that says nothing lets them go where the slots put them,
+           which is what the About page wants. The homepage says 0 on the
+           left, because the copy sits right there. */
+        const room = (host.getAttribute('data-sticker-room') || '')
+            .split(/[\s,]+/).map(parseFloat)
+            .filter(function (n) { return !isNaN(n); });
+
+        const face = (host.getAttribute('data-sticker-face') || '')
+            .split(/[\s,]+/).map(parseFloat)
+            .filter(function (n) { return !isNaN(n); });
+
+        sets.push({
+            host: host,
+            items: items,
+            layer: layer,
+            room: room.length === 4 ? room : null,
+            // data-sticker-enter="diagonal": come up across the picture
+            // from its bottom right rather than leaning on the drift. For a
+            // photo hemmed in above and below - the homepage's, with copy
+            // beside it - this is where the movement comes from.
+            slide: host.getAttribute('data-sticker-enter') === 'diagonal',
+
+            /* data-sticker-face="left right top bottom", the part of the
+               picture nothing may cover, as shares of its own box. Both
+               photos have a face up top, so a sticker that would land on it
+               is pushed straight down until it is clear - always down, not
+               whichever way is nearest, because a nearest-edge rule flips
+               axis mid-scroll and the sticker jumps. */
+            face: face.length === 4 ? face : null
+        });
+    });
+
+    if (!sets.length) return;
+
+    /* Stacked, there is no drift to announce them, so they pop in as the
+       picture arrives and stay put - the stagger and the pop itself are in
+       the stylesheet, this only says when. Out of sight it comes off
+       again, so it plays on the way back up too. */
+    if (window.IntersectionObserver) {
+        sets.forEach(function (set) {
+            if (set.layer.dataset.watched) return;
+            set.layer.dataset.watched = '1';
+            new IntersectionObserver(function (entries) {
+                const e = entries[entries.length - 1];
+                if (e.intersectionRatio > 0.14) set.layer.classList.add('is-in');
+                else if (!e.isIntersecting) set.layer.classList.remove('is-in');
+            }, { threshold: [0, 0.15] }).observe(set.host);
+        });
+    }
+
+    // With motion off they still hang there, they just do not drift.
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (document.documentElement.classList.contains('liquid-hero-reduced')) return;
+
+    function update() {
+        const vh = window.innerHeight || 1;
+        const mid = vh / 2;
+        // enough travel to be silly, not so much that they leave the page
+        const cap = Math.min(340, vh * 0.42);
+        const vw = window.innerWidth || 1;
+        const stacked = STACKED && STACKED.matches;
+        const shrink = vw <= PHONE ? SHRINK : 1;
+
+        sets.forEach(function (set) {
+            const r = set.host.getBoundingClientRect();
+            if (r.bottom < -400 || r.top > vh + 400) return;
+            // one measurement for the whole photo: they all hang off it
+            const offset = (r.top + r.height / 2) - mid;   // -above / +below
+
+            /* A page can ask the stickers to leave their slots and gather
+               down one side of the frame: --gather, 0 to 1, written on the
+               photo's own box. The About page drives it with part two of
+               its pin - they collect on the picture's outer edge as it
+               slides left, leaving the other side clear for the bio. Read
+               off the inline style, which costs nothing - not the computed
+               one. */
+            const gather = parseFloat(set.host.style.getPropertyValue('--gather')) || 0;
+
+            set.items.forEach(function (el) {
+                const rate = parseFloat(el.dataset.rate || 0);
+
+                // stacked, they do not drift at all: they pop in where
+                // they are put and stay there
+                let y = stacked ? 0 : -offset * rate;
+                y = Math.max(-cap, Math.min(cap, y));
+
+                if (stacked) {
+                    // Stacked, the words are right above the picture as
+                    // well as below it, so nothing may pass either edge:
+                    // how far this one can rise before its top reaches the
+                    // picture's, and how far it can fall before its bottom
+                    // reaches the picture's. They are square, so height is
+                    // width, and a slot that already hangs past an edge is
+                    // pulled back inside it - the top one comes to rest
+                    // flush with the top, the low one flush with the foot.
+                    const w = (parseFloat(el.dataset.w) / 100) * r.width * shrink;
+                    const c = (parseFloat(el.dataset.y) / 100) * r.height;
+                    const up = w / 2 - c;
+                    const down = r.height - w / 2 - c;
+                    // taller than the picture: nowhere to go but the middle
+                    y = up > down ? (up + down) / 2
+                        : Math.max(up, Math.min(down, y));
+                }
+
+                // The crossing is parallaxed like the drift is, off the same
+                // rates: the quick ones are away first and the slow ones
+                // trail, so they go as a loose flock rather than a block.
+                // The spread is gentle (0.5) and the curve eases at both
+                // ends, which is what keeps it from snapping across; even
+                // the slowest is home by 0.88 of the swap.
+                let g = gather ? Math.min(1, gather * (1 + rate * 0.5)) : 0;
+                g = g * g * (3 - 2 * g);          // smoothstep, in and out
+
+                // GATHER_X sits on the left edge, so each one ends up half
+                // over the picture and half off it; they keep their own
+                // heights, so they come out strung down that side
+                const x = parseFloat(el.dataset.x || 50);
+                let dx = g ? ((GATHER_X - x) / 100) * r.width * g : 0;
+
+
+                /* Diagonal entrance: while the picture is still below the
+                   middle of the screen they wait off its bottom right and
+                   come up across it into their slots as it arrives - each
+                   at its own rate, so they land one after another rather
+                   than in a line. The travel sets the angle: a shade over
+                   half as far down as out. It stands in for the drift on
+                   the way in, which pulls the other way and would flatten
+                   the diagonal to a sideways slide; once the picture is
+                   past the middle the ordinary drift takes over again. */
+                if (set.slide && !stacked && offset > 0) {
+                    const enter = offset * rate * SLIDE;
+                    dx += enter;
+                    y = enter * SLIDE_Y;
+                }
+
+                /* The room, where the photo gives one: the sticker's whole
+                   box is held inside the photo opened out by it, and never
+                   past the window's own edge. Whatever the slot, the drift
+                   and the gather ask for, this is what they get. */
+                if (set.room) {
+                    const unit = r.width / 100;
+                    const w = parseFloat(el.dataset.w) * unit * shrink;
+                    const lo = Math.max(r.left - set.room[3] * unit, EDGE) + w / 2;
+                    const hi = Math.min(r.right + set.room[1] * unit, vw - EDGE) - w / 2;
+                    const sx = r.left + (x / 100) * r.width;
+                    dx = (lo > hi ? (lo + hi) / 2
+                        : Math.max(lo, Math.min(hi, sx + dx))) - sx;
+
+                    // the same again downward (they are square, so the box
+                    // is as tall as it is wide)
+                    const up = r.top - set.room[0] * unit + w / 2;
+                    const dn = r.bottom + set.room[2] * unit - w / 2;
+                    const sy = r.top + (parseFloat(el.dataset.y) / 100) * r.height;
+                    y = (up > dn ? (up + dn) / 2
+                        : Math.max(up, Math.min(dn, sy + y))) - sy;
+                }
+
+                /* Keep off his face. A keep-out test - "if it is on his
+                   face, move it below" - teleports: the moment a drifting
+                   sticker touches the top of the box the test flips and it
+                   jumps the whole height of it. So it is a limit instead.
+                   Each sticker keeps the side of his face its slot puts it
+                   on and stops at the edge, which is somewhere it can
+                   arrive at and leave continuously. The limit fades in with
+                   how much of his face's width the sticker is actually over,
+                   so crossing into those columns does not snap either. */
+                if (set.face) {
+                    const f = set.face;
+                    const w = (parseFloat(el.dataset.w) / 100) * r.width * shrink;
+                    const sx = r.left + (x / 100) * r.width;
+                    const sy = r.top + (parseFloat(el.dataset.y) / 100) * r.height;
+                    const fl = r.left + (f[0] / 100) * r.width;
+                    const fr = r.left + (f[1] / 100) * r.width;
+                    const ft = r.top + (f[2] / 100) * r.height;
+                    const fb = r.top + (f[3] / 100) * r.height;
+
+                    /* Judged on the slot, not on where the gather has taken
+                       it. Measured live, a sticker crossing his face dips as
+                       the limit ramps in and floats back up as it ramps out,
+                       which reads as a wobble in the middle of a straight
+                       move. This way the limit governs where they live and
+                       drift, and the crossing - which ends at the left edge,
+                       clear of him anyway - is left alone. */
+                    const over = Math.min(sx + w / 2, fr) - Math.max(sx - w / 2, fl);
+                    const k = Math.max(0, Math.min(1, over / (w * 0.5)));
+
+                    if (k > 0) {
+                        // above his face at rest, so it stays above; below, below
+                        const above = sy + w / 2 <= ft;
+                        const limit = above ? ft - w / 2 : fb + w / 2;
+                        const cy = sy + y;
+                        if (above ? cy > limit : cy < limit) {
+                            y += (limit - cy) * k;
+                        }
+                    }
+                }
+
+                el.style.setProperty('--dx', dx.toFixed(1) + 'px');
+                el.style.setProperty('--dy', y.toFixed(1) + 'px');
+
+                // and each one leans a few degrees as it goes, its own way
+                // round, on top of the slow turn it already carries from the
+                // scroll. Subtle on purpose: you should feel it settle, not
+                // watch it rotate.
+                el.style.setProperty('--dr', stacked ? '0deg'
+                    : (offset / vh * parseFloat(el.dataset.spin || 0) +
+                       g * parseFloat(el.dataset.turn || 0)).toFixed(2) + 'deg');
+            });
+        });
+    }
+
+    // The listeners are bound once and always, and call through this, so
+    // when the motion toggle runs the whole thing again it is the new pass
+    // that answers, not the one that was told to sit still.
+    initPhotoStickers.run = update;
+    if (!initPhotoStickers.bound) {
+        initPhotoStickers.bound = true;
+        let queued = false;
+        const kick = function () {
+            if (queued) return;
+            queued = true;
+            requestAnimationFrame(function () {
+                queued = false;
+                if (initPhotoStickers.run) initPhotoStickers.run();
+            });
+        };
+        window.addEventListener('scroll', kick, { passive: true });
+        window.addEventListener('resize', kick);
+    }
+    update();
+}
+
+/* ============================================
    Social links - clone the footer set into a fixed
    side rail (desktop) and the burger menu (mobile)
    ============================================ */
@@ -1264,6 +1616,27 @@ function initCardParallax() {
         navLinks.appendChild(li);
     }
 }*/
+
+/* ============================================
+   Social icons in the burger menu - cloned from
+   the footer set, so there is one copy to edit
+   ============================================ */
+function initNavSocial() {
+    const navLinks = document.querySelector('.nav-links');
+    const source = document.querySelector('.footer-social');
+    // 404 has no footer, so there is nothing to clone there
+    if (!navLinks || !source) return;
+    if (navLinks.querySelector('.nav-social')) return;
+
+    // The footer can list icon + handle name; the menu wants icons only.
+    const icons = source.cloneNode(true);
+    icons.querySelectorAll('.footer-social__name').forEach(n => n.remove());
+
+    const li = document.createElement('li');
+    li.className = 'nav-social';
+    li.innerHTML = icons.innerHTML;
+    navLinks.appendChild(li);
+}
 
 /* ============================================
    Navbar - fade the black backdrop in on scroll
@@ -1364,6 +1737,7 @@ function initMotionToggle() {
             /* the parallax listeners are bound once at load, so turning it
                back on mid-page needs them wired up now */
             if (!on && typeof initCardParallax === 'function') initCardParallax();
+            if (!on && typeof initPhotoStickers === 'function') initPhotoStickers();
         });
     });
 }
@@ -3479,8 +3853,15 @@ try {
         // to full bleed and turns solid blue, then [data-grow-skills] plays
         var splitAttr = parseFloat(pin.getAttribute('data-grow-split'));
         var split = isNaN(splitAttr) ? 0 : splitAttr;
-        var blue = pin.querySelector('.cta-blue');
-        var solid = pin.querySelector('.cta-solid');
+        // The About opener keeps its blue outside the pin, as a direct child
+        // of the run it has to cover (.ab-blue in about.html), so one layer
+        // carries on down the page past the stage. Look there as well.
+        var blue = pin.querySelector('.cta-blue') ||
+            (pin.parentNode && pin.parentNode.querySelector &&
+             pin.parentNode.querySelector(':scope > .cta-blue'));
+        var solid = blue && blue.querySelector('.cta-solid');
+        // the run the blue has to cover, when it reaches past the pin
+        var run = blue && blue.parentNode !== pin ? blue.parentNode : null;
         var skills = pin.querySelector('[data-grow-skills]');
         var play = pin.querySelector('[data-grow-play]');
 
@@ -3515,9 +3896,27 @@ try {
             frame.style.setProperty('--it', iy.toFixed(1));
             frame.style.setProperty('--ib', iy.toFixed(1));
             if (blue) {
+                // The blue is a large-viewport box (see .cta-blue), so on a
+                // phone it can be taller than the stage. That overshoot comes
+                // off the bottom of its clip while the box is still a square,
+                // keeping it on top of the liquid one, and closes as the box
+                // goes full bleed - which is the moment the blue has to reach
+                // the bottom of the screen. Nothing to take off on a desktop.
+                var over = Math.max(0, (blue.clientHeight || h) - h);
+                var ib = iy + over * (1 - grow);
+                // Where the run ends, the blue ends. Its negative bottom
+                // margin lets it stay stuck a screenful past the foot of the
+                // run, so without this it would carry on over the section
+                // below; the clip's bottom follows that foot up the screen
+                // instead, handing back to the black page there.
+                if (run) {
+                    var tail = blue.getBoundingClientRect().bottom -
+                        run.getBoundingClientRect().bottom;
+                    if (tail > ib) ib = tail;
+                }
                 blue.style.setProperty('--ix', ix.toFixed(1));
                 blue.style.setProperty('--it', iy.toFixed(1));
-                blue.style.setProperty('--ib', iy.toFixed(1));
+                blue.style.setProperty('--ib', ib.toFixed(1));
             }
 
             // the gradient settles from a slight zoom as the box opens
