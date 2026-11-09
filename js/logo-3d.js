@@ -154,10 +154,15 @@ if (host) {
    --------------------------------------------------------------- */
 function build(host) {
   let renderer;
+  // The page ships the <canvas> in its markup (same box, opacity 0), so the
+  // 3D logo fades in on a box that is already laid out. Creating it here
+  // instead would insert a much larger element after first paint, which
+  // counts as a layout shift.
+  const existing = host.querySelector(':scope > canvas');
   try {
     // Lite tier (window.lite, from site.js): no multisampling, which is
     // the most memory-hungry part of a WebGL canvas on a phone.
-    renderer = new THREE.WebGLRenderer({ antialias: !window.lite, alpha: true });
+    renderer = new THREE.WebGLRenderer({ antialias: !window.lite, alpha: true, canvas: existing || undefined });
   } catch (e) {
     return null; // no WebGL -> flat <img> stays
   }
@@ -165,7 +170,7 @@ function build(host) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.lite ? 1.5 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.15;
-  host.appendChild(renderer.domElement);
+  if (!existing) host.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 4000);

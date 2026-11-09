@@ -19,6 +19,13 @@
 /* ============================================
    CSS Custom Properties (Design Tokens)
    ============================================ */
+/* Reserve the scrollbar's width from the start. The page-loader holds
+   overflow:hidden on the body until it lifts; when the scrollbar then
+   appears, centred content would shift sideways by half its width. */
+html {
+    scrollbar-gutter: stable;
+}
+
 :root {
     /* Primary Colors */
     --color-orange: #FC6935;    /* orange (primary accent) */
