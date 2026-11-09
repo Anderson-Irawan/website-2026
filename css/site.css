@@ -2280,7 +2280,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 }
 
 /* "Start a project" - hovering it pops a gif up above the link.
-   Drop your clip in at assets/images/rock-and-roll.gif; if the file
+   Drop your clip in at assets/images/rock-and-roll.webp; if the file
    isn't there initCtaSpark() removes the <img> so nothing breaks. */
 .cta-spark {
     position: relative;
@@ -4042,6 +4042,27 @@ body {
 
 /* the forced break only applies on phones, where the phrase is two lines */
 .hero-divider__br { display: none; }
+
+/* Until js/site.js has run its first scroll update, show the phrase in the
+   pose that update settles on at scroll 0 (STRETCH_X / STRETCH_Y there), so
+   the first script frame doesn't jump it on screen. The script adds
+   .hero-js-ready when it takes over. */
+.has-hero-pin:not(.hero-js-ready) .hero-divider__text {
+    transform: scale(0.9, 2.2);
+}
+
+/* Hold the phrase back until its serif has loaded and js/site.js has fitted
+   it, so the font swap and the resize don't show as the text jumping. The
+   script adds .phrase-ready; the animation is a fallback that shows it after
+   3s whatever happens. */
+@keyframes phraseShow {
+    to { visibility: visible; }
+}
+
+html:not(.phrase-ready) .hero-divider__text {
+    visibility: hidden;
+    animation: phraseShow 0s linear 3s forwards;
+}
 
 .hero-divider__text {
     margin: 0;

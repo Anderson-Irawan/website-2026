@@ -3184,6 +3184,9 @@ try {
     var ticking = false;
     function update() {
         ticking = false;
+        // the phrase's pre-script pose (css, .has-hero-pin:not(.hero-js-ready))
+        // now gives way to the inline transform set below
+        document.documentElement.classList.add('hero-js-ready');
 
         // .is-active keeps the gradient sharp (no old blur-out) in both modes
         frame.classList.add('is-active');
@@ -3461,8 +3464,15 @@ try {
     // re-fit once the serif font has loaded, since it changes the width
     // the serif changes the title widths, which changes how many lines a
     // title takes, which changes the card height the stack is centred on
+    // the phrase stays hidden (css, html:not(.phrase-ready)) until it is fitted
+    // with its real font, so the swap and the refit don't show as a jump
+    function revealPhrase() { document.documentElement.classList.add('phrase-ready'); }
     if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(function () { fitPhrase(); measureStack(); onScroll(); });
+        document.fonts.ready.then(function () {
+            fitPhrase(); revealPhrase(); measureStack(); onScroll();
+        });
+    } else {
+        revealPhrase();
     }
     // the motion toggle flips a class on <html>
     new MutationObserver(onScroll).observe(html, { attributes: true, attributeFilter: ['class'] });
