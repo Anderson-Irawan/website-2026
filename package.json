@@ -1,0 +1,10 @@
+{
+  "name": "website-2026",
+  "private": true,
+  "scripts": {
+    "build": "esbuild css/site.css --minify --outfile=css/site.min.css && esbuild js/site.js --minify --outfile=js/site.min.js && esbuild js/logo-3d.js --minify --format=esm --outfile=js/logo-3d.min.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

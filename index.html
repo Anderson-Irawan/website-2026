@@ -28,7 +28,7 @@
 
     <!-- Plantin (Adobe Fonts): the display serif, used as font-marker in styles.css -->
     <link rel="stylesheet" href="https://use.typekit.net/bzi8cqp.css">
-    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="css/site.min.css">
     <link rel="icon" href="assets/favicon.ico" sizes="any">
     <script>document.documentElement.classList.add("is-loading");</script>
     <!-- Apply the saved motion setting before anything paints, so a
@@ -212,7 +212,7 @@
       </footer>
     </div>
 
-    <script src="js/site.js" defer></script>
+    <script src="js/site.min.js" defer></script>
     
     
     
@@ -235,7 +235,7 @@
        until the 3D build is ready, so fetch it only once the page has loaded
        and the browser is idle. */
     window.addEventListener('load', function () {
-        var go = function () { import('./js/logo-3d.js?v=20261025').catch(function () {}); };
+        var go = function () { import('./js/logo-3d.min.js?v=20261108').catch(function () {}); };
         if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 2000 });
         else setTimeout(go, 200);
     });
