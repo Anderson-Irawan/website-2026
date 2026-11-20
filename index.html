@@ -118,15 +118,19 @@
         <h2 class="hero-divider__text">For Dreamers<br class="hero-divider__br"> &amp; Daredevils</h2>
     </section>
 
-    <!-- Work Section -->
+    <!-- Work Section: one project per screen. See css/work-deck.css -->
     <section class="portfolio-section">
 
-          <div class="work-scatter work-scatter--squish" data-sanity-cards data-featured-only data-limit="4" data-fit-titles>
-            <!-- Empty on purpose: every card is built from Sanity by
-                 js/sanity-cards.js, ordered by each project's order field.
+          <div class="work-deck" data-work-deck data-featured-only data-limit="4">
+            <!-- Empty on purpose: every slide is built from Sanity by
+                 js/work-deck.js, ordered by each project's order field.
                  data-featured-only means only projects with "Show on the
                  homepage" ticked in the Studio appear here.
-                 data-limit="4" limits the homepage to show only 4 projects. -->
+                 data-limit="4" limits the homepage to show only 4 projects.
+
+                 Each slide is the project's own mockup darkened behind,
+                 its clip looping in a square in the middle, the title on
+                 the left and the category tags stacked on the right. -->
 
         </div>
 

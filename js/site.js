@@ -4150,3 +4150,232 @@ try {
 })();
 
 } catch (e) { console.error("site.js: projects-v2", e); }
+
+/* ======================================================================
+   js/work-deck.js
+   ====================================================================== */
+/* The homepage portfolio: one project per screen.
+
+   Same Sanity project the cards read, one <a> per featured project. The
+   markup it builds is described in css/work-deck.css ("WORK DECK").
+
+   The clip loops while its slide is on screen and pauses when it is not,
+   so four projects are never decoding at once. Phones and reduced-motion
+   visitors get the still instead: the clips run from half a megabyte to
+   twenty, and autoplaying four of them on a phone is not worth it. */
+try {
+(function initWorkDeck() {
+    const deck = document.querySelector('[data-work-deck]');
+    if (!deck) return;
+
+    const LIMIT = parseInt(deck.getAttribute('data-limit'), 10) || 0;
+    const FEATURED = deck.hasAttribute('data-featured-only');
+
+    /* Phones and touch screens: still, no video. Same cut-off as the rest
+       of the site (js/lite in the main script) plus the saved motion
+       setting, which the navbar toggle writes. */
+    const reduced = (function () {
+        try {
+            if (localStorage.getItem('liquid-hero:reduced') === '1') return true;
+        } catch (e) { /* private mode */ }
+        return !!(window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    })();
+    const STILL_ONLY = !!window.lite || reduced;
+
+    const STILL_W = window.lite ? 800 : 1000;
+    const BACKDROP_W = window.lite ? 900 : 1400;
+
+    function assetUrl(ref) {
+        if (!ref) return '';
+        const p = ref.split('-');
+        if (p.length < 4) return '';
+        return 'https://cdn.sanity.io/images/' + SANITY.projectId + '/' +
+            SANITY.dataset + '/' + p[1] + '-' + p[2] + '.' + p[3];
+    }
+
+    function imgUrl(ref, w) {
+        const u = assetUrl(ref);
+        return u ? u + '?w=' + w + '&auto=format&q=75' : '';
+    }
+
+    /* Filenames carry spaces ("PagiKopi overview.mp4"), which a plain
+       concatenation leaves for the browser to guess at. */
+    function videoUrl(name) {
+        return '/assets/videos/' + encodeURIComponent(name);
+    }
+
+    function esc(s) {
+        const d = document.createElement('div');
+        d.textContent = s == null ? '' : s;
+        return d.innerHTML;
+    }
+
+    function slide(p) {
+        const still = p.cardStill && p.cardStill.asset;
+        if (!still) return '';
+
+        const hover = p.cardHover || {};
+        const stillUrl = imgUrl(still._ref, STILL_W);
+        const poster = (hover.poster && hover.poster.asset)
+            ? imgUrl(hover.poster._ref, STILL_W)
+            : stillUrl;
+
+        let media =
+            '<img class="work-deck__still" src="' + esc(stillUrl) +
+            '" alt="" loading="lazy" decoding="async">';
+
+        if (!STILL_ONLY && hover.videoPath) {
+            media =
+                '<video class="work-deck__video" muted loop playsinline' +
+                ' preload="none" aria-hidden="true" tabindex="-1"' +
+                ' data-src="' + esc(videoUrl(hover.videoPath)) + '"' +
+                ' poster="' + esc(poster) + '"></video>';
+        }
+
+        const tags = (p.categories || []).map(function (slug) {
+            const cat = WORK_CATEGORIES[slug];
+            return cat ? '<span class="tag">' + esc(cat.label) + '</span>' : '';
+        }).join('');
+
+        return '<a class="work-deck__slide" href="' + esc(caseUrl(p.slug)) + '">' +
+            '<span class="work-deck__backdrop" aria-hidden="true">' +
+                '<img src="' + esc(imgUrl(still._ref, BACKDROP_W)) +
+                '" alt="" loading="lazy" decoding="async">' +
+            '</span>' +
+            '<div class="work-deck__stage">' +
+                '<h2 class="work-deck__title">' + esc(p.title) + '</h2>' +
+                '<div class="work-deck__square">' + media + '</div>' +
+                '<div class="work-deck__tags">' + tags + '</div>' +
+            '</div>' +
+        '</a>';
+    }
+
+    /* Two observers, because loading early and playing early are not the
+       same thing. The loader runs a screen ahead so the clip has usually
+       buffered by the time its slide arrives; the player only runs for a
+       slide that is actually on screen, so at most one clip decodes at a
+       time rather than three. */
+    function ensureSrc(video) {
+        if (video && !video.getAttribute('src')) {
+            video.src = video.getAttribute('data-src');
+        }
+    }
+
+    /* Load a slide's clip a screen early. Deciding what should *play* is
+       not this observer's job: once a slide has stuck, it stays in the
+       viewport even with later slides painted over it, so an intersection
+       test says "visible" for every buried slide at once. That had all
+       four clips decoding together. Playback belongs to the stack pass
+       below, which knows the order. */
+    function watch() {
+        if (STILL_ONLY || !window.IntersectionObserver) return;
+
+        const loader = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                ensureSrc(entry.target.querySelector('.work-deck__video'));
+                loader.unobserve(entry.target);
+            });
+        }, { rootMargin: '100% 0px' });
+
+        deck.querySelectorAll('.work-deck__slide').forEach(function (s) {
+            loader.observe(s);
+        });
+    }
+
+    /* Which clip plays. The stacking itself is pure CSS sticky (see the
+       comment on .work-deck__slide) - nothing here touches the geometry,
+       because the covered slide has to stay exactly where it is.
+
+       One clip at rest, two through a transition: the slide on top and
+       the one climbing over it. Everything buried stays paused. An
+       intersection test cannot do this: a stuck slide stays inside the
+       viewport with later slides painted over it, so it reports every
+       buried slide as visible, which had four clips decoding at once. */
+    function playback() {
+        if (STILL_ONLY || !window.requestAnimationFrame) return;
+
+        const slides = Array.prototype.slice.call(
+            deck.querySelectorAll('.work-deck__slide'));
+        if (!slides.length) return;
+
+        let ticking = false;
+
+        function update() {
+            ticking = false;
+            const vh = window.innerHeight || 1;
+
+            const deckTop = deck.getBoundingClientRect().top;
+            const H = slides[0].offsetHeight || vh;
+            const inDeck = deckTop < vh && deckTop + H * slides.length > 0;
+            const front = Math.max(0,
+                Math.min(slides.length - 1, Math.floor(-deckTop / H)));
+
+            for (let i = 0; i < slides.length; i++) {
+                const video = slides[i].querySelector('.work-deck__video');
+                if (!video) continue;
+
+                /* the climb only counts once it has actually appeared */
+                const climbing = i === front + 1 && (deckTop + i * H) < vh;
+                const wanted = inDeck && (i === front || climbing);
+
+                if (wanted) {
+                    ensureSrc(video);
+                    if (video.paused && video.dataset.blocked !== '1') {
+                        const playing = video.play();
+                        if (playing && playing.catch) {
+                            playing.catch(function () { video.dataset.blocked = '1'; });
+                        }
+                    }
+                } else if (!video.paused) {
+                    video.pause();
+                }
+            }
+        }
+
+        function onScroll() {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+        update();
+    }
+
+    const QUERY = '*[_type == "project" && defined(slug.current)] | order(order asc) {' +
+        'title, "slug": slug.current, categories, featured, cardStill, cardHover}';
+
+    fetch('https://' + SANITY.projectId + '.' + SANITY_HOST + '/v' + SANITY.apiVersion +
+        '/data/query/' + SANITY.dataset + '?query=' + encodeURIComponent(QUERY))
+        .then(function (r) {
+            if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+            return r.json();
+        })
+        .then(function (j) {
+            let list = j.result || [];
+
+            if (FEATURED) {
+                list = list.filter(function (p) { return p.featured; });
+            }
+            /* a project with no still has nothing to put on screen */
+            list = list.filter(function (p) { return p.cardStill && p.cardStill.asset; });
+            if (LIMIT) list = list.slice(0, LIMIT);
+            if (!list.length) return;
+
+            deck.innerHTML = list.map(slide).join('') +
+                /* the last slide has nothing following it to cover it, so
+                   without this it is the only one that flashes past instead
+                   of holding for a screen (see .work-deck__tail) */
+                '<div class="work-deck__tail" aria-hidden="true"></div>';
+            watch();
+            playback();
+        })
+        .catch(function (e) {
+            console.error('site.js: work-deck', e);
+        });
+})();
+
+} catch (e) { console.error("site.js: work-deck", e); }

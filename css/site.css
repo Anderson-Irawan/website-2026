@@ -1697,43 +1697,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 /* "In the works" tiles keep the normal title/category colours - the
    striped frame already reads as a placeholder */
 
-/* Single column layout for homepage projects. The cards still arrive two
-   to a .work-row, so this gap has to match the gap between rows or the
-   stack reads as pairs. */
-.page-home .work-scatter--squish .work-row {
-    flex-direction: column;
-    row-gap: clamp(3rem, 7vw, 6rem);
-}
-
-.page-home .work-scatter--squish .work-row > .work-card {
-    flex: none;
-    width: 60%;   /* was 80% */
-    /* auto margins beat the row's align-items: flex-start */
-    margin-inline: auto;
-}
-
-/* Phones keep the wider card: at 60% of a phone screen, with the phone
-   frame height below, the card turns into a tall narrow strip. */
-@media (max-width: 760px) {
-    .page-home .work-scatter--squish .work-row > .work-card {
-        width: 80%;
-    }
-}
-
-/* The frame height was tuned for half-width cards, so a full-width card
-   needs the shape to scale with it instead of staying short and wide.
-   Above 760px only: the mobile heights below are already tuned for a
-   single full-width card. */
-@media (min-width: 761px) {
-    .page-home .work-scatter--squish .work-card__frame {
-        height: auto;
-        aspect-ratio: 3 / 2;
-        /* At full row width 3:2 works out taller than the viewport, so the
-           card could not be seen in one piece without this. (was 80vh) */
-        max-height: 65vh;
-    }
-}
-
 @media (max-width: 760px) {
     .work-scatter--squish {
         max-width: none;
@@ -1844,51 +1807,6 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 /* (Titles used to swap to italic on hover, with a hidden italic copy
    under each one reserving the width so the swap never reflowed. Both
    are gone: the image is the whole hover now.) */
-
-/* Homepage: the title is a display line sized to the card (fitTitles in
-   js/sanity-cards.js), so it fills the card the way the image does, and
-   always on one line. */
-.page-home .work-card__meta {
-    align-items: center;
-    text-align: center;
-    margin-top: 0;
-    padding-top: 0;
-    /* the frame is position: relative, so it paints over any unpositioned
-       sibling; the title has to sit in its own layer to show on top */
-    position: relative;
-    z-index: 1;
-}
-
-.page-home .work-card__tags {
-    justify-content: center;
-}
-
-/* Homepage labels are orange (text, outline and icon) and the titles are
-   page ink - swapped from the site default. */
-.page-home .tag {
-    color: var(--color-orange);
-    border-color: var(--color-orange);
-}
-
-/* --title-size is set by fitTitles() in js/sanity-cards.js; the clamp is
-   only the first paint before the cards are measured */
-.page-home .work-card__title {
-    font-size: var(--title-size, clamp(2.75rem, 8vw, 8.5rem));
-    /* page ink; the orange is on the labels (was the other way round) */
-    color: var(--page-ink);
-    /* always one line - fitTitles() sizes it to fit the card */
-    white-space: nowrap;
-    line-height: 0.92;
-    letter-spacing: -0.035em;
-    /* Trim the box to exactly cap height to baseline, so -0.4cap overlaps
-       the image by 40% of the letters rather than 40% of blank leading.
-       Firefox has no text-box yet and keeps the leading, so it overlaps
-       a little less there. */
-    text-box: trim-both cap alphabetic;
-    margin-top: -0.4cap;
-    /* trimming the bottom lets descenders hang free; keep them off the tags */
-    margin-bottom: 0.25em;
-}
 
 /* See more button under the grid */
 .work-more {
@@ -4421,57 +4339,10 @@ html.liquid-hero-reduced .hero-divider {
     pointer-events: none;
 }
 
-/* Homepage project cards: an orange cover over the image frame while it
-   stretches in, swiping away left to right once the card settles in the
-   middle of the screen. js/hero-shrink.js puts .card-reveal on <html>
-   (only with motion on) and .is-revealed on each frame when it settles. */
-.card-reveal .page-home .work-card__frame::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 2;   /* above the image, the hover image and the video */
-    background: var(--color-orange);
-    pointer-events: none;
-    /* anchored right, so shrinking it uncovers the image from the left */
-    transform-origin: 100% 50%;
-    transform: scaleX(1);
-    /* swipe speed (was 0.9s) */
-    transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
-}
-
-.card-reveal .page-home .work-card__frame.is-revealed::after {
-    transform: scaleX(0);
-}
-
-/* Homepage project cards stack: each card holds in the middle of the
-   screen while the next one slides up over it (the one underneath blurs,
-   dims and shrinks a touch - js/hero-shrink.js, stackCards). Only with
-   motion on (.card-reveal); otherwise they scroll as a normal list.
-
-   The cards arrive two to a .work-row; display: contents dissolves the
-   rows so all the cards share one parent and stack as one pile. The row
-   gap is the same as the grid's, so the spacing does not change. */
-.card-reveal .page-home .work-scatter--squish .work-row {
-    display: contents;
-}
-
-/* Scroll space between stacked cards: how long each one holds, sharp and
-   on its own, before the next appears at the bottom and the blur starts.
-   (The grid's own gap is ~6rem, which made them blur almost at once.) */
-.card-reveal .page-home .work-scatter--squish {
-    row-gap: 45vh;
-    row-gap: 45svh;
-}
-
-.card-reveal .page-home .work-scatter--squish .work-card {
-    position: sticky;
-    /* --stack-top centres the card on the screen; set per card by the js */
-    top: var(--stack-top, 15vh);
-}
-
-/* Reduced motion: no shrink. js/hero-shrink.js keeps the gradient full
-   screen and lets it scroll away with the hero, so the page below matches
-   the full version (black + still topo lines). */
+/* (The homepage project cards, their orange swipe and their sticky stack
+   are gone: the homepage portfolio is the full-screen deck built by
+   js/work-deck.js, styled at the end of this file. The reduced-motion note
+   that lived here went with them - the deck simply shows stills.) */
 
 /* ======================================================================
    css/montage.css
@@ -5582,3 +5453,211 @@ html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; 
 .pj-v2 {
     --card-reveal-time: 0.28s;
 }
+
+/* ======================================================================
+   css/work-deck.css
+   ====================================================================== */
+/* ============================================================
+   WORK DECK - the homepage portfolio, one project per screen.
+
+   Composition after MIUX Studio's work list: the project's own mockup
+   darkened behind, its clip looping in a square in the middle, the title
+   on the left, the category tags stacked and right aligned on the right.
+
+   Built by js/work-deck.js from Sanity, one <a> per featured project:
+
+       <a class="work-deck__slide" href="/work/<slug>">
+         <span class="work-deck__backdrop"><img></span>
+         <div class="work-deck__stage">
+           <h2 class="work-deck__title">Title</h2>
+           <div class="work-deck__square"><video></div>
+           <div class="work-deck__tags"><span class="tag">..</span></div>
+         </div>
+       </a>
+
+   The whole slide is the link, so the title, the tags and the clip are
+   all the same target and there is only one tab stop per project.
+   ============================================================ */
+
+.work-deck {
+    /* above the hero's logo and the divider phrase, as the old grid was,
+       so the slides cover them as the projects come in */
+    position: relative;
+    z-index: 3;
+}
+
+/* Scroll room under the last slide, so it gets the same one screen of
+   hold the others get while being covered. Padding on the deck does not
+   do this - sticky measures against the content box, so padding is not
+   included - hence a plain filler as tall as a slide. js/work-deck.js
+   appends it; it is empty and only there to be scrolled through. */
+.work-deck__tail {
+    height: 100vh;
+    height: 100svh;
+    pointer-events: none;
+}
+
+/* ── one project, one screen, stacked ────────────────────── */
+/* Each slide pins to the top of the window and the next one slides up
+   over it, the way the old cards stacked. Sticky does the holding: a
+   later sibling paints over an earlier one, and every slide is opaque
+   right across, so the incoming slide hides the one behind it.
+
+   The covered slide is left exactly as it is - not scaled, not dimmed.
+   Scaling it pulled it off the edges and showed black around a
+   full-bleed image, which is the one thing this section cannot do. */
+.work-deck__slide {
+    position: sticky;
+    top: 0;
+    display: grid;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    /* keeps the blurred backdrop and its overlay off the next slide */
+    isolation: isolate;
+    text-decoration: none;
+    color: var(--page-ink);
+}
+
+/* ── the darkened mockup behind ──────────────────────────── */
+.work-deck__backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+}
+
+.work-deck__backdrop img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* scaled up first so the blur never shows its own soft edges */
+    transform: scale(1.12);
+    /* "a darker version": blurred so it recedes and reads as ground
+       rather than as a second image competing with the square, then
+       pulled down in brightness - but not so far that the mockup stops
+       being recognisable, which is the point of showing it */
+    filter: blur(26px) brightness(0.42) saturate(0.9);
+}
+
+/* Vignette. Without it the blurred mockup still fights the title and the
+   tags at the edges, where it is brightest. Kept light: any heavier and
+   the backdrop turns into flat brown mush. */
+.work-deck__backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 50%,
+            rgba(12, 12, 12, 0) 0%,
+            rgba(12, 12, 12, 0.45) 85%),
+        linear-gradient(to top,
+            rgba(12, 12, 12, 0.55) 0%,
+            rgba(12, 12, 12, 0) 40%);
+}
+
+/* ── the three-part stage ────────────────────────────────── */
+/* Equal outer columns with the square in the middle one, so the square
+   stays centred in the window however long the title or the tags get. */
+.work-deck__stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    width: 100%;
+    padding-inline: var(--page-inset);
+}
+
+/* ── title, left ─────────────────────────────────────────── */
+.work-deck__title {
+    justify-self: start;
+    max-width: 11ch;
+    margin: 0;
+    font-family: var(--font-marker);   /* Plantin */
+    font-size: var(--fs-2);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    /* the global h1-h4 rule sets caps; the deck reads as sentence case,
+       like the rest of the display type on the site */
+    text-transform: none;
+    color: var(--page-ink);
+    transition: color 0.3s var(--transition-smooth);
+}
+
+.work-deck__slide:hover .work-deck__title,
+.work-deck__slide:focus-visible .work-deck__title {
+    color: var(--color-orange);
+}
+
+.work-deck__slide:focus-visible {
+    outline: 2px solid var(--color-orange);
+    outline-offset: -2px;
+}
+
+/* ── the square, middle ──────────────────────────────────── */
+/* Same idea as the index intro's square: one square holding the moving
+   thing, everything else sitting around it. */
+.work-deck__square {
+    position: relative;
+    width: min(46vh, 40vw);
+    aspect-ratio: 1;
+    overflow: hidden;
+    background-color: var(--color-gray-placeholder);
+    /* lifts it off the blurred ground so the edge reads as an edge */
+    box-shadow: 0 2.5rem 5rem rgba(0, 0, 0, 0.55);
+}
+
+.work-deck__video,
+.work-deck__still {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ── tags, right, stacked ────────────────────────────────── */
+.work-deck__tags {
+    justify-self: end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+/* the site's pill, unchanged in shape - only the stacking is new.
+   Orange on both counts, as the homepage labels have always been. */
+.work-deck .tag {
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+}
+
+/* ── phones ──────────────────────────────────────────────── */
+@media (max-width: 760px) {
+    .work-deck__stage {
+        /* one column: title, square, tags. The square takes the width
+           and the tags stay right aligned under it. */
+        grid-template-columns: minmax(0, 1fr);
+        gap: clamp(1.25rem, 5vw, 2rem);
+        padding-block: clamp(3rem, 12vh, 5rem);
+    }
+
+    .work-deck__title {
+        justify-self: start;
+        max-width: none;
+        font-size: var(--fs-3);
+    }
+
+    .work-deck__square {
+        width: 100%;
+        box-shadow: none;
+    }
+
+    .work-deck__tags {
+        justify-self: end;
+    }
+}
+
+/* ── reduced motion ──────────────────────────────────────── */
+/* js/work-deck.js does not build a <video> at all when motion is off or
+   the visitor is on a phone, so there is nothing to pause here. */
