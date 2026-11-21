@@ -1653,6 +1653,8 @@ function initNavbar() {
    the way up
    ============================================ */
 function initNavHide() {
+    // Disabled: the bar stays on screen while scrolling on every page.
+    return;
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
 
@@ -2733,8 +2735,8 @@ try {
     'precision highp float;',
     'uniform vec2 u_res;',
     'uniform float u_time;',
-    'uniform vec3 u_col[5];',
-    'uniform float u_stop[5];',
+    'uniform vec3 u_col[7];',
+    'uniform float u_stop[7];',
     'uniform float u_order,u_bands,u_detail,u_scale,u_warp,u_contrast,u_angle,u_grain,u_grainScale;',
     'uniform vec2 u_mouse;',
     'uniform float u_pointer;',
@@ -2778,7 +2780,7 @@ try {
 
     'vec3 ramp(float t){',
     '  vec3 c=u_col[0];',
-    '  for(int i=0;i<4;i++){c=mix(c,u_col[i+1],smoothstep(u_stop[i],u_stop[i+1],t));}',
+    '  for(int i=0;i<6;i++){c=mix(c,u_col[i+1],smoothstep(u_stop[i],u_stop[i+1],t));}',
     '  return c;',
     '}',
 
@@ -2831,6 +2833,11 @@ try {
     // Lite tier: a quarter fewer pixels than 2x. The gradient is smooth, so
     // the upscale is not visible; the grain gets a touch coarser.
     if (global.lite && !(options && options.maxDPR)) cfg.maxDPR = 1.25;
+    // the shader takes seven colour stops; a shorter palette repeats its last
+    // colour, so the homepage hero (five) looks exactly as it did
+    var padStops = [0.97, 1.0];
+    while (cfg.colors.length < 7) cfg.colors = cfg.colors.concat([cfg.colors[cfg.colors.length - 1]]);
+    while (cfg.stops.length < 7) cfg.stops = cfg.stops.concat([padStops[cfg.stops.length - 5]]);
 
     var gl = canvas.getContext('webgl', { antialias: false, alpha: false })
           || canvas.getContext('experimental-webgl', { antialias: false, alpha: false });
@@ -3037,6 +3044,12 @@ try {
         }
       },
       // Freeze / unfreeze all motion (persisted per visitor).
+      setColors: function (list) {
+        var flat = [];
+        list.forEach(function (c) { flat = flat.concat(hexToRgb(c)); });
+        gl.useProgram(prog);
+        gl.uniform3fv(U.col, new Float32Array(flat));
+      },
       setReduced: function (v) {
         forced = !!v;
         try { global.localStorage.setItem(STORE_KEY, forced ? '1' : '0'); } catch (e) {}
@@ -3622,7 +3635,9 @@ try {
            square is fully hidden), then 1 a tenth of a screen later. The
            fade therefore happens behind the card, never in view. */
         if (!firstFrame || !firstFrame.isConnected) {
-            firstFrame = document.querySelector('.page-home .work-card__frame');
+            /* the homepage work is the work deck now; its first slide is
+               full-screen, so it covers the square the same way a card did */
+            firstFrame = document.querySelector('.page-home .work-deck__slide');
         }
         let out = 0;
         if (firstFrame) {
@@ -4168,6 +4183,84 @@ try {
     const deck = document.querySelector('[data-work-deck]');
     if (!deck) return;
 
+    /* the work backdrop is the homepage's liquid gradient, recoloured as the
+       slides hand over. One canvas serves the whole deck. */
+    const liquidCanvas = document.createElement('canvas');
+    liquidCanvas.className = 'work-deck__liquid';
+    liquidCanvas.setAttribute('aria-hidden', 'true');
+    deck.parentElement.setAttribute('data-liquid-watch', '');
+    deck.parentElement.insertBefore(liquidCanvas, deck);
+    let liquid = null;
+    let liquidKey = '';
+    function deckShade(hex, toHex, t) {
+        const a = [1, 3, 5].map(function (i) { return parseInt(hex.substr(i, 2), 16); });
+        const b = [1, 3, 5].map(function (i) { return parseInt(toHex.substr(i, 2), 16); });
+        return '#' + a.map(function (v, i) {
+            return Math.round(v + (b[i] - v) * t).toString(16).padStart(2, '0');
+        }).join('');
+    }
+    function lerpHex(a, b, t) {
+        return deckShade(a, b, t);
+    }
+    function paletteFor(brands) {
+        const a = brands[0], b = brands[1] || a, c = brands[2] || b;
+        return [deckShade(a, '#000000', 0.3), a, deckShade(b, '#000000', 0.12), b,
+                c, deckShade(c, '#000000', 0.22), deckShade(a, '#000000', 0.36)];
+    }
+    /* the photo layer is only shown while the deck is on screen, so it does
+       not carry on over the rest of the page */
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (entries) {
+            document.documentElement.classList.toggle('work-deck-on', entries[0].isIntersecting);
+        }).observe(deck);
+    }
+
+    /* the handover: from the moment the next slide starts to arrive until it
+       is HANDOVER of the way up, the outgoing title and tags fade out, the
+       incoming ones fade in, and the liquid moves from the old brand colour to
+       the new one. Everything follows that one scroll progress. */
+    const HANDOVER = 0.7;
+    let liveQueued = false;
+    function brandsOf(s) {
+        const out = [];
+        ['--brand', '--brand2', '--brand3'].forEach(function (name) {
+            const v = (s.style.getPropertyValue(name) || '').trim();
+            if (/^#[0-9a-f]{6}$/i.test(v)) out.push(v);
+        });
+        return out.length ? out : ['#FC6935'];
+    }
+    function markLive() {
+        liveQueued = false;
+        deck.classList.add('work-deck-js');
+        const list = deck.querySelectorAll('.work-deck__slide');
+        const vh = window.innerHeight || 1;
+        let k = -1;
+        list.forEach(function (s, i) { if (s.getBoundingClientRect().top < vh - 1) k = i; });
+        if (k < 0) return;
+        const top = list[k].getBoundingClientRect().top;
+        const p = Math.min(1, Math.max(0, 1 - top / vh));
+        const m = Math.min(1, p / HANDOVER);
+        const live = p >= HANDOVER ? k : Math.max(0, k - 1);
+        list.forEach(function (s, i) { s.classList.toggle('is-live', i === live); });
+        const inBrands = brandsOf(list[k]);
+        const outBrands = k > 0 ? brandsOf(list[k - 1]) : inBrands;
+        const from = paletteFor(outBrands), to = paletteFor(inBrands);
+        const colors = to.map(function (c, i) { return lerpHex(from[i], c, m); });
+        const key = colors.join();
+        if (key === liquidKey) return;
+        liquidKey = key;
+        return; // the liquid background is off; the work backdrop is the mockup photo
+        if (!liquid && window.liquidHero) liquid = window.liquidHero(liquidCanvas, { colors: colors, stops: [0.12, 0.3, 0.45, 0.6, 0.75, 0.88, 1.0] });
+        else if (liquid) liquid.setColors(colors);
+    }
+    function queueLive() {
+        if (liveQueued) return;
+        liveQueued = true;
+        requestAnimationFrame(markLive);
+    }
+    window.addEventListener('scroll', queueLive, { passive: true });
+    window.addEventListener('resize', queueLive);
+
     const LIMIT = parseInt(deck.getAttribute('data-limit'), 10) || 0;
     const FEATURED = deck.hasAttribute('data-featured-only');
 
@@ -4214,6 +4307,23 @@ try {
     function slide(p) {
         const still = p.cardStill && p.cardStill.asset;
         if (!still) return '';
+        /* the backdrop is a different picture from the card: the first project
+           image that is not the card still (media rows, hero, then the hover) */
+        /* a real application shot over a logo, swatch or type specimen: the
+           alt text the Studio carries decides which is which */
+        const LOGOISH = /logo|mark|palette|colou?r|typeface|type|font|icon|swatch|specimen|symbol|stamp/i;
+        const MOCKISH = /mock|shop|box|bag|wall|sign|cup|cap|shirt|tee|label|pack|hoard|poster|menu|bottle|store|print|card|station|on a|on the|applied|in use|worn|carry|building|van|car/i;
+        const pool = [].concat(p.rows || [], p.hero ? [p.hero] : [],
+            (p.cardHover && p.cardHover.image) ? [p.cardHover.image] : [])
+            .filter(function (i) { return i && i.ref && i.ref !== still._ref; });
+        let backRef = still._ref, best = -Infinity;
+        pool.forEach(function (i) {
+            const alt = i.alt || '';
+            const score = (MOCKISH.test(alt) ? 2 : 0) - (LOGOISH.test(alt) ? 2 : 0);
+            if (score > best) { best = score; backRef = i.ref; }
+        });
+        /* a backdrop picked by hand in the Studio always wins */
+        if (p.backdrop && p.backdrop.ref) backRef = p.backdrop.ref;
 
         const hover = p.cardHover || {};
         const stillUrl = imgUrl(still._ref, STILL_W);
@@ -4238,9 +4348,13 @@ try {
             return cat ? '<span class="tag">' + esc(cat.label) + '</span>' : '';
         }).join('');
 
-        return '<a class="work-deck__slide" href="' + esc(caseUrl(p.slug)) + '">' +
+        /* the project's own brand colour, set in the Studio as a hex value; the
+           deck falls back to the site orange when it is empty */
+        const brands = (p.brandColors || []).filter(function (h) { return /^#[0-9a-f]{6}$/i.test(h); }).slice(0, 3);
+        const brandStyle = brands.map(function (h, i) { return '--brand' + (i ? i + 1 : '') + ':' + h; }).join(';');
+        return '<a class="work-deck__slide"' + (brandStyle ? ' style="' + brandStyle + '"' : '') + ' href="' + esc(caseUrl(p.slug)) + '">' +
             '<span class="work-deck__backdrop" aria-hidden="true">' +
-                '<img src="' + esc(imgUrl(still._ref, BACKDROP_W)) +
+                '<img src="' + esc(imgUrl(backRef, BACKDROP_W)) +
                 '" alt="" loading="lazy" decoding="async">' +
             '</span>' +
             '<div class="work-deck__stage">' +
@@ -4346,7 +4460,7 @@ try {
     }
 
     const QUERY = '*[_type == "project" && defined(slug.current)] | order(order asc) {' +
-        'title, "slug": slug.current, categories, featured, cardStill, cardHover}';
+        'title, "slug": slug.current, categories, featured, cardStill, cardHover, brandColors, "hero": hero.image{"ref": asset._ref, alt}, "rows": blocks[_type == "mediaRow"].items[].image{"ref": asset._ref, alt}, "backdrop": backdrop{"ref": asset._ref, alt}}';
 
     fetch('https://' + SANITY.projectId + '.' + SANITY_HOST + '/v' + SANITY.apiVersion +
         '/data/query/' + SANITY.dataset + '?query=' + encodeURIComponent(QUERY))
@@ -4372,6 +4486,7 @@ try {
                 '<div class="work-deck__tail" aria-hidden="true"></div>';
             watch();
             playback();
+            markLive();
         })
         .catch(function (e) {
             console.error('site.js: work-deck', e);
@@ -4379,3 +4494,60 @@ try {
 })();
 
 } catch (e) { console.error("site.js: work-deck", e); }
+
+/* ======================================================================
+   projects grid motion (Studio9P style)
+   Cover parallax (+/-5% of its own height across the viewport) and the
+   title rising 50px into place as each card scrolls in, staggered by
+   column. Hover is pure CSS. Skipped under reduced motion.
+   ====================================================================== */
+try {
+(function () {
+    if (!document.body.classList.contains('pj-v2')) return;
+    const grid = document.querySelector('[data-sanity-cards]');
+    if (!grid) return;
+    const reduce = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ||
+        document.documentElement.classList.contains('liquid-hero-reduced');
+    if (reduce) return;
+
+    let armed = false, cards = [];
+    function arm() {
+        cards = Array.prototype.slice.call(grid.querySelectorAll('.work-card'));
+        if (!cards.length || armed) return;
+        armed = true;
+        document.body.classList.add('pj-grid-armed');
+        const io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (!e.isIntersecting) return;
+                const i = cards.indexOf(e.target);
+                const meta = e.target.querySelector('.work-card__title');
+                if (meta) meta.style.transitionDelay = ((i % 3) / 5) + 's';
+                e.target.classList.add('is-in');
+                io.unobserve(e.target);
+            });
+        }, { rootMargin: '0px 0px -50px 0px' });
+        cards.forEach(function (c) { io.observe(c); });
+        tick();
+    }
+
+    let ticking = false;
+    function update() {
+        ticking = false;
+        const vh = window.innerHeight;
+        cards.forEach(function (c) {
+            const r = c.getBoundingClientRect();
+            if (r.bottom < 0 || r.top > vh) return;
+            // 0 as the card enters at the bottom, 1 as it leaves at the top
+            const p = (vh - r.top) / (vh + r.height);
+            c.style.setProperty('--drift', ((p * 10 - 5) / 1.15).toFixed(2) + '%');
+        });
+    }
+    function tick() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    window.addEventListener('scroll', tick, { passive: true });
+    window.addEventListener('resize', tick);
+
+    // the cards are built after a Sanity fetch, so watch for them
+    new MutationObserver(arm).observe(grid, { childList: true, subtree: true });
+    arm();
+})();
+} catch (e) { console.error("site.js: projects-grid", e); }

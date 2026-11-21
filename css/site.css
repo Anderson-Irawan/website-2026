@@ -351,7 +351,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
    later column before one asking for an earlier column makes grid wrap
    the second onto a new row, because auto-placement never backtracks. */
 .navbar .logo { grid-column: 1; grid-row: 1; justify-self: start; }
-.navbar .nav-links { grid-column: 2; grid-row: 1; justify-self: center; }
+.navbar .nav-links { grid-column: 3; grid-row: 1; justify-self: end; }
 .navbar .mobile-menu-toggle { grid-column: 3; grid-row: 1; justify-self: end; }
 
 .logo {
@@ -392,7 +392,7 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 
 .nav-links {
     display: flex;
-    gap: var(--space-4xl);
+    gap: var(--space-lg);
     list-style: none;
 }
 
@@ -434,11 +434,11 @@ html:not(.menu-open) .theme-light .navbar:not(.is-solid) .mobile-menu-toggle spa
 }*/
 
 /* the size that actually applies to the bar's links (this selector beats
-   .nav-link-cycle above). Caption tier, ~13-15px; the phone menu sets its
+   .nav-link-cycle above). Body tier, ~15-17px; the phone menu sets its
    own large size further down. Was 1.1rem (~18px). */
 .nav-links a {
     font-family: var(--font-body);
-    font-size: var(--fs-6);
+    font-size: var(--fs-5);
     color: #fff;
     text-decoration: none;
     position: relative;
@@ -5402,9 +5402,6 @@ html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; 
        the card's own height, and it moves the whole column without
        touching the gaps, so the spacing inside each column stays even.
        It also leaves `transform` free for the reveal. */
-    .pj-v2 .work-scatter--squish .work-row > .work-card:nth-child(2) {
-        translate: 0 50%;
-    }
 
     /* room under the grid for the last right card's overhang: half a
        card = half of (a column's width x 2/3 for the 3:2 image) plus
@@ -5522,12 +5519,16 @@ html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; 
 
 /* ── the darkened mockup behind ──────────────────────────── */
 .work-deck__backdrop {
-    position: absolute;
+    position: fixed;
     inset: 0;
     z-index: -1;
+    /* brand orange shows through the photo: overlay keeps its colours
+       vivid where they sit on the orange, instead of greying them out */
+    background-color: var(--brand, var(--color-orange));
 }
 
 .work-deck__backdrop img {
+    mix-blend-mode: overlay;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -5537,7 +5538,7 @@ html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; 
        rather than as a second image competing with the square, then
        pulled down in brightness - but not so far that the mockup stops
        being recognisable, which is the point of showing it */
-    filter: blur(26px) brightness(0.42) saturate(0.9);
+    filter: blur(26px) brightness(0.9) saturate(1.15);
 }
 
 /* Vignette. Without it the blurred mockup still fights the title and the
@@ -5574,7 +5575,7 @@ html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; 
     max-width: 11ch;
     margin: 0;
     font-family: var(--font-marker);   /* Plantin */
-    font-size: var(--fs-2);
+    font-size: var(--fs-3);
     font-weight: 400;
     line-height: 1.02;
     letter-spacing: -0.03em;
@@ -5585,7 +5586,6 @@ html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; 
     transition: color 0.3s var(--transition-smooth);
 }
 
-.work-deck__slide:hover .work-deck__title,
 .work-deck__slide:focus-visible .work-deck__title {
     color: var(--color-orange);
 }
@@ -5645,7 +5645,7 @@ html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; 
     .work-deck__title {
         justify-self: start;
         max-width: none;
-        font-size: var(--fs-3);
+        font-size: var(--fs-4);
     }
 
     .work-deck__square {
@@ -5661,3 +5661,468 @@ html.liquid-hero-reduced .ab-v2 .abm-me .abm-bio { opacity: 1; translate: none; 
 /* ── reduced motion ──────────────────────────────────────── */
 /* js/work-deck.js does not build a <video> at all when motion is off or
    the visitor is on a phone, so there is nothing to pause here. */
+
+/* ======================================================================
+   css/projects-grid.css
+   Projects page grid after Studio9P's work page: an edge-to-edge,
+   three-up grid of tall cards (aspect .76) with a 16px gap. The cover is
+   taller than the card and drifts as you scroll (parallax); the title
+   sits on the picture in difference blend; on hover the picture blurs
+   and the hover image rises into the middle. Scoped to body.pj-v2.
+   ====================================================================== */
+.pj-v2 .page-header {
+    min-height: 62svh;
+    padding-top: 110px;
+}
+
+.pj-v2 .work-scatter--squish {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0;
+    row-gap: 0;
+    align-items: stretch;
+}
+
+@media (min-width: 768px) {
+    .pj-v2 .work-scatter--squish {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        padding: 0 16px;
+    }
+}
+
+.pj-v2 .work-scatter--squish .work-row { display: contents; }
+
+.pj-v2 .work-scatter--squish .work-row > .work-card,
+.pj-v2 .work-scatter--squish > .work-card {
+    position: relative;
+    display: block;
+    flex: none;
+    width: auto;
+    translate: none;
+    transform: none;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* the picture is the tall box; the title sits right under it */
+.pj-v2 .work-card__frame {
+    position: relative;
+    height: auto;
+    aspect-ratio: 0.76;
+    overflow: hidden;
+    background: var(--color-gray-dark);
+}
+
+/* the cover: 115% tall, centred, so it has room to drift +/-5% */
+.pj-v2 .work-card__img:not(.work-card__img--hover) {
+    inset: auto;
+    top: -7.5%;
+    left: 0;
+    width: 100%;
+    height: 115%;
+    will-change: transform;
+    transform: translate3d(0, var(--drift, 0%), 0);
+    transition: none;
+}
+.pj-v2 .work-card:hover .work-card__img:not(.work-card__img--hover) {
+    transform: translate3d(0, var(--drift, 0%), 0);
+}
+
+/* the preview: starts low, small and blurred; rises on hover */
+.pj-v2 .work-card__img--hover {
+    inset: auto;
+    top: 50%;
+    left: 50%;
+    width: 52%;
+    height: 71%;
+    object-fit: contain;
+    z-index: 2;
+    opacity: 0;
+    transform: translate(-50%, 21%) scale(0.8);
+    filter: blur(50px);
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 0.6s cubic-bezier(0.45, 0, 0.55, 1),
+        filter 0.6s cubic-bezier(0.45, 0, 0.55, 1);
+}
+.pj-v2 .work-card:hover .work-card__img--hover {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
+    transition-duration: 0.6s;
+}
+
+/* frosted layer between cover and preview, only where a preview exists */
+.pj-v2 .work-card__frame:has(.work-card__img--hover)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+    -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(30px);
+    transition: opacity 0.6s cubic-bezier(0.45, 0, 0.55, 1);
+}
+.pj-v2 .work-card:hover .work-card__frame:has(.work-card__img--hover)::before {
+    opacity: 1;
+}
+
+/* the title sits tight under the picture, serif, normal capitalisation */
+.pj-v2 .work-card__meta {
+    /* static on purpose: the tags inside position against the CARD */
+    display: block;
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    pointer-events: none;
+}
+.pj-v2 .work-card__title {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 3;
+    font-family: var(--font-marker);
+    font-size: var(--fs-4);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    text-transform: lowercase;
+    text-box: normal;
+    white-space: normal;
+    color: #fff;
+    mix-blend-mode: difference;
+}
+.pj-v2 .work-card__desc { display: none; }
+
+.pj-v2 .work-card__tags {
+    justify-content: flex-end;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 3;
+    margin: 0;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pj-v2 .work-card:hover .work-card__tags,
+.pj-v2 .work-card:focus-visible .work-card__tags {
+    opacity: 1;
+    transform: none;
+}
+@media (hover: none) {
+    .pj-v2 .work-card__tags { opacity: 1; transform: none; }
+}
+
+.pj-v2 .work-card__tags { gap: 0.35rem; }
+.pj-v2 .work-card__tags .tag {
+    font-size: 0.7rem;
+    padding: 0.45em 0.6em;
+    background: rgba(12, 12, 12, 0.45);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+/* the title rises into place as the card scrolls in */
+.pj-v2.pj-grid-armed .work-card__title {
+    transform: translateY(50px);
+    transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pj-v2.pj-grid-armed .work-card.is-in .work-card__title {
+    transform: none;
+}
+
+.pj-v2 .work-scatter--squish { padding-bottom: 0; }
+@media (min-width: 761px) {
+    .pj-v2 .work-scatter--squish { padding-bottom: 0; }
+}
+.pj-v2 .portfolio-section { padding-bottom: clamp(3rem, 6vw, 5rem); }
+
+@media (hover: none) {
+    .pj-v2 .work-card__img--hover { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pj-v2 .work-card__img--hover,
+    .pj-v2 .work-card__frame::before,
+    .pj-v2.pj-grid-armed .work-card__title { transition: none; }
+}
+
+/* ======================================================================
+   Card titles and tags on the About and case study "more work" rows,
+   matching the Projects page: lowercase serif title bottom left in
+   difference blend, tags top right on hover.
+   ====================================================================== */
+.abm-cards .work-card { position: relative; }
+
+.abm-cards .work-card__meta {
+    display: block;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+}
+
+.abm-cards .work-card__title {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 3;
+    font-family: var(--font-marker);
+    font-size: var(--fs-4);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    text-transform: lowercase;
+    text-box: normal;
+    white-space: normal;
+    color: #fff;
+    mix-blend-mode: difference;
+}
+
+.abm-cards .work-card__desc { display: none; }
+
+.abm-cards .work-card__tags {
+    justify-content: flex-end;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 3;
+    margin: 0;
+    gap: 0.35rem;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.abm-cards .work-card:hover .work-card__tags,
+.abm-cards .work-card:focus-visible .work-card__tags {
+    opacity: 1;
+    transform: none;
+}
+.abm-cards .work-card__tags .tag {
+    font-size: 0.7rem;
+    padding: 0.45em 0.6em;
+    background: rgba(12, 12, 12, 0.45);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+@media (hover: none) {
+    .abm-cards .work-card__tags { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .abm-cards .work-card__tags { transition: none; }
+}
+
+/* ── backdrop fades in as each slide arrives ─────────────── */
+@property --bg-in {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 1;
+}
+
+@supports (animation-timeline: view()) {
+    @keyframes deckBgIn {
+        from { --bg-in: 0; }
+        to { --bg-in: 1; }
+    }
+
+}
+
+
+/* the photo layer is only there while the deck is on screen (js/site.js) */
+.work-deck__backdrop {
+    transition: opacity 0.25s ease;
+}
+
+html:not(.work-deck-on) .work-deck__backdrop {
+    opacity: 0;
+}
+
+/* the title and tags go with the photo layer, just as quickly */
+.work-deck__title,
+.work-deck__tags {
+    transition: color 0.3s var(--transition-smooth), opacity 0.25s ease;
+}
+
+html:not(.work-deck-on) .work-deck__title,
+html:not(.work-deck-on) .work-deck__tags {
+    opacity: 0;
+}
+
+/* the title and tags stay where they sit on screen as their slide arrives:
+   each one is moved back by exactly the distance its slide has still to
+   travel, so only the background and the photo layer move */
+@supports (animation-timeline: view()) {
+    @keyframes deckFollow {
+        from { translate: 0 -100svh; }
+        to { translate: 0 0; }
+    }
+
+    .work-deck__slide {
+        view-timeline-name: --deck-slide;
+        view-timeline-axis: block;
+    }
+
+    .work-deck__title,
+    .work-deck__tags {
+        animation: deckFollow linear both;
+        animation-timeline: --deck-slide;
+        animation-range: entry 0% entry 100%;
+    }
+}
+
+/* a title and its tags are only shown on the slide that is arriving or
+   on screen; the one before it has already gone (js/site.js markLive) */
+.work-deck-js:has(.is-live) .work-deck__slide:not(.is-live) .work-deck__title,
+.work-deck-js:has(.is-live) .work-deck__slide:not(.is-live) .work-deck__tags {
+    opacity: 0;
+}
+
+.work-deck-js .work-deck__slide.is-live .work-deck__title,
+.work-deck-js .work-deck__slide.is-live .work-deck__tags {
+    transition: opacity 0.15s ease;
+}
+
+/* the work backdrop is a liquid gradient built from the project's own
+   brand colour (--brand, set per slide; the site orange when empty),
+   in place of the blurred photo */
+.work-deck__backdrop img {
+    display: none;
+}
+
+.work-deck__backdrop {
+    overflow: hidden;
+    background-color: var(--brand, var(--color-orange));
+}
+
+.work-deck__backdrop::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    background:
+        radial-gradient(circle at 25% 30%,
+            color-mix(in oklab, var(--brand, var(--color-orange)) 55%, white) 0%, transparent 45%),
+        radial-gradient(circle at 75% 65%,
+            color-mix(in oklab, var(--brand, var(--color-orange)) 45%, black) 0%, transparent 50%),
+        radial-gradient(circle at 60% 20%,
+            color-mix(in oklab, var(--brand, var(--color-orange)) 70%, white) 0%, transparent 40%);
+    filter: blur(40px);
+    animation: deckLiquid 14s ease-in-out infinite alternate;
+}
+
+@keyframes deckLiquid {
+    0%   { transform: translate3d(-4%, -3%, 0) scale(1); }
+    50%  { transform: translate3d(3%, 4%, 0) scale(1.08) rotate(4deg); }
+    100% { transform: translate3d(-2%, 3%, 0) scale(1.02) rotate(-3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .work-deck__backdrop::before { animation: none; }
+}
+
+/* the work deck uses the homepage liquid gradient (js/site.js, initWorkDeck),
+   recoloured per slide; the photo backdrop is no longer drawn */
+.work-deck__liquid {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+html.work-deck-on .work-deck__liquid {
+    opacity: 1;
+}
+
+.work-deck__backdrop {
+    background-color: transparent;
+}
+
+.work-deck__backdrop::before {
+    display: none;
+}
+
+
+/* the vignette is per slide and every slide's backdrop stays up after it has
+   passed, so the dark edges stacked and the page got darker as you scrolled */
+.work-deck__backdrop::after {
+    display: none;
+}
+
+/* the work backdrop is the project's mockup, darkened and blurred, again;
+   the liquid background is switched off */
+.work-deck__liquid {
+    display: none;
+}
+
+.work-deck__backdrop img {
+    display: block;
+    mix-blend-mode: normal;
+    filter: brightness(0.42) saturate(0.9);
+}
+
+/* one fade per slide: the live slide's photo and its title and tags fade in
+   together when it is 70% of the way up; the one before fades out */
+.work-deck__backdrop {
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.work-deck__slide.is-live .work-deck__backdrop {
+    opacity: 1;
+}
+
+.work-deck-js .work-deck__title,
+.work-deck-js .work-deck__tags {
+    opacity: 0;
+    transition: opacity 0.5s ease, color 0.3s var(--transition-smooth);
+}
+
+.work-deck-js .work-deck__slide.is-live .work-deck__title,
+.work-deck-js .work-deck__slide.is-live .work-deck__tags {
+    opacity: 1;
+}
+
+/* once the deck has scrolled away, no slide's photo may stay up over the
+   rest of the page (outranks the live-slide rule above) */
+html:not(.work-deck-on) .work-deck__slide .work-deck__backdrop {
+    opacity: 0;
+}
+
+/* ── handover to the About section ───────────────────────── */
+/* Each slide's photo is position: fixed, so on its own it would stay over
+   the whole window until the deck had gone, hiding the About section as it
+   came up. Clipping the deck at its bottom edge fixes that: the photo now
+   ends exactly where the deck ends, so the last project scrolls away with
+   the page and About is revealed under it, tied to the scroll rather than
+   to a timed slide-out. The top and sides are pushed far out so only the
+   bottom edge clips - the first project still fades in over the whole
+   window as it arrives. clip-path does not make the deck a containing
+   block for fixed children, so the photos still sit still behind it. */
+.work-deck {
+    clip-path: inset(-300vh -100vw 0 -100vw);
+}
+
+/* the sticky slides are positioned, so they paint over the normal page
+   flow; at -1 they sit behind the about section's content instead */
+.work-deck__slide {
+    z-index: -1;
+}
+
+/* a short hold on the last project before the page carries it away */
+.work-deck__tail {
+    height: 40vh;
+    height: 40svh;
+}
+
+/* About follows the deck straight on */
+.page-home .portfolio-section {
+    padding-bottom: 0;
+}
